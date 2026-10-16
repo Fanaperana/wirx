@@ -1,0 +1,37 @@
+// Astable NE555 LED blinker, about 1.4 Hz, powered from a 2-pin header.
+title "NE555 blinker"
+revision "A"
+
+module Astable(vcc, out) {
+  u  = NE555
+  ra = R(10k, 0603)
+  rb = R(47k, 0603)
+  ct = C(10uF, 0805)
+  cv = C(10nF, 0603)
+  cd = C(100nF, 0603)
+
+  vcc -- u.VCC, u.R, ra.1, cd.1
+  ra.2 -- u.DIS -- rb.1
+  rb.2 -- u.THR, u.TR -- ct.1
+  u.CV -- cv.1
+  GND  -- u.GND, ct.2, cv.2, cd.2
+  out -- u.Q
+
+  layout { cd near u.VCC }
+}
+
+module Indicator(drive) {
+  r = R(470, 0603)
+  d = LED(red, 0603)
+  drive -- r.1
+  r.2 -- d.A
+  d.K -- GND
+}
+
+j = Conn_01x02
+j.1 -- +5V
+j.2 -- GND
+power_flag +5V, GND
+
+timer = Astable(vcc: +5V, out: BLINK)
+led   = Indicator(drive: BLINK)

@@ -1,0 +1,126 @@
+// ATmega328P board: USB-C 5 V input, 16 MHz crystal, reset, ISP header, status LED, I/O headers.
+// Shows custom parts, multi-sheet output and modules reused across sheets.
+title "ATmega328P minimal board"
+revision "1"
+
+part ATmega328P {
+  prefix "U"
+  value "ATmega328P-AU"
+  footprint "Package_QFP:TQFP-32_7x7mm_P0.8mm"
+  datasheet "https://ww1.microchip.com/downloads/en/DeviceDoc/ATmega48A-PA-88A-PA-168A-PA-328-P-DS-DS40002061A.pdf"
+  pins {
+    29 ~RESET : input
+    7  XTAL1  : input
+    8  XTAL2  : output @left
+    20 AREF   : passive
+    12 PB0    : bidirectional @right
+    13 PB1    : bidirectional @right
+    14 PB2    : bidirectional @right
+    15 PB3    : bidirectional @right
+    16 PB4    : bidirectional @right
+    17 PB5    : bidirectional @right
+    23 PC0    : bidirectional @right
+    24 PC1    : bidirectional @right
+    25 PC2    : bidirectional @right
+    26 PC3    : bidirectional @right
+    27 PC4    : bidirectional @right
+    28 PC5    : bidirectional @right
+    30 PD0    : bidirectional @right
+    31 PD1    : bidirectional @right
+    32 PD2    : bidirectional @right
+    1  PD3    : bidirectional @right
+    4, 6 VCC  : power_in
+    18 AVCC   : power_in
+    3, 5, 21 GND : power_in
+    19 ADC6   : input @left
+    22 ADC7   : input @left
+  }
+}
+
+module Crystal16(x1, x2) {
+  y  = Crystal(16MHz)
+  c1 = C(22pF, 0603)
+  c2 = C(22pF, 0603)
+  x1 -- y.1 -- c1.1
+  x2 -- y.2 -- c2.1
+  GND -- c1.2, c2.2
+}
+
+module Reset(rst) {
+  r  = R(10k, 0603)
+  sw = SW_Push
+  c  = C(100nF, 0603)
+  +5V -- r.1
+  rst -- r.2, sw.1, c.1
+  GND -- sw.2, c.2
+}
+
+module Mcu(rst, sck, miso, mosi, led, d0, d1, a0, a1) {
+  u   = ATmega328P
+  c1  = C(100nF, 0603)
+  c2  = C(100nF, 0603)
+  c3  = C(100nF, 0603)
+  xt  = Crystal16(x1: u.XTAL1, x2: u.XTAL2)
+
+  +5V -- u.VCC, u.AVCC, c1.1, c2.1
+  GND -- u.GND, c1.2, c2.2, c3.2
+  u.AREF -- c3.1
+  rst  -- u.~RESET
+  sck  -- u.PB5
+  miso -- u.PB4
+  mosi -- u.PB3
+  led  -- u.PB1
+  d0   -- u.PD0
+  d1   -- u.PD1
+  a0   -- u.PC0
+  a1   -- u.PC1
+  nc u.PB0, u.PB2, u.PC2, u.PC3, u.PC4, u.PC5, u.PD2, u.PD3, u.ADC6, u.ADC7
+
+  layout { c1 near u.VCC; c2 near u.AVCC }
+}
+
+module StatusLed(drive) {
+  r = R(330, 0603)
+  d = LED(yellow, 0603)
+  drive -- r.1
+  r.2 -- d.A
+  d.K -- GND
+}
+
+sheet "Power" {
+  j  = USB_C_Power
+  r1 = R(5k1, 0603)
+  r2 = R(5k1, 0603)
+  cb = C(10uF, 0805)
+  j.VBUS -- +5V
+  j.CC1 -- r1.1
+  j.CC2 -- r2.1
+  GND -- j.GND, j.SHIELD, r1.2, r2.2, cb.2
+  +5V -- cb.1
+  power_flag +5V, GND
+  pwr = StatusLed(drive: +5V)
+}
+
+sheet "MCU" {
+  mcu = Mcu(rst: RESET, sck: SCK, miso: MISO, mosi: MOSI, led: LED, d0: RXD, d1: TXD, a0: A0, a1: A1)
+  rst = Reset(rst: RESET)
+  status = StatusLed(drive: LED)
+}
+
+sheet "Connectors" {
+  isp = Conn_02x03
+  isp.1 -- MISO
+  isp.2 -- +5V
+  isp.3 -- SCK
+  isp.4 -- MOSI
+  isp.5 -- RESET
+  isp.6 -- GND
+
+  io = Conn_01x06
+  io.1 -- RXD
+  io.2 -- TXD
+  io.3 -- A0
+  io.4 -- A1
+  io.5 -- +5V
+  io.6 -- GND
+}

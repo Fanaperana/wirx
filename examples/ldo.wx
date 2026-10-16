@@ -1,0 +1,38 @@
+// 3.3 V supply from USB-C: connector, fuse, LDO with input/output caps and a power LED.
+title "USB-C to 3.3V"
+revision "A"
+
+module Ldo(vin, vout) {
+  u    = AMS1117_3V3
+  cin  = C(10uF, 0805)
+  cout = C(22uF, 0805)
+
+  vin  -- u.VIN  -- cin.1
+  vout -- u.VOUT -- cout.1
+  GND  -- u.GND, cin.2, cout.2
+}
+
+module PowerLed(rail) {
+  r = R(1k, 0603)
+  d = LED(green, 0603)
+  rail -- r.1
+  r.2 -- d.A
+  d.K -- GND
+}
+
+sheet "Power" {
+  j = USB_C_Power
+  f = Fuse(500mA, 1206)
+  j.VBUS -- f.1
+  f.2 -- VBUS
+  j.GND, j.SHIELD -- GND
+  j.CC1 -- r1.1
+  j.CC2 -- r2.1
+  r1 = R(5k1, 0603)
+  r2 = R(5k1, 0603)
+  r1.2, r2.2 -- GND
+  power_flag VBUS, GND
+
+  reg = Ldo(vin: VBUS, vout: +3V3)
+  led = PowerLed(rail: +3V3)
+}
