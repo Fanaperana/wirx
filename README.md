@@ -125,11 +125,17 @@ The essentials:
    wires cross only by passing straight through, never along or onto another net. Short nets are
    routed first; failures are ripped up and retried. A label is the last resort, and it is
    reported.
-5. **Labels.** Nets leaving a group get one label. Groups are placed near the groups they share
-   labels with, on the smallest page that fits (A4, then A3, then A2, then more sheets).
-6. **Text.** After routing, reference and value text moves to the nearest spot that covers no wire
+5. **Labels and sheets.** Nets leaving a group get one label. A sheet is drawn around its biggest
+   group: the groups it shares labels with stand in a column beside the side of it those labels
+   leave from (the crystal left of the chip when XIN is on its left), level with their labels, and
+   every frame fits its circuit. Sheets without such partners are a grid of blocks. The smallest
+   page that fits is used (A4, then A3, then A2, then more sheets).
+6. **Wires between blocks.** A small part (a resistor, a button) that reaches a neighbouring block
+   only through a label gets a wire to it instead, where a short one fits without crossing or
+   touching anything.
+7. **Text.** After routing, reference and value text moves to the nearest spot that covers no wire
    or part.
-7. **Self-check.** wirx rebuilds connectivity from the drawing, the way eleceda does, and compares
+8. **Self-check.** wirx rebuilds connectivity from the drawing, the way eleceda does, and compares
    it with the design. A mismatch stops the build.
 
 ## Editing in eleceda: `wirx import`

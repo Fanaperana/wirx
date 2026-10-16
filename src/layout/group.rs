@@ -354,8 +354,18 @@ impl Ctx<'_> {
                 dc.items.push(Item::Label { net: n, text: netd.name.clone(), at: s, rot: out, global: false, shape: "bidirectional" });
                 decor.push(dc);
             } else if self.flag_pin.get(&n) == Some(&(inst, k)) {
-                let (wires, s) = stub_to(t, out, 90, STUB);
-                let mut dc = Decor { net: n as i32, wires: wires.clone(), pois: vec![t, s], ..Default::default() };
+                // On a pin facing down or sideways the flag stands to the side of the stub, far
+                // enough that its name clears the part; the net's wire continues from the corner.
+                let (wires, s) = match stub_to(t, out, 90, STUB) {
+                    (w, _) if w.len() == 2 => {
+                        let s1 = w[0].1;
+                        (vec![(t, s1), (s1, s1 + pt(250, 0))], s1 + pt(250, 0))
+                    }
+                    other => other,
+                };
+                let mut pois = vec![t];
+                pois.extend(wires.iter().map(|w| w.1));
+                let mut dc = Decor { net: n as i32, wires: wires.clone(), pois, ..Default::default() };
                 dc.block.push(Rect::new(-130, -190, 130, 0).translate(s));
                 for (a, b) in &wires {
                     dc.items.push(Item::Wire { a: *a, b: *b });
@@ -635,7 +645,12 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
             label_pin.insert(n, pick);
         }
         if net.flagged && !flags_done.contains(&n) {
-            let candidates: Vec<&(usize, usize)> = here.iter().filter(|p| label_pin.get(&n) != Some(p) && !d.instances[p.0].nc[p.1]).collect();
+            let mut candidates: Vec<&(usize, usize)> = here.iter().filter(|p| label_pin.get(&n) != Some(p) && !d.instances[p.0].nc[p.1]).collect();
+            // A signal net's flag goes on a small part's pin: on a chip's edge, between pins 100 mil
+            // apart, its symbol would block the neighbouring pins.
+            if !net.is_rail() {
+                candidates.sort_by_key(|p| fixed(p));
+            }
             if let Some(p) = candidates.first() {
                 flag_pin.insert(n, **p);
                 flags_done.insert(n);
@@ -668,6 +683,38 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
         placed.insert(p.inst, p);
     };
 
+    // Where each part's outgoing nets land on a chip outside the group: (side of the chip, height
+    // on it). A group is drawn beside the chip side its nets reach, so clusters go left to right
+    // in the order that keeps their wires to that side from crossing: on the chip's left, the
+    // cluster for the lowest pin nearest the chip (rightmost); on its right, mirrored.
+    let partner_pins = |i: usize| -> Vec<(Rot, i32)> {
+        let inst = &d.instances[i];
+        let mut out = Vec::new();
+        for n in inst.pin_net.iter().flatten().copied() {
+            if d.nets[n].is_rail() || !ctx.label_pin.contains_key(&n) {
+                continue;
+            }
+            for &(j, k) in &d.nets[n].pins {
+                if ctx.in_group.contains(&j) || ctx.class(j) != Class::Fixed {
+                    continue;
+                }
+                let pin = place_pin(&ctx.sym(j).pins[k], Orient::IDENTITY, pt(0, 0));
+                out.push((pin.out, pin.at.y));
+            }
+        }
+        out
+    };
+    let facing: i32 = group.instances.iter().flat_map(|&i| partner_pins(i)).map(|(out, _)| match out {
+        180 => 1,
+        0 => -1,
+        _ => 0,
+    }).sum::<i32>().signum();
+    let cluster_key: HashMap<usize, (bool, i32)> = group
+        .instances
+        .iter()
+        .map(|&i| (i, partner_pins(i).iter().map(|p| p.1).min().map_or((false, 0), |y| (true, -facing * y))))
+        .collect();
+
     // Clusters of signal-connected parts, each grown from its biggest part.
     loop {
         let anchor = group
@@ -675,7 +722,7 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
             .iter()
             .copied()
             .filter(|i| !placed.contains_key(i) && !rail_only(*i))
-            .max_by_key(|&i| (d.parts[d.instances[i].part].pins.len(), std::cmp::Reverse(i)));
+            .max_by_key(|&i| (d.parts[d.instances[i].part].pins.len(), cluster_key[&i], std::cmp::Reverse(i)));
         let Some(anchor) = anchor else { break };
         let orient = ctx.rail_orient(anchor).unwrap_or(Orient::IDENTITY);
         let proto = ctx.make_placed(anchor, orient);
@@ -802,11 +849,21 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
                 inst.pin_net.iter().flatten().map(|&n| &d.nets[n]).find(|n| matches!(n.kind, NetKind::Rail(RailKind::Supply))).map(|n| n.name.clone()).unwrap_or_default()
             };
             list.sort_by_key(|p| (rail_name(p), p.inst));
-            let mut x = 0;
+            // A row under the circuit wraps at the circuit's width, so a long bank of decoupling
+            // caps does not widen the group (and push its neighbours away from its pins).
+            let limit = match side {
+                None => occupied.iter().copied().reduce(Rect::union).map_or(i32::MAX, |r| r.w()),
+                Some(_) => i32::MAX,
+            };
+            let (mut x, mut y, mut row_h) = (0, 0, 0);
             for p in &mut list {
                 let ext = p.rects.iter().copied().reduce(Rect::union).unwrap();
-                p.translate(pt(snap50(x - ext.x0), 0));
+                if x > 0 && x + ext.w() > limit {
+                    (x, y, row_h) = (0, y + row_h + 2 * CLEAR, 0);
+                }
+                p.translate(pt(snap50(x - ext.x0), snap50(y)));
                 x = p.rects.iter().copied().reduce(Rect::union).unwrap().x1 + 2 * CLEAR + 50;
+                row_h = row_h.max(ext.h());
             }
             let row_ext = list.iter().flat_map(|p| p.rects.iter().copied()).reduce(Rect::union).unwrap();
             let gap = 2 * CLEAR + 100;
@@ -1184,11 +1241,30 @@ fn route_net(g: &mut Grid, ni: usize, net: &(usize, Vec<(usize, usize)>), placed
         if g.idx(tp.at).is_some_and(|c| tree.contains(&c)) {
             continue;
         }
-        match g.route(n as i32, tp.at, tp.out, &tree) {
+        // A pin whose own decoration (a PWR_FLAG stub) fills the space in front of it is reached
+        // through the far end of that decoration instead.
+        let (gr, tr) = (&*g, &tree);
+        let from_decor = || {
+            let cost = |path: &Vec<Pt>| path.windows(2).map(|w| w[0].manhattan(w[1])).sum::<i32>() + 200 * path.len() as i32;
+            placed[&t.0]
+                .decor
+                .iter()
+                .filter(|dc| dc.net == n as i32)
+                .flat_map(|dc| dc.pois.iter().copied())
+                .filter(|&p| p != tp.at)
+                .flat_map(|p| [tp.out, 0, 90, 180, 270].into_iter().filter_map(move |dir| gr.route(n as i32, p, dir, tr)))
+                .min_by_key(|path| (cost(path), path.clone()))
+        };
+        match g.route(n as i32, tp.at, tp.out, &tree).or_else(from_decor) {
             Some(path) => {
                 for w in path.windows(2) {
                     g.mark_wire(w[0], w[1], n as i32);
                     tree.extend(g.segment_cells(w[0], w[1]));
+                }
+                for dc in placed[&t.0].decor.iter().filter(|dc| dc.net == n as i32) {
+                    for &(a, b) in &dc.wires {
+                        tree.extend(g.segment_cells(a, b));
+                    }
                 }
                 tree_pts.extend(path.iter().copied());
                 out.paths.push((ni, path));

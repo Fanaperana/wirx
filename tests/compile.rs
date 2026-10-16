@@ -260,7 +260,7 @@ fn layout_fixtures() {
 }
 
 /// The RP2350B board (examples/rp2350b.wx) passes the electrical checks, builds, verifies and
-/// is deterministic.
+/// is deterministic. Every pin is wired: the core regulator on the chip's crowded top edge too.
 #[test]
 fn rp2350b_board_builds() {
     let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("examples/rp2350b.wx");
@@ -268,7 +268,8 @@ fn rp2350b_board_builds() {
     assert!(c.diags.iter().all(|d| d.severity == Severity::Info), "{:#?}", messages(&c));
     let design = c.design.unwrap();
     assert_eq!((design.instances.len(), design.nets.len(), design.sheets.len()), (46, 79, 3));
-    let (a, _) = wirx::build(&design).unwrap();
+    let (a, layout_diags) = wirx::build(&design).unwrap();
+    assert!(layout_diags.is_empty(), "{:?}", layout_diags.iter().map(|d| &d.message).collect::<Vec<_>>());
     let (b, _) = wirx::build(&design).unwrap();
     assert_eq!(a, b);
 }

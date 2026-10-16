@@ -7,8 +7,10 @@
 //! 3. Nets inside a group are routed with orthogonal wires on the 50 mil grid; nets leaving the
 //!    group get one net label each.
 //! 4. Groups are packed onto sheets, framed and named.
+//! 5. Labels of small parts become wires to the neighbouring block where a short one fits.
 
 mod group;
+mod join;
 pub use group::{GroupStats, Variant};
 mod pack;
 mod route;
@@ -144,7 +146,7 @@ pub fn layout_with(d: &Design, opts: &Options) -> (Schematic, Vec<Diagnostic>) {
         groups.push(out);
     }
     let stats: Vec<GroupStats> = groups.iter().map(|g| g.stats.clone()).collect();
-    let sheets = pack::pack(d, groups, &mut diags);
+    let sheets = pack::pack(d, groups, &extra_symbols, &mut diags);
     let mut symbols: Vec<SymbolDef> = Vec::new();
     let mut seen = std::collections::HashSet::new();
     for s in d.symbols.iter().chain(extra_symbols.iter()) {

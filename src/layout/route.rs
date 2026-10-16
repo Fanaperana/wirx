@@ -104,6 +104,17 @@ impl Grid {
         }
     }
 
+    /// No blocked cell inside `r`.
+    pub fn rect_free(&self, r: Rect) -> bool {
+        self.cells_in(r).into_iter().all(|i| !self.blocked[i])
+    }
+
+    pub fn unblock_rect(&mut self, r: Rect) {
+        for i in self.cells_in(r) {
+            self.blocked[i] = false;
+        }
+    }
+
     /// Extra cost for one cell (congestion history).
     pub fn add_soft(&mut self, cell: usize, cost: u16) {
         self.soft[cell] = self.soft[cell].saturating_add(cost);
