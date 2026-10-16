@@ -20,7 +20,6 @@ const TEXT: i32 = 50;
 pub struct GroupOut {
     pub group: usize,
     pub name: String,
-    pub framed: bool,
     pub items: Vec<Item>,
     pub bbox: Rect,
 }
@@ -455,6 +454,16 @@ fn front_offsets() -> &'static [(i32, i32)] {
     })
 }
 
+/// Offsets for a part hanging off a line (a pull-down under a wire): neighbours line up along it.
+fn along_offsets() -> &'static [(i32, i32)] {
+    static CELL: OnceLock<Vec<(i32, i32)>> = OnceLock::new();
+    CELL.get_or_init(|| {
+        let mut v: Vec<(i32, i32)> = front_offsets().to_vec();
+        v.sort_by_key(|&(a, p): &(i32, i32)| (a + 3 * p.abs() + i32::from(p < 0), a, p));
+        v
+    })
+}
+
 /// Offsets around a point, nearest first.
 fn ring_offsets() -> &'static [Pt] {
     static CELL: OnceLock<Vec<Pt>> = OnceLock::new();
@@ -573,7 +582,9 @@ pub fn layout_group(d: &Design, g: usize, extra_symbols: &mut Vec<SymbolDef>, fl
                     90 => 2,
                     _ => 3,
                 };
-                (side, if is_horizontal(pp[k].out) { pp[k].at.y } else { pp[k].at.x })
+                // Bottom-up on the sides: parts hanging down off lower pins take the near spots, so
+                // the wires of the pins above pass over them instead of crossing.
+                (side, if is_horizontal(pp[k].out) { -pp[k].at.y } else { pp[k].at.x })
             });
             for k in pin_order {
                 let Some(n) = d.instances[parent].pin_net[k] else { continue };
@@ -589,7 +600,10 @@ pub fn layout_group(d: &Design, g: usize, extra_symbols: &mut Vec<SymbolDef>, fl
                         Some(hp) => (hp.at, hp.out),
                         None => (pp[k].at, pp[k].out),
                     };
-                    let p = place_child(&mut ctx, ci, ck, anchor_pin, anchor_out, &occupied);
+                    let p = match bridge_child(&mut ctx, ci, ck, parent, &pp, k, &occupied) {
+                        Some(p) => p,
+                        None => place_child(&mut ctx, ci, ck, anchor_pin, anchor_out, &occupied),
+                    };
                     let straight = p.pins[ck].at.y == anchor_pin.y || p.pins[ck].at.x == anchor_pin.x;
                     let tip = p.pins[ck].at;
                     commit(p, &mut placed, &mut order, &mut occupied);
@@ -601,53 +615,285 @@ pub fn layout_group(d: &Design, g: usize, extra_symbols: &mut Vec<SymbolDef>, fl
         }
     }
 
-    // Rail-only parts (decoupling, bulk caps) next to the pins they serve.
+    // Rail-only parts (decoupling, bulk caps): a `near` hint puts one at its pin; the rest stand in
+    // one tidy row under the circuit, supplies on top and grounds on one baseline.
+    let mut row: Vec<Placed> = Vec::new();
     for &i in &group.instances {
         if placed.contains_key(&i) {
             continue;
         }
         let orient = ctx.rail_orient(i).unwrap_or(Orient::IDENTITY);
         let proto = ctx.make_placed(i, orient);
-        let rails: Vec<usize> = d.instances[i].pin_net.iter().flatten().copied().filter(|&n| d.nets[n].is_rail()).collect();
-        let target = near.get(&i).and_then(|&(b, k)| placed.get(&b).map(|p| p.pins[k])).or_else(|| {
-            // Prefer a supply pin of an already placed part on the same rail.
-            let mut best: Option<PlacedPin> = None;
-            for &o in &order {
-                for (k, pin) in placed[&o].pins.iter().enumerate() {
-                    if let Some(n) = d.instances[o].pin_net[k]
-                        && rails.contains(&n)
-                    {
-                        let supply = matches!(d.nets[n].kind, NetKind::Rail(RailKind::Supply));
-                        if best.is_none() || supply {
-                            best = Some(*pin);
-                        }
-                        if supply {
-                            return best;
+        if let Some(t) = near.get(&i).and_then(|&(b, k)| placed.get(&b).map(|p| p.pins[k])) {
+            let ext = proto.rects.iter().copied().reduce(Rect::union).unwrap();
+            let desired = t.at + dir_vec(t.out) * 300 - pt(ext.center().x, 0);
+            let p = place_near(&proto, pt(snap50(desired.x), snap50(desired.y)), &occupied);
+            commit(p, &mut placed, &mut order, &mut occupied);
+        } else {
+            row.push(proto);
+        }
+    }
+    tidy(&ctx, &mut placed, &order);
+    let mut occupied: Vec<Rect> = order.iter().flat_map(|i| placed[i].rects.iter().copied()).collect();
+    // A group made only of rail-connected parts (an LDO between two rails): its biggest part
+    // anchors it, the rest go beside the pins they serve.
+    if order.is_empty() && !row.is_empty() {
+        let big = (0..row.len()).max_by_key(|&k| (row[k].pins.len(), std::cmp::Reverse(row[k].inst))).unwrap();
+        let p = row.remove(big);
+        commit(p, &mut placed, &mut order, &mut occupied);
+    }
+    if !row.is_empty() {
+        // The pin each part serves: a pin on the same supply rail, preferring the biggest part.
+        let served = |p: &Placed, placed: &HashMap<usize, Placed>| -> Option<PlacedPin> {
+            let inst = &d.instances[p.inst];
+            let supply: Vec<usize> = inst.pin_net.iter().flatten().copied().filter(|&n| matches!(d.nets[n].kind, NetKind::Rail(RailKind::Supply))).collect();
+            order.iter().find_map(|o| {
+                let q = &placed[o];
+                (0..q.pins.len()).find(|&k| d.instances[*o].pin_net[k].is_some_and(|n| supply.contains(&n))).map(|k| q.pins[k])
+            })
+        };
+        let anchor_rects: Rect = order.first().map(|i| placed[i].rects.iter().copied().reduce(Rect::union).unwrap()).unwrap();
+        // A cap serving a top or bottom pin goes to a side of the anchor that has no pins, when
+        // there is one; otherwise under it.
+        let free_side: Option<Rot> = order.first().and_then(|a| {
+            let pins = &placed[a].pins;
+            [180, 0].into_iter().find(|&o| !pins.iter().any(|p| p.out == o))
+        });
+        let side_of = |pin: Option<PlacedPin>| -> Option<Rot> {
+            match pin {
+                Some(t) if is_horizontal(t.out) => Some(t.out),
+                Some(_) => free_side,
+                None => None,
+            }
+        };
+        let mut sides: Vec<(Option<Rot>, Option<PlacedPin>, Vec<Placed>)> = Vec::new();
+        for p in row {
+            let pin = served(&p, &placed);
+            let side = side_of(pin);
+            match sides.iter_mut().find(|(s, _, _)| *s == side) {
+                Some((_, _, list)) => list.push(p),
+                None => sides.push((side, pin, vec![p])),
+            }
+        }
+        for (side, pin, mut list) in sides {
+            let rail_name = |p: &Placed| {
+                let inst = &d.instances[p.inst];
+                inst.pin_net.iter().flatten().map(|&n| &d.nets[n]).find(|n| matches!(n.kind, NetKind::Rail(RailKind::Supply))).map(|n| n.name.clone()).unwrap_or_default()
+            };
+            list.sort_by_key(|p| (rail_name(p), p.inst));
+            let mut x = 0;
+            for p in &mut list {
+                let ext = p.rects.iter().copied().reduce(Rect::union).unwrap();
+                p.translate(pt(snap50(x - ext.x0), 0));
+                x = p.rects.iter().copied().reduce(Rect::union).unwrap().x1 + 2 * CLEAR + 50;
+            }
+            let row_ext = list.iter().flat_map(|p| p.rects.iter().copied()).reduce(Rect::union).unwrap();
+            let gap = 2 * CLEAR + 100;
+            // Level with the pin it serves (or the anchor's middle), beside the chosen side.
+            let level = match pin {
+                Some(t) if is_horizontal(t.out) => t.at.y,
+                _ => anchor_rects.center().y,
+            };
+            let base = match side {
+                Some(180) => pt(anchor_rects.x0 - gap - row_ext.x1, level - row_ext.center().y),
+                Some(_) => pt(anchor_rects.x1 + gap - row_ext.x0, level - row_ext.center().y),
+                None => pt(anchor_rects.center().x - row_ext.w() / 2 - row_ext.x0, anchor_rects.y1 + gap - row_ext.y0),
+            };
+            let base = pt(snap50(base.x), snap50(base.y));
+            let fits = |d: Pt, occupied: &[Rect]| list.iter().all(|p| !collides(p, d, occupied));
+            let shift = ring_offsets().iter().map(|&o| base + o).find(|&d| fits(d, &occupied)).unwrap_or(base);
+            for mut p in list {
+                p.translate(shift);
+                commit(p, &mut placed, &mut order, &mut occupied);
+            }
+        }
+    }
+
+    let occupied: Vec<Rect> = order.iter().flat_map(|i| placed[i].rects.iter().copied()).collect();
+    route_group(&mut ctx, &placed, &order, &occupied)
+}
+
+/// Line things up: nudge parts so connected pins share a row or column (straight wires instead
+/// of jogs), and so ground and supply symbols of neighbouring parts sit on one baseline.
+fn tidy(ctx: &Ctx, placed: &mut HashMap<usize, Placed>, order: &[usize]) {
+    let d = ctx.d;
+    let nets: Vec<Vec<(usize, usize)>> = d
+        .nets
+        .iter()
+        .filter(|n| !n.is_rail())
+        .map(|n| n.pins.iter().copied().filter(|p| ctx.in_group.contains(&p.0) && !d.instances[p.0].nc[p.1]).collect::<Vec<_>>())
+        .filter(|t| t.len() >= 2)
+        .collect();
+    let mut nets_of: HashMap<usize, Vec<usize>> = HashMap::new();
+    for (ni, t) in nets.iter().enumerate() {
+        for &(i, _) in t {
+            let e = nets_of.entry(i).or_default();
+            if !e.contains(&ni) {
+                e.push(ni);
+            }
+        }
+    }
+    // A bent connection costs much more than a long straight one.
+    let net_cost = |terms: &[(usize, usize)], placed: &HashMap<usize, Placed>| -> i64 {
+        let pts: Vec<Pt> = terms.iter().map(|t| placed[&t.0].pins[t.1].at).collect();
+        let mut in_tree = vec![false; pts.len()];
+        in_tree[0] = true;
+        let mut cost = 0i64;
+        for _ in 1..pts.len() {
+            let mut best = (i64::MAX, 0, 0);
+            for a in 0..pts.len() {
+                if !in_tree[a] {
+                    continue;
+                }
+                for b in 0..pts.len() {
+                    if !in_tree[b] {
+                        let dd = pts[a].manhattan(pts[b]) as i64;
+                        if dd < best.0 {
+                            best = (dd, a, b);
                         }
                     }
                 }
             }
-            best
-        });
-        let p = match target {
-            Some(t) => {
-                let ext = proto.rects.iter().copied().reduce(Rect::union).unwrap();
-                let desired = t.at + dir_vec(t.out) * 300 - pt(ext.center().x, 0);
-                place_near(&proto, pt(snap50(desired.x), snap50(desired.y)), &occupied)
+            in_tree[best.2] = true;
+            let (pa, pb) = (pts[best.1], pts[best.2]);
+            let (dx, dy) = ((pa.x - pb.x).abs() as i64, (pa.y - pb.y).abs() as i64);
+            cost += if dx != 0 && dy != 0 { 2000 + dx.min(dy) } else { 0 } + best.0 / 2;
+        }
+        cost
+    };
+    // Points where a part's ground (down) or supply (up) symbol attaches.
+    let rail_points = |p: &Placed| -> Vec<(Rot, i32, i32)> {
+        let inst = &d.instances[p.inst];
+        p.pins
+            .iter()
+            .enumerate()
+            .filter_map(|(k, pp)| match inst.pin_net[k].map(|n| d.nets[n].kind) {
+                Some(NetKind::Rail(kind)) if pp.out == kind.natural_dir() => Some((pp.out, pp.at.x, pp.at.y)),
+                _ => None,
+            })
+            .collect()
+    };
+    // Baseline cost: neighbouring symbols of the same direction at slightly different heights.
+    let rail_cost = |placed: &HashMap<usize, Placed>| -> i64 {
+        let pts: Vec<(Rot, i32, i32)> = order.iter().flat_map(|i| rail_points(&placed[i])).collect();
+        let mut cost = 0;
+        for a in 0..pts.len() {
+            for b in a + 1..pts.len() {
+                let (pa, pb) = (pts[a], pts[b]);
+                if pa.0 == pb.0 && (pa.1 - pb.1).abs() <= 1000 && pa.2 != pb.2 && (pa.2 - pb.2).abs() <= 300 {
+                    cost += 500;
+                }
             }
-            None => {
-                let desired = occupied.iter().copied().reduce(Rect::union).map(|r| pt(snap50(r.x1 + 400), snap50(r.y0))).unwrap_or(pt(0, 0));
-                place_near(&proto, desired, &occupied)
+        }
+        cost
+    };
+    let anchor = order.first().copied();
+    for _pass in 0..6 {
+        let mut improved = false;
+        for &p in order {
+            if Some(p) == anchor {
+                continue;
             }
-        };
-        commit(p, &mut placed, &mut order, &mut occupied);
+            let my_nets = nets_of.get(&p).cloned().unwrap_or_default();
+            let cost_of = |placed: &HashMap<usize, Placed>| -> i64 { my_nets.iter().map(|&n| net_cost(&nets[n], placed)).sum::<i64>() + rail_cost(placed) };
+            let mut shifts: Vec<Pt> = Vec::new();
+            for &n in &my_nets {
+                for &(_, k) in nets[n].iter().filter(|t| t.0 == p) {
+                    let at = placed[&p].pins[k].at;
+                    for &(j, m) in nets[n].iter().filter(|t| t.0 != p) {
+                        let other = placed[&j].pins[m].at;
+                        shifts.push(pt(0, other.y - at.y));
+                        shifts.push(pt(other.x - at.x, 0));
+                    }
+                }
+            }
+            for (dir, x, y) in rail_points(&placed[&p]) {
+                for &o in order.iter().filter(|&&o| o != p) {
+                    for (dir2, x2, y2) in rail_points(&placed[&o]) {
+                        if dir == dir2 && (x - x2).abs() <= 1000 && (y2 - y).abs() <= 300 {
+                            shifts.push(pt(0, y2 - y));
+                        }
+                    }
+                }
+            }
+            shifts.retain(|s| *s != pt(0, 0) && s.x.abs() <= 1200 && s.y.abs() <= 1200);
+            shifts.sort();
+            shifts.dedup();
+            if shifts.is_empty() {
+                continue;
+            }
+            let others: Vec<Rect> = order.iter().filter(|&&o| o != p).flat_map(|o| placed[o].rects.iter().copied()).collect();
+            let before = cost_of(placed);
+            let mut best: Option<(i64, Pt)> = None;
+            for s in shifts {
+                if collides(&placed[&p], s, &others) {
+                    continue;
+                }
+                let original = placed[&p].clone();
+                placed.get_mut(&p).unwrap().translate(s);
+                let after = cost_of(placed);
+                placed.insert(p, original);
+                if after < before && best.is_none_or(|b| after < b.0) {
+                    best = Some((after, s));
+                }
+            }
+            if let Some((_, s)) = best {
+                placed.get_mut(&p).unwrap().translate(s);
+                improved = true;
+            }
+        }
+        if !improved {
+            break;
+        }
     }
-
-    route_group(&mut ctx, &placed, &order, &occupied)
 }
 
 fn snap50(v: i32) -> i32 {
     crate::geom::snap(v)
+}
+
+/// A two-pin part whose pins both go to the same side of one part (a crystal between XTAL1 and
+/// XTAL2, a resistor between two neighbouring pins) stands parallel to that side, between them.
+#[allow(clippy::too_many_arguments)]
+fn bridge_child(ctx: &mut Ctx, ci: usize, ck: usize, parent: usize, pp: &[PlacedPin], k: usize, occupied: &[Rect]) -> Option<Placed> {
+    let d = ctx.d;
+    if ctx.class(ci) != Class::TwoTerminal {
+        return None;
+    }
+    let ok = 1 - ck;
+    let other_net = d.instances[ci].pin_net[ok]?;
+    if d.nets[other_net].is_rail() {
+        return None;
+    }
+    let out = pp[k].out;
+    let k2 = (0..pp.len()).find(|&j| j != k && pp[j].out == out && d.instances[parent].pin_net[j] == Some(other_net))?;
+    let (p1, p2) = (pp[k].at, pp[k2].at);
+    let along_side = if is_horizontal(out) { |p: Pt| p.y } else { |p: Pt| p.x };
+    let sym = ctx.sym(ci);
+    // Orientation: pins spread along the side, in the same order as the parent's pins.
+    let orient = [0, 90, 180, 270].map(Orient::rot).into_iter().find(|&o| {
+        let (a, b) = (o.apply(sym.pins[ck].at), o.apply(sym.pins[ok].at));
+        let across = if is_horizontal(out) { a.x == b.x } else { a.y == b.y };
+        across && (along_side(a) < along_side(b)) == (along_side(p1) < along_side(p2))
+    })?;
+    let proto = ctx.make_placed(ci, orient);
+    let mid = pt((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+    let pins_mid = pt((proto.pins[ck].at.x + proto.pins[ok].at.x) / 2, (proto.pins[ck].at.y + proto.pins[ok].at.y) / 2);
+    let ext = proto.rects[0];
+    let depth = if is_horizontal(out) { ext.w() } else { ext.h() } / 2;
+    let target = mid + dir_vec(out) * (GAP + depth) - pins_mid;
+    let base = pt(snap50(target.x), snap50(target.y));
+    let along = dir_vec(out);
+    let across = dir_vec(crate::geom::norm_rot(out as i32 - 90));
+    for &(a, p) in front_offsets() {
+        let off = base + along * a + across * p;
+        if !collides(&proto, off, occupied) {
+            let mut placed = proto.clone();
+            placed.translate(off);
+            return Some(placed);
+        }
+    }
+    None
 }
 
 /// Place part `ci` so its pin `ck` faces the parent pin at `at` (leaving in direction `out`).
@@ -674,7 +920,8 @@ fn place_child(ctx: &mut Ctx, ci: usize, ck: usize, at: Pt, out: Rot, occupied: 
     let base = tip - q.at;
     let along = dir_vec(out);
     let across = dir_vec(crate::geom::norm_rot(out as i32 - 90));
-    for &(a, p) in front_offsets() {
+    let hanging = is_horizontal(q.out) != is_horizontal(out);
+    for &(a, p) in if hanging { along_offsets() } else { front_offsets() } {
         let off = base + along * a + across * p;
         if !collides(&proto, off, occupied) {
             let mut placed = proto.clone();
@@ -854,7 +1101,7 @@ fn route_group(ctx: &mut Ctx, placed: &HashMap<usize, Placed>, order: &[usize], 
         bb = Some(bb.map_or(r, |x| x.union(r)));
     }
     let group = &d.groups[ctx.g];
-    GroupOut { group: ctx.g, name: group.name.clone(), framed: group.framed, items, bbox: bb.unwrap_or(Rect::new(0, 0, 100, 100)) }
+    GroupOut { group: ctx.g, name: group.name.clone(), items, bbox: bb.unwrap_or(Rect::new(0, 0, 100, 100)) }
 }
 
 /// A junction dot wherever three or more connections meet at a point.

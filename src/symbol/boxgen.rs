@@ -41,7 +41,7 @@ pub fn is_ground_name(name: &str) -> bool {
     n.starts_with("GND") || n.ends_with("GND") || n == "VSS" || n.starts_with("VSS") || n == "VEE" || n == "EP" || n == "PAD"
 }
 
-fn auto_side(p: &BoxPin) -> Option<Side> {
+pub fn auto_side(p: &BoxPin) -> Option<Side> {
     match p.ptype {
         PinType::PowerIn | PinType::PowerOut if is_ground_name(&p.name) => Some(Side::Bottom),
         PinType::PowerIn => Some(Side::Top),

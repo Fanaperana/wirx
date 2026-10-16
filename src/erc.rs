@@ -41,6 +41,26 @@ const DRIVERS: [PinType; 7] = [
     PinType::OpenEmitter,
 ];
 
+/// How a script refers to this pin: `x.VIN`, `x[1]` or `x["~RESET"]`.
+fn script_pin(var: &str, name: &str, number: &str) -> String {
+    let ident = !name.is_empty() && name.chars().next().is_some_and(|c| c.is_ascii_alphabetic() || c == '_') && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_');
+    if ident {
+        format!("{var}.{name}")
+    } else if number.chars().all(|c| c.is_ascii_digit()) {
+        format!("{var}[{number}]")
+    } else {
+        format!("{var}[\"{number}\"]")
+    }
+}
+
+/// How a script refers to this net: a built-in rail constant, `supply("…")` or `net("…")`.
+fn script_net(name: &str, rail: bool) -> String {
+    if let Some(r) = crate::stdlib::RAILS.iter().find(|r| r.1 == name) {
+        return r.0.to_string();
+    }
+    if rail { format!("supply(\"{name}\")") } else { format!("net(\"{name}\")") }
+}
+
 pub fn check(d: &Design) -> Vec<Diagnostic> {
     let mut out = Vec::new();
 
@@ -72,7 +92,7 @@ pub fn check(d: &Design) -> Vec<Diagnostic> {
                 out.push(
                     Diagnostic::error("pin_not_connected", msg)
                         .at(inst.span)
-                        .hint(format!("connect it (`{}.{} -- …`) or mark it unused: `nc {}.{}`", inst.local, pin.number, inst.local, pin.number)),
+                        .hint(format!("connect it, or mark it unused: `{} -> NC` (where `x` holds {})", script_pin("x", &pin.name, &pin.number), inst.reference)),
                 );
             }
         }
@@ -115,7 +135,7 @@ pub fn check(d: &Design) -> Vec<Diagnostic> {
             out.push(
                 Diagnostic::warning("power_not_driven", format!("net `{}` powers {} but nothing drives it", net.name, users.join(", ")))
                     .at_opt(net.span)
-                    .hint(format!("if power comes from a connector or off-board, add `power_flag {}`", net.name)),
+                    .hint(format!("if power comes from a connector or off-board, mark it driven: `{}.driven();`", script_net(&net.name, net.is_rail()))),
             );
         }
         // Inputs with no driver on an otherwise connected net.
@@ -130,7 +150,7 @@ pub fn check(d: &Design) -> Vec<Diagnostic> {
             out.push(
                 Diagnostic::warning("missing_footprint", format!("{} ({}) has no footprint", inst.reference, d.parts[inst.part].name))
                     .at(inst.span)
-                    .hint("set `footprint \"Lib:Name\"` in the part, or pass it: `X(value, footprint: \"Lib:Name\")`"),
+                    .hint("pass one: `X(\"value\", \"Lib:Footprint\")`, or set `footprint:` in the part"),
             );
         }
         if inst.value.trim().is_empty() {

@@ -1,4 +1,5 @@
-//! End-to-end tests: examples build cleanly and deterministically, and mistakes give useful errors.
+//! End-to-end tests: examples build cleanly and deterministically, scripts build the intended
+//! design, and mistakes give located errors with useful hints.
 
 use std::path::Path;
 use wirx::diag::{has_errors, Severity};
@@ -11,20 +12,29 @@ fn codes(c: &wirx::Compiled, sev: Severity) -> Vec<&'static str> {
     c.diags.iter().filter(|d| d.severity == sev).map(|d| d.code).collect()
 }
 
+fn messages(c: &wirx::Compiled) -> Vec<String> {
+    c.diags.iter().map(|d| c.sources.render(d)).collect()
+}
+
+fn net_pins(d: &wirx::ir::Design, name: &str) -> Vec<String> {
+    let net = d.nets.iter().find(|n| n.name == name).unwrap_or_else(|| panic!("no net {name}"));
+    let mut v: Vec<String> = net.pins.iter().map(|&(i, k)| format!("{}.{}", d.instances[i].reference, d.pin(i, k).number)).collect();
+    v.sort();
+    v
+}
+
 #[test]
 fn examples_build_without_errors_and_deterministically() {
     for name in ["ldo", "blinker", "mcu"] {
         let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("examples").join(format!("{name}.wx"));
         let c = wirx::check_file(&path).unwrap();
-        let msgs: Vec<String> = c.diags.iter().map(|d| c.sources.render(d)).collect();
-        assert!(c.diags.iter().all(|d| d.severity == Severity::Info), "{name}: {msgs:#?}");
+        assert!(c.diags.iter().all(|d| d.severity == Severity::Info), "{name}: {:#?}", messages(&c));
         let design = c.design.unwrap();
         let (a, layout_diags) = wirx::build(&design).unwrap_or_else(|e| panic!("{name}: {e:#?}"));
         assert!(layout_diags.is_empty(), "{name}: {:?}", layout_diags.iter().map(|d| &d.message).collect::<Vec<_>>());
         let (b, _) = wirx::build(&design).unwrap();
         assert_eq!(a, b, "{name}: output must be deterministic");
         assert_eq!(a["format"], "eleceda-schematic");
-        // Every symbol used is embedded.
         for sheet in a["sheets"].as_array().unwrap() {
             for it in sheet["items"].as_array().unwrap() {
                 if it["kind"] == "symbol" {
@@ -36,122 +46,179 @@ fn examples_build_without_errors_and_deterministically() {
 }
 
 #[test]
+fn chains_join_nets_and_parts_pass_through() {
+    let c = check(
+        r#"
+        let u = NE555();
+        P5V -> [u.VCC, u.R];
+        u.GND -> GND;
+        u.Q -> R("330") -> LED("red") -> GND;      // R in, LED anode in, cathode out
+        nc([u.TR, u.THR, u.CV, u.DIS]);
+        P5V.driven(); GND.driven();
+        "#,
+    );
+    assert!(!has_errors(&c.diags), "{:#?}", messages(&c));
+    let d = c.design.unwrap();
+    assert_eq!(net_pins(&d, "+5V"), ["U1.4", "U1.8"]);
+    assert_eq!(net_pins(&d, "U1_Q"), ["R1.1", "U1.3"]);
+    // LED pins are K=1, A=2: the resistor reaches the anode, the cathode goes to ground.
+    assert_eq!(net_pins(&d, "GND"), ["D1.1", "U1.1"]);
+    assert!(d.nets.iter().any(|n| n.pins.len() == 2 && n.pins.iter().any(|&(i, k)| d.instances[i].reference == "D1" && d.pin(i, k).name == "A")));
+}
+
+#[test]
+fn functions_become_groups_and_loops_work() {
+    let c = check(
+        r#"
+        fn indicator(drive) { drive -> R("330") -> LED("red") -> GND; }
+        fn ATtiny() { part(#{ name: "ATtiny", pins: [[1, "PB0"], [2, "PB1"], [3, "PB2"], [[4, 5], "GND", power_in], [6, "VCC", power_in]] }) }
+        sheet("Main", || {
+            let u = ATtiny();
+            u.VCC -> P5V.driven();
+            u.GND -> GND.driven();
+            for i in 0..3 { indicator(u.pin(`PB${i}`)); }
+        });
+        "#,
+    );
+    assert!(!has_errors(&c.diags), "{:#?}", messages(&c));
+    let d = c.design.unwrap();
+    assert_eq!(d.instances.len(), 7);
+    let framed: Vec<&str> = d.groups.iter().filter(|g| g.framed && !g.instances.is_empty()).map(|g| g.name.as_str()).collect();
+    // One call site in a loop is one group; the part constructor is not a group.
+    assert_eq!(framed, ["indicator"]);
+    let (esch, _) = wirx::build(&d).unwrap();
+    assert_eq!(esch["sheets"][0]["name"], "Main");
+}
+
+#[test]
+fn separate_call_sites_are_separate_groups() {
+    let c = check(
+        r#"
+        fn divider(top, tap) { top -> R("10k") -> tap -> R("10k") -> GND; }
+        divider(P5V, net("A"));
+        divider(P5V, net("B"));
+        let j = Conn(2);
+        j[1] -> net("A");
+        j[2] -> net("B");
+        "#,
+    );
+    let d = c.design.unwrap();
+    let mut framed: Vec<&str> = d.groups.iter().filter(|g| g.framed).map(|g| g.name.as_str()).collect();
+    framed.sort();
+    assert_eq!(framed, ["divider", "divider 2"]);
+    assert_eq!(net_pins(&d, "A"), ["J1.1", "R1.2", "R2.1"]);
+}
+
+#[test]
+fn user_names_win_over_built_in_constants() {
+    let c = check(
+        r#"
+        fn f(left) { left -> R("1k") -> GND; }
+        let input = net("IN");
+        sheet("S", || { f(input); input -> R("2k") -> GND; });
+        "#,
+    );
+    let d = c.design.unwrap();
+    assert_eq!(net_pins(&d, "IN"), ["R1.1", "R2.1"]);
+}
+
+#[test]
 fn unknown_pin_suggests_the_right_one() {
-    let c = check("sheet \"A\" { u = AMS1117_3V3\n u.VI -- X }");
+    let c = check("let u = AMS1117_3V3();\nP5V -> u.VI;");
     let d = c.diags.iter().find(|d| d.code == "unknown_pin").expect("unknown_pin");
-    assert!(d.hint.as_ref().unwrap().contains("u.VIN"), "{:?}", d.hint);
+    assert!(d.hint.as_ref().unwrap().contains(".VIN"), "{:?}", d.hint);
+    let s = d.span.unwrap();
+    assert_eq!(c.sources.line_col(s.file, s.start), (2, 10));
 }
 
 #[test]
-fn unknown_part_suggests_and_points_at_it() {
-    let c = check("sheet \"A\" { y = Crystl(16MHz) }");
-    let d = c.diags.iter().find(|d| d.code == "unknown_type").unwrap();
-    assert!(d.hint.as_ref().unwrap().contains("`Crystal`"), "{:?}", d.hint);
-    assert_eq!(c.sources.line_col(d.span.unwrap().file, d.span.unwrap().start), (1, 17));
+fn errors_inside_functions_point_at_the_line() {
+    let c = check("fn f(x) {\n    x -> R(\"1k\") -> GND;\n}\nf(\"oops\");");
+    let d = c.diags.iter().find(|d| d.code == "string_as_net").unwrap();
+    assert_eq!(c.sources.line_col(d.span.unwrap().file, d.span.unwrap().start).0, 2);
+    assert!(d.hint.as_ref().unwrap().contains("net(\"oops\")"));
 }
 
 #[test]
-fn unconnected_pin_is_an_error_with_a_fix() {
-    let c = check("sheet \"A\" { r = R(1k)\n r.1 -- GND }");
+fn unconnected_pin_is_an_error() {
+    let c = check("let r = R(\"1k\");\nr[1] -> GND;");
     let d = c.diags.iter().find(|d| d.code == "pin_not_connected").unwrap();
     assert!(d.message.contains("R1.2"), "{}", d.message);
-    assert!(d.hint.as_ref().unwrap().contains("nc r.2"));
 }
 
 #[test]
 fn nc_pins_are_fine_but_not_when_connected() {
-    let ok = check("sheet \"A\" { r = R(1k)\n r.1 -- GND\n nc r.2 }");
+    let ok = check("let r = R(\"1k\");\nr[1] -> GND;\nr[2] -> NC;");
     assert!(!has_errors(&ok.diags), "{:?}", codes(&ok, Severity::Error));
-    let bad = check("sheet \"A\" { r = R(1k)\n r.1 -- GND\n r.2 -- GND\n nc r.2 }");
+    let bad = check("let r = R(\"1k\");\nr[1] -> GND;\nr[2] -> GND;\nnc(r[2]);");
     assert!(codes(&bad, Severity::Error).contains(&"nc_connected"));
 }
 
 #[test]
 fn shorted_rails_are_reported() {
-    let c = check("sheet \"A\" { r = R(1k)\n +5V -- GND -- r.1\n r.2 -- GND }");
+    let c = check("let r = R(\"1k\");\nP5V -> GND -> r[1];\nr[2] -> GND;");
     assert!(codes(&c, Severity::Error).contains(&"rails_shorted"));
 }
 
 #[test]
 fn two_outputs_conflict() {
-    let src = r#"
-part Buf { pins { 1 A : input  2 Y : output  3 VCC : power_in  4 GND : power_in } }
-sheet "A" {
-  a = Buf
-  b = Buf
-  a.Y -- b.Y -- X
-  a.A, b.A -- IN
-  r = R(1k)
-  r.1 -- IN
-  r.2 -- GND
-  +5V -- a.VCC, b.VCC
-  GND -- a.GND, b.GND
-  power_flag +5V, GND
-}
-"#;
-    let c = check(src);
-    assert!(codes(&c, Severity::Error).contains(&"pin_conflict"), "{:?}", c.diags.iter().map(|d| &d.message).collect::<Vec<_>>());
+    let c = check(
+        r#"
+        fn Buf() { part(#{ name: "Buf", pins: [[1, "A", input], [2, "Y", output], [3, "VCC", power_in], [4, "GND", power_in]] }) }
+        let a = Buf();
+        let b = Buf();
+        a.Y -> b.Y;
+        [a.A, b.A] -> R("1k") -> GND;
+        P5V.driven() -> [a.VCC, b.VCC];
+        GND.driven() -> [a.GND, b.GND];
+        "#,
+    );
+    assert!(codes(&c, Severity::Error).contains(&"pin_conflict"), "{:#?}", messages(&c));
 }
 
 #[test]
-fn power_needs_a_driver_or_flag() {
-    let src = "sheet \"A\" { u = NE555\n +5V -- u.VCC, u.R\n GND -- u.GND\n nc u.TR, u.THR, u.CV, u.Q, u.DIS }";
+fn power_needs_a_driver_or_driven() {
+    let src = "let u = NE555();\nP5V -> [u.VCC, u.R];\nu.GND -> GND;\nnc([u.TR, u.THR, u.CV, u.Q, u.DIS]);";
     let c = check(src);
     let d = c.diags.iter().find(|d| d.code == "power_not_driven").expect("power_not_driven");
-    assert!(d.hint.as_ref().unwrap().contains("power_flag +5V"));
-    let fixed = check(&src.replace(" }", "\n power_flag +5V, GND }"));
+    assert!(d.hint.as_ref().unwrap().contains("P5V.driven()"), "{:?}", d.hint);
+    let fixed = check(&format!("{src}\nP5V.driven();\nGND.driven();"));
     assert!(!fixed.diags.iter().any(|d| d.code == "power_not_driven"));
 }
 
 #[test]
-fn modules_expand_with_local_nets() {
-    let src = r#"
-module Div(top, mid) {
-  a = R(10k)
-  b = R(10k)
-  top -- a.1
-  a.2 -- tap -- b.1
-  b.2 -- GND
-  mid -- tap
-}
-sheet "A" {
-  d1 = Div(top: +5V, mid: M1)
-  d2 = Div(top: +5V, mid: M2)
-  t1 = Conn_01x02
-  t1.1 -- M1
-  t1.2 -- M2
-}
-"#;
-    let c = check(src);
-    assert!(!has_errors(&c.diags), "{:?}", c.diags.iter().map(|d| &d.message).collect::<Vec<_>>());
-    let d = c.design.unwrap();
-    assert_eq!(d.instances.len(), 5);
-    // The two dividers' internal `tap` nets stay separate and take the sheet-level names.
-    assert!(d.nets.iter().any(|n| n.name == "M1" && n.pins.len() == 3));
-    assert!(d.nets.iter().any(|n| n.name == "M2" && n.pins.len() == 3));
-    assert_eq!(d.groups.iter().filter(|g| g.framed).count(), 2);
-    let (esch, _) = wirx::build(&d).unwrap();
-    assert_eq!(esch["sheets"].as_array().unwrap().len(), 1);
-}
-
-#[test]
-fn references_are_stable_and_explicit_refs_win() {
-    let c = check("sheet \"A\" { a = R(1k)\n b = R(1k, ref: \"R1\")\n a.1, b.1 -- GND\n a.2, b.2 -- X }");
+fn references_and_values() {
+    let c = check(
+        r#"
+        let a = R(4700);
+        let b = R("1k", "0402", #{ ref: "R1", mpn: "X" });
+        let c = C(0.0000001, "0402");
+        let r = R(e24(4600.0));
+        [a[1], b[1], c[1], r[1]] -> GND;
+        [a[2], b[2], c[2], r[2]] -> net("X");
+        "#,
+    );
     let d = c.design.unwrap();
     assert_eq!(d.instances[0].reference, "R2");
+    assert_eq!(d.instances[0].value, "4k7");
     assert_eq!(d.instances[1].reference, "R1");
+    assert_eq!(d.instances[1].footprint, "Resistor_SMD:R_0402_1005Metric");
+    assert!(d.instances[1].fields.contains(&("MPN".into(), "X".into())));
+    assert_eq!(d.instances[2].value, "100nF");
+    assert_eq!(d.instances[3].value, "4k7");
 }
 
 #[test]
-fn footprint_aliases_expand() {
-    let c = check("sheet \"A\" { c = C(1uF, 0402)\n c.1 -- X\n c.2 -- GND }");
-    let d = c.design.unwrap();
-    assert_eq!(d.instances[0].footprint, "Capacitor_SMD:C_0402_1005Metric");
-}
-
-#[test]
-fn template_pin_count_mismatch_is_explained() {
-    let c = check("part Q { symbol npn pins { 1 B 2 C } }");
+fn custom_part_mistakes_are_explained() {
+    let c = check("fn Q() { part(#{ name: \"Q\", symbol: \"npn\", pins: [[1, \"B\"], [2, \"C\"]] }) }\nlet q = Q();");
     let d = c.diags.iter().find(|d| d.code == "template_pin_count").unwrap();
     assert!(d.message.contains("B, C, E"), "{}", d.message);
+    let c = check("let p = part(#{ name: \"X\", pins: [[1, \"A\", inptu]] });");
+    assert!(codes(&c, Severity::Error).contains(&"unknown_variable"), "{:#?}", messages(&c));
+}
+
+#[test]
+fn multi_pin_part_cannot_sit_inline() {
+    let c = check("let u = NE555();\nP5V -> u -> GND;");
+    assert!(codes(&c, Severity::Error).contains(&"not_inline"));
 }

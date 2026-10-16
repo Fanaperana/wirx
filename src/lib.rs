@@ -1,15 +1,17 @@
-//! wirx: schematic-as-code. Describe parts, nets and groups in a small language; the compiler
+//! wirx: schematic-as-code. Describe parts, nets and groups in a Rhai script; the compiler
 //! checks the circuit, lays out the schematic and writes it for eleceda (`.esch`) or as a netlist.
 
 pub mod backend;
 pub mod diag;
 pub mod erc;
 pub mod geom;
+pub mod import;
 pub mod ir;
 pub mod layout;
+pub mod script;
 pub mod sema;
+pub mod stdlib;
 pub mod symbol;
-pub mod syntax;
 pub mod verify;
 
 use diag::{Diagnostic, Sources};
@@ -21,20 +23,16 @@ pub struct Compiled {
     pub diags: Vec<Diagnostic>,
 }
 
-/// Parse, elaborate and check a design given as text.
+/// Run a design script and check it.
 pub fn check_source(name: &str, text: &str, base_dir: &Path) -> Compiled {
-    let mut sources = Sources::default();
-    let program = match sema::load(&mut sources, name, text, base_dir) {
-        Ok(p) => p,
-        Err(diags) => return Compiled { sources, design: None, diags },
-    };
-    let stem = Path::new(name).file_stem().and_then(|s| s.to_str()).unwrap_or("design").to_string();
-    let (design, mut diags) = sema::elaborate(&program, &stem);
-    if !diag::has_errors(&diags) {
-        diags.extend(erc::check(&design));
+    let (sources, design, mut diags) = script::run(name, text, base_dir);
+    if let Some(d) = &design
+        && !diag::has_errors(&diags)
+    {
+        diags.extend(erc::check(d));
     }
     diags.sort_by_key(|d| (d.severity, d.span.map(|s| (s.file, s.start))));
-    Compiled { sources, design: Some(design), diags }
+    Compiled { sources, design, diags }
 }
 
 /// Parse, elaborate and check a design file.

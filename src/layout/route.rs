@@ -13,7 +13,7 @@ pub const FREE: i32 = -1;
 pub const FOREIGN: i32 = -2;
 
 const STEP: u32 = 10;
-const BEND: u32 = 40;
+const BEND: u32 = 80;
 const CROSS: u32 = 60;
 
 #[derive(Clone)]

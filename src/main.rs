@@ -4,7 +4,7 @@ use std::process::ExitCode;
 use wirx::diag::{has_errors, Diagnostic, Severity, Sources};
 
 #[derive(Parser)]
-#[command(name = "wirx", version, about = "Schematic-as-code: compile .wx circuits into checked, laid-out schematics")]
+#[command(name = "wirx", version, about = "Schematic-as-code: run .wx (Rhai) circuit scripts into checked, laid-out schematics")]
 struct Cli {
     #[command(subcommand)]
     cmd: Cmd,
@@ -45,6 +45,16 @@ enum Cmd {
         format: NetFormat,
         #[arg(short, long)]
         out: Option<PathBuf>,
+    },
+    /// Turn an eleceda schematic (.esch) back into wirx source, e.g. after editing it in eleceda.
+    Import {
+        file: PathBuf,
+        /// Output path (default: print the source).
+        #[arg(short, long)]
+        out: Option<PathBuf>,
+        /// Write the source even when its netlist differs from the schematic's.
+        #[arg(long)]
+        force: bool,
     },
     /// Browse the standard library.
     Lib {
@@ -196,53 +206,81 @@ fn main() -> ExitCode {
                 }
             }
         }
+        Cmd::Import { file, out, force } => import(&file, out.as_deref(), force),
         Cmd::Lib { cmd } => lib(cmd),
     }
 }
 
-fn lib(cmd: LibCmd) -> ExitCode {
-    let mut sources = Sources::default();
-    let program = match wirx::sema::load(&mut sources, "<lib>", "", Path::new(".")) {
-        Ok(p) => p,
-        Err(_) => return fail("standard library failed to load"),
+fn import(file: &Path, out: Option<&Path>, force: bool) -> ExitCode {
+    let text = match std::fs::read_to_string(file) {
+        Ok(t) => t,
+        Err(e) => return fail(&format!("cannot read {}: {e}", file.display())),
     };
-    let std_ast = &program.files[0].1;
+    let esch: serde_json::Value = match serde_json::from_str(&text) {
+        Ok(v) => v,
+        Err(e) => return fail(&format!("{} is not valid JSON: {e}", file.display())),
+    };
+    let name = out.unwrap_or(file).file_stem().and_then(|s| s.to_str()).unwrap_or("design").to_string();
+    let imported = match wirx::import::import(&esch, &name) {
+        Ok(i) => i,
+        Err(e) => return fail(&e),
+    };
+    for w in &imported.warnings {
+        eprintln!("warning: {w}");
+    }
+    if !imported.mismatches.is_empty() {
+        for p in &imported.mismatches {
+            eprintln!("mismatch: {p}");
+        }
+        if !force {
+            return fail("the source does not reproduce the schematic's netlist (this is a wirx bug; pass --force to write it anyway)");
+        }
+    }
+    match out {
+        Some(p) => {
+            if let Err(e) = std::fs::write(p, &imported.text) {
+                return fail(&format!("cannot write {}: {e}", p.display()));
+            }
+            eprintln!("wrote {}", p.display());
+        }
+        None => print!("{}", imported.text),
+    }
+    ExitCode::SUCCESS
+}
+
+fn lib(cmd: LibCmd) -> ExitCode {
+    use wirx::stdlib::{PARTS, RAILS};
     match cmd {
         LibCmd::List => {
-            println!("Parts:");
-            for item in &std_ast.items {
-                if let wirx::syntax::ast::Item::Part(p) = item {
-                    let desc = p.props.iter().find(|(k, _)| k.text == "description").and_then(|(_, v)| v.as_ref()).map(|v| v.text.clone()).unwrap_or_default();
-                    println!("  {:<14} {desc}", p.name.text);
-                }
+            println!("Parts (call as Name(value, footprint, options); all arguments optional):");
+            for p in PARTS {
+                println!("  {:<14} {}", p.name, p.description);
             }
-            println!("  {:<14} single-row header with NN pins (generated)", "Conn_01xNN");
-            println!("  {:<14} dual-row header, 2×NN pins (generated)", "Conn_02xNN");
-            println!("\nRails:");
-            for item in &std_ast.items {
-                if let wirx::syntax::ast::Item::Rail(r) = item {
-                    println!("  {:<14} {}", r.name.text, r.kind.text);
-                }
+            println!("  {:<14} single-row header with n pins", "Conn(n)");
+            println!("  {:<14} dual-row header, 2 x rows pins", "Conn2(rows)");
+            println!("
+Rails:");
+            for (konst, name, kind) in RAILS {
+                println!("  {konst:<14} {name} ({kind:?})");
             }
-            println!("  {:<14} any name starting with + or - (e.g. +3V3, -12V)", "+X / -X");
-            println!("\nSymbol shapes: {}", wirx::symbol::templates::TEMPLATE_NAMES.join(", "));
+            println!("  {:<14} make your own: supply(\"VIO\"), ground(\"GND_ISO\"), negative(\"-15V\")", "");
+            println!("
+Symbol shapes: box, {}", wirx::symbol::templates::TEMPLATE_NAMES.join(", "));
             ExitCode::SUCCESS
         }
         LibCmd::Show { part } => {
-            let text = format!("sheet \"x\" {{ p = {part} }}");
-            let c = wirx::check_source("<lib>", &text, Path::new("."));
-            let Some(d) = c.design.filter(|d| !d.parts.is_empty()) else {
-                return fail(&format!("no part `{part}` in the standard library"));
+            let Some(p) = wirx::stdlib::find(&part) else {
+                return fail(&format!("no part `{part}` in the standard library (see `wirx lib list`)"));
             };
-            let p = &d.parts[0];
-            println!("part {}  (prefix {}, symbol {})", p.name, p.prefix, p.symbol);
-            if !p.description.is_empty() {
-                println!("  {}", p.description);
+            let d = p.to_def();
+            println!("{}()  prefix {}, symbol {}", d.name, d.prefix, d.symbol);
+            if !d.description.is_empty() {
+                println!("  {}", d.description);
             }
-            println!("  value     {}", p.value);
-            println!("  footprint {}", p.footprint);
+            println!("  value     {}", d.value);
+            println!("  footprint {}", d.footprint);
             println!("  pins:");
-            for pin in &p.pins {
+            for pin in &d.pins {
                 println!("    {:<5} {:<10} {}", pin.number, pin.name, pin.ptype.name());
             }
             ExitCode::SUCCESS

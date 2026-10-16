@@ -1,7 +1,7 @@
 # wirx
 
-**Schematic-as-code.** In a small language you describe the parts, what connects to what, in what
-order, and which parts belong together. The compiler then:
+**Schematic-as-code.** In a small [Rhai](https://rhai.rs) script you describe the parts, what
+connects to what, in what order, and which parts belong together. The compiler then:
 
 - checks the circuit (names, pin types, power, PCB readiness),
 - lays out readable sheets: placement, grouping, wires, labels, power symbols,
@@ -12,26 +12,24 @@ serve, wires go to the wrong pins, and groups scatter across the page. With wirx
 only states intent. Placement and wiring are deterministic and checked: every output is verified
 against the design before it is written.
 
-```wx
-module Ldo(vin, vout) {
-  u    = AMS1117_3V3
-  cin  = C(10uF, 0805)
-  cout = C(22uF, 0805)
-
-  vin  -- u.VIN  -- cin.1        // one net; chain order is a placement hint
-  vout -- u.VOUT -- cout.1
-  GND  -- u.GND, cin.2, cout.2   // fan out with commas
+```rhai
+fn ldo(vin, vout) {                          // a function call = one framed group
+    let u = AMS1117_3V3();
+    vin  -> u.VIN  -> C("10uF", "0805") -> GND;   // two-pin parts sit inline
+    vout -> u.VOUT -> C("22uF", "0805") -> GND;
+    u.GND -> GND;
 }
 
-sheet "Power" {
-  j = USB_C_Power
-  j.VBUS -- VBUS
-  j.GND, j.SHIELD -- GND
-  nc j.CC1, j.CC2
-  power_flag VBUS, GND           // power enters the board here
+sheet("Power", || {
+    let j = USB_C_Power();
+    j.VBUS -> VBUS.driven();                 // power enters the board here (PWR_FLAG)
+    [j.GND, j.SHIELD] -> GND.driven();
+    j.CC1 -> R("5k1") -> GND;
+    j.CC2 -> R("5k1") -> GND;
 
-  reg = Ldo(vin: VBUS, vout: +3V3)
-}
+    ldo(VBUS, P3V3);
+    P3V3 -> R("1k") -> LED("green") -> GND;
+});
 ```
 
 ## Usage
@@ -41,7 +39,7 @@ cargo build --release
 ```
 
 ```bash
-wirx check design.wx                     # syntax, names, electrical rules
+wirx check design.wx                     # run the script, check names and electrical rules
 wirx check design.wx --json              # the same, machine-readable (for editors and AI)
 wirx build design.wx -o design.esch      # check + lay out + write the eleceda schematic
 wirx render design.wx -o out/            # one SVG per sheet, for a quick look
@@ -51,140 +49,73 @@ wirx lib show NE555                      # pins of one part
 ```
 
 `build` refuses to write a file while there are errors (override with `--force`). Every
-diagnostic has a stable code, a source location and, where possible, a hint that is a line of
-wirx that fixes it:
+diagnostic has a stable code, a source location (also for errors inside functions and loops) and,
+where possible, a hint that fixes it:
 
 ```text
-error[unknown_pin]: part `AMS1117_3V3` (u) has no pin `VI`
-  --> design.wx:4:13
+error[unknown_pin]: part `AMS1117_3V3` has no pin `VI`
+  --> design.wx:3:14
   |
-4 |   VBUS -- u.VI -- c.1
-  |             ^^
-  = help: did you mean `u.VIN`? pins: 3 VIN, 2 VOUT, 1 GND
+3 |     vin -> u.VI;
+  |              ^^
+  = help: did you mean `.VIN`? pins: 3 VIN, 2 VOUT, 1 GND
 ```
 
 ## The language
 
-A file holds `part`, `module`, `sheet` and `rail` declarations, `use` imports and title-block
-lines. Statements need no separators (`;` is allowed). Comments are `//` and `/* */`.
+A `.wx` file is a Rhai script; the full reference is [docs/rhai-syntax.md](docs/rhai-syntax.md).
+The essentials:
 
-### Parts
+| What | How |
+| --- | --- |
+| Standard part | `R("10k")`, `C("100nF", "0402")`, `R("0", "0603", #{ ref: "R10", mpn: "…", dnp: true })` |
+| Computed value | `R(e24((5.0 - 2.0) / 0.010))` (numbers are base units) |
+| Custom part | `fn ATmega328P() { part(#{ name: "ATmega328P", footprint: "…", pins: [[29, "~RESET", input], [[4, 6], "VCC", power_in]] }) }` |
+| Pins | `u.VIN`, `c[1]`, `j["A9"]`, `u.pin("~RESET")`, `u.pins(power_in)`, `u.pins("PB")` |
+| Connect | `a -> b` joins and continues from `b`; `[a, b] -> GND` fans in or out |
+| Inline part | `pb1 -> R("330") -> LED("red") -> GND` (in → out: 1 → 2, A → K, + → −) |
+| Unused pin | `u.PB0 -> NC;` or `nc([u.PB2, u.PC3]);` |
+| Nets | `net("SDA")` (same name, same net everywhere), `net()` (anonymous) |
+| Rails | `GND`, `P3V3`, `P5V`, `VBUS`, … built in; `supply("VIO")`, `ground("…")`, `negative("…")` |
+| Off-board power | `VBUS.driven()` (adds a PWR_FLAG) |
+| Groups | every function call that places parts is a framed group; `group("Name", \|\| { … })` |
+| Sheets | `sheet("Power", \|\| { … })`; statements outside sheets go to a main sheet |
+| Hints | `near(c1, u.VDD)`, `flow(down)` |
+| Imports | `import "parts/mcu" as mcu;` then `mcu::ATmega328P()` |
+| Title block | `title("…"); revision("B"); author("…"); company("…");` |
 
-```wx
-part ATmega328P {
-  prefix "U"                      // reference prefix (U1, U2…)
-  value "ATmega328P-AU"
-  footprint "Package_QFP:TQFP-32_7x7mm_P0.8mm"
-  datasheet "https://…"
-  mpn "ATMEGA328P-AU"
-  field "LCSC" "C14877"           // any extra field
-  symbol box                      // default; or a shape: resistor, capacitor, npn, led, …
-  pins {
-    29 ~RESET : input             // number name : type
-    7  XTAL1  : input
-    8  XTAL2  : output @left      // @side overrides automatic placement
-    4, 6 VCC  : power_in          // several pins with one name
-    3, 5, 21 GND : power_in
-  }
-}
-```
+- **Logic.** Loops, conditions and arithmetic are plain Rhai:
 
-- **Pin types:** `input`, `output`, `bidirectional`, `tri_state`, `passive` (the default),
-  `power_in`, `power_out`, `open_collector`, `open_emitter`, `free`, `unspecified`, `no_connect`.
-- **`box` symbols** are generated from the pin list. Inputs go on the left, outputs on the right,
-  supplies on top and grounds at the bottom. Other pins split between left and right in
-  declaration order.
-- **Shapes:** `resistor`, `capacitor`, `cap_polarized`, `inductor`, `fuse`, `crystal`, `diode`,
-  `led`, `zener`, `schottky`, `npn`/`pnp` (pins B, C, E), `nmos`/`pmos` (G, D, S), `button`,
-  `switch`. The part's pins map to the shape's pins in declaration order.
+  ```rhai
+  for i in 0..8 { u.pin(`PB${i}`) -> R("330") -> LED("red") -> GND; }
+  ```
 
-### Instances and connections
-
-```wx
-r1 = R(4k7, 0603)                 // value, footprint alias
-r2 = R(value: 10k, footprint: "Resistor_SMD:R_0402_1005Metric", ref: "R10", mpn: "…")
-reg = Ldo(vin: VBUS, vout: +3V3)  // module instance; ports by name or position
-
-a -- r1.1                         // pin by number…
-u.VOUT -- r1.2 -- LED_A           // …or by name; a chain is one net
-GND -- u.GND, c1.2, c2.2          // comma lists fan out
-reg.vout -- TP1                   // a module instance's port
-nc u.PB0, u.PB2                   // intentionally unconnected (or `u.PB0 -- nc`)
-power_flag VBUS                   // net driven from off-board (adds a PWR_FLAG)
-```
-
+- **Scope.** Functions can't see `let` variables from outside; pass nets in as parameters.
+  Built-in rails, `net("…")` and `supply("…")` work everywhere.
+- **Standard parts:** R, C, C_Pol, L, Fuse, Crystal, D, D_Schottky, D_Zener, LED, Q_NPN, Q_PNP,
+  Q_NMOS, Q_PMOS, SW_Push, SW_SPST, AMS1117_3V3, NE555, USB_C_Power, plus `Conn(n)` (single-row
+  header) and `Conn2(rows)` (dual-row, odd/even).
 - **Footprint aliases** `0201` to `2512` work for resistors, capacitors, inductors, LEDs, fuses and
   diodes.
-- **References** are assigned in declaration order per prefix. `ref:` pins one down.
-
-### Nets and rails
-
-- **Sheet level.** A bare name like `VBUS` or `SDA` is a design-wide net.
-- **Inside a module.** Bare names are local to that instance, so two copies don't short. Ports are
-  the way in and out.
-- **Rails** are drawn as power symbols at every pin, never as long wires. Names starting with `+`
-  or `-` (`+3V3`, `-12V`) are rails automatically. The standard library also declares `GND`,
-  `GNDA`, `AGND`, `DGND`, `PGND`, `VSS` (ground) and `VCC`, `VDD`, `VBUS`, `VBAT`, `VDDA`, `AVCC`
-  (supply).
-- **Declaring a rail:** `rail VIO : supply` (kinds: `ground`, `supply`, `negative`).
-
-### Modules, sheets and grouping
-
-```wx
-module Name(port1, port2) { … }   // reusable block
-sheet "Power" { … }               // a page; statements outside any sheet go to a main sheet
-```
-
-- **A module placed on a sheet** is drawn as one framed group, laid out together.
-- **A module nested inside a module** is drawn as part of its parent's group.
-- **Groups connect across the sheet** by net labels. Groups that share nets are placed next to each
-  other, and labels become global when the net spans sheets.
-
-### Layout hints (optional)
-
-```wx
-layout {
-  c1 near u.VDD                   // keep the decoupling cap at that pin
-  flow right
-}
-```
-
-### Files and the standard library
-
-- **Imports.** `use "parts/sensors.wx"` imports parts and modules from another file. A library
-  file is just parts and modules.
-- **Standard library.** Always available: `use std::{R, C}` only documents what you use. It holds
-  R, C, C_Pol, L, Fuse, Crystal, D, D_Schottky, D_Zener, LED, Q_NPN, Q_PNP, Q_NMOS, Q_PMOS,
-  SW_Push, SW_SPST, AMS1117_3V3, NE555 and USB_C_Power.
-- **Generated families:** `Conn_01xNN` (single-row header) and `Conn_02xNN` (dual-row, odd/even).
-
-### Title block
-
-```wx
-title "My board"
-revision "B"
-author "…"
-company "…"
-```
 
 ## What the checks cover
 
 | Code | Meaning |
 | --- | --- |
-| `unknown_*`, `duplicate_*`, `syntax` | Names and structure, with "did you mean" hints |
-| `pin_not_connected` | A pin that is neither connected nor marked `nc` |
-| `nc_connected` | An `nc` pin that is connected after all |
+| `syntax`, `unknown_*`, `duplicate_*` | Script and name errors, with "did you mean" hints |
+| `string_as_net`, `not_inline`, `bad_*` | Connections that make no sense (a string as a net, an 8-pin part inline) |
+| `pin_not_connected` | A pin that is neither connected nor marked `NC` |
+| `nc_connected` | An `NC` pin that is connected after all |
 | `pin_conflict` | KiCad's pin-type matrix: output vs output, power_out vs output, … |
-| `power_not_driven` | Power inputs with no regulator output or `power_flag` |
+| `power_not_driven` | Power inputs with no regulator output or `.driven()` |
 | `input_not_driven` | Inputs with no driver |
 | `rails_shorted` | Two rails joined |
 | `missing_footprint`, `missing_value` | Not ready for PCB layout |
-| `unused_port` | A module port the body never uses |
 
 ## How layout works
 
-1. **Groups.** Each sheet-level module instance is a group, and so are the parts placed directly
-   on a sheet.
+1. **Groups.** Each function call site that places parts is a group (nested calls stay in the
+   outer group), and so are the parts placed directly on a sheet.
 2. **Placement.** In each group the part with the most pins anchors the layout. Parts connected to
    its pins are placed in front of those pins: a series part facing the pin, a pull-down hanging
    below the line. Then their neighbours, and so on.
@@ -200,6 +131,41 @@ company "…"
    or part.
 7. **Self-check.** wirx rebuilds connectivity from the drawing, the way eleceda does, and compares
    it with the design. A mismatch stops the build.
+
+## Editing in eleceda: `wirx import`
+
+`wirx import` turns an `.esch` file back into wirx source, so changes made in eleceda (by hand, or
+by an AI through eleceda's MCP server) flow back into the design:
+
+```bash
+wirx build design.wx -o design.esch      # draw it
+# … edit design.esch in eleceda …
+wirx import design.esch -o design.wx     # take the edits back (without -o it prints the source)
+```
+
+- **Connectivity** is rebuilt the way eleceda does it: wires join at their ends and at any point on
+  them, labels join by name (local labels per sheet, global labels everywhere), power symbols by
+  value. Hierarchical labels join their sheet pins.
+- **Parts.** A wirx symbol (`wirx:R`) whose pins still match the standard part becomes that part
+  again (`R(…)`, `Conn(6)`). Other symbols become custom parts, `fn Name() { part(#{ … }) }`, with
+  the pins from the file (number, name, type, side) and the shape they match, else `"box"`.
+- **Instances** keep their value, footprint (as an alias such as `"0603"` where one fits), extra
+  fields and `dnp` in the options map. References are kept: `ref:` is written only where automatic
+  numbering would differ.
+- **Nets** become `->` chains, named after their labels (`net("SDA")`). Power-symbol nets become
+  rails: built-ins like `GND` or `P3V3`, else `supply("…")` / `ground("…")`. No-connect flags
+  become `nc([…])` and PWR_FLAGs `.driven()`.
+- **Groups.** Each sheet becomes a `sheet("…", || …)`. A block frame titled like a function
+  (`ldo`, `ldo 2`) becomes a function called once per block; blocks that hold the same parts wired
+  the same way share one function, with the nets that differ as parameters. Other titles become
+  `group("…", || …)`.
+
+Before writing, `import` compiles its own output and compares the netlist with the schematic's; it
+refuses to write on a mismatch (override with `--force`). What wirx cannot express yet is reported
+as a warning: buses, text notes, layout hints, and per-part value, footprint, fields or references
+of custom parts (their constructor takes no options yet). Re-importing a file that wirx built gives
+the same netlist, and importing again after a rebuild gives the same source (`tests/import.rs`
+checks this for the examples).
 
 ## Verifying output with eleceda
 
@@ -219,7 +185,6 @@ readability.
 
 - Hierarchical sheet symbols
 - Buses
-- `.esch` → `.wx` (two-way editing)
 - LSP and formatter
 - Footprint pad checks
 - KiCad `.kicad_sch` output

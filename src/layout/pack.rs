@@ -1,139 +1,152 @@
-//! Packing groups onto sheets: rows of groups, left to right, on the smallest paper that fits.
+//! Arranging groups on sheets as a grid of framed blocks, like a hand-drawn schematic: groups that
+//! share nets sit next to each other, every row spans the page width, the blocks of a row share
+//! one height, and each block's circuit is centred in its frame.
 
 use super::group::GroupOut;
 use super::{Item, Paper, SheetOut};
 use crate::diag::Diagnostic;
-use crate::geom::{pt, snap, Pt, Rect, GRID};
+use crate::geom::{pt, Rect, GRID};
 use crate::ir::Design;
 use std::collections::{HashMap, HashSet};
 
-const MARGIN: i32 = 600;
+const MARGIN: i32 = 500;
 /// Height kept free at the bottom for the title block.
 const TITLE_BLOCK: i32 = 1300;
-const GAP: i32 = 250;
-const FRAME_PAD: i32 = 150;
-const FRAME_NAME: i32 = 100;
+/// Space between neighbouring frames.
+const GUTTER_X: i32 = 150;
+/// Vertical space between rows; leaves room for the block names drawn above the frames.
+const GUTTER_Y: i32 = 250;
+/// Space between a circuit and its frame.
+const PAD: i32 = 200;
+/// A row may grow this much (relative) to fill the page height.
+const MAX_ROW_GROWTH: f64 = 0.0;
+
+fn snap_down(v: i32) -> i32 {
+    v.div_euclid(GRID) * GRID
+}
+
+fn snap_up(v: i32) -> i32 {
+    -(-v).div_euclid(GRID) * GRID
+}
 
 struct Boxed {
     out: GroupOut,
-    /// Everything the group occupies, frame included, before translation.
-    total: Rect,
-    frame: Option<Rect>,
+    /// The circuit plus padding: the smallest frame this group fits in.
+    content: Rect,
+    /// Nets this group carries labels for.
+    nets: HashSet<usize>,
 }
 
 fn boxed(g: GroupOut) -> Boxed {
-    let snap_down = |v: i32| v.div_euclid(GRID) * GRID;
-    let snap_up = |v: i32| -(-v).div_euclid(GRID) * GRID;
     let b = g.bbox;
-    let frame = g.framed.then(|| Rect::new(snap_down(b.x0 - FRAME_PAD), snap_down(b.y0 - FRAME_PAD), snap_up(b.x1 + FRAME_PAD), snap_up(b.y1 + FRAME_PAD)));
-    let total = match frame {
-        Some(f) => Rect::new(f.x0, f.y0 - FRAME_NAME, f.x1, f.y1),
-        None => Rect::new(snap_down(b.x0), snap_down(b.y0), snap_up(b.x1), snap_up(b.y1)),
-    };
-    Boxed { out: g, total, frame }
+    let content = Rect::new(snap_down(b.x0 - PAD), snap_down(b.y0 - PAD), snap_up(b.x1 + PAD), snap_up(b.y1 + PAD));
+    let nets = g.items.iter().filter_map(|it| if let Item::Label { net, .. } = it { Some(*net) } else { None }).collect();
+    Boxed { out: g, content, nets }
 }
 
-/// Shelf packing; positions are the top-left corner for each box, or None if it does not fit.
-fn shelf(sizes: &[(i32, i32)], w: i32, h: i32) -> Option<Vec<Pt>> {
-    let mut out = Vec::new();
-    let (mut x, mut y, mut row_h) = (0, 0, 0);
-    for &(bw, bh) in sizes {
+/// Order groups so that groups sharing nets come one after another: start with the biggest, then
+/// take the group most connected to the ones already placed and put it on the side its partner's
+/// label points to (a `~RESET` label on the left puts the reset block to the left).
+fn connection_order(boxes: &[Boxed]) -> Vec<usize> {
+    let n = boxes.len();
+    let shared = |a: usize, b: usize| boxes[a].nets.intersection(&boxes[b].nets).count();
+    let area = |i: usize| boxes[i].content.w() as i64 * boxes[i].content.h() as i64;
+    let label_dir = |g: usize, net: usize| -> Option<u16> {
+        boxes[g].out.items.iter().find_map(|it| match it {
+            Item::Label { net: n, rot, .. } if *n == net => Some(*rot),
+            _ => None,
+        })
+    };
+    let first = (0..n).max_by_key(|&i| (area(i), std::cmp::Reverse(i))).unwrap();
+    let mut seq: std::collections::VecDeque<usize> = std::collections::VecDeque::from([first]);
+    let mut taken = vec![false; n];
+    taken[first] = true;
+    while seq.len() < n {
+        let next = (0..n)
+            .filter(|&i| !taken[i])
+            .max_by_key(|&i| (seq.iter().map(|&j| shared(i, j)).sum::<usize>(), std::cmp::Reverse(i)))
+            .unwrap();
+        taken[next] = true;
+        let partner = seq.iter().copied().max_by_key(|&j| shared(next, j)).unwrap();
+        let net = boxes[next].nets.intersection(&boxes[partner].nets).min().copied();
+        let left = net.and_then(|nt| label_dir(partner, nt)) == Some(180);
+        let at_front = seq.front() == Some(&partner);
+        let at_back = seq.back() == Some(&partner);
+        if left && (at_front || !at_back) {
+            seq.push_front(next);
+        } else {
+            seq.push_back(next);
+        }
+    }
+    seq.into_iter().collect()
+}
+
+/// Frame of each box (by index into `boxes`), in a `w` × `h` area, or None if they don't fit.
+fn tile(boxes: &[Boxed], order: &[usize], w: i32, h: i32) -> Option<HashMap<usize, Rect>> {
+    // Rows: fill left to right.
+    let mut rows: Vec<Vec<usize>> = vec![];
+    let mut width = 0;
+    for &i in order {
+        let bw = boxes[i].content.w();
         if bw > w {
             return None;
         }
-        if x > 0 && x + bw > w {
-            x = 0;
-            y += row_h + GAP;
-            row_h = 0;
-        }
-        if y + bh > h {
-            return None;
-        }
-        out.push(pt(x, y));
-        x += bw + GAP;
-        row_h = row_h.max(bh);
-    }
-    Some(out)
-}
-
-/// Distance kept between the labels of a net in two neighbouring groups: close enough that the
-/// parts read as related, far enough that two labels do not look like a missing wire.
-const PARTNER: i32 = 1100;
-
-/// Place groups in connection order: each next group goes as close as possible to the group it
-/// shares the most labels with, its label facing the partner's. Positions are top-left corners.
-fn connected(boxes: &[Boxed], w: i32, h: i32) -> Option<Vec<Pt>> {
-    use crate::geom::dir_vec;
-    let n = boxes.len();
-    let labels: Vec<Vec<(usize, Pt, u16)>> = boxes
-        .iter()
-        .map(|b| {
-            b.out
-                .items
-                .iter()
-                .filter_map(|it| if let Item::Label { net, at, rot, .. } = it { Some((*net, *at, *rot)) } else { None })
-                .collect()
-        })
-        .collect();
-    let shared = |a: usize, b: usize| labels[a].iter().filter(|x| labels[b].iter().any(|y| y.0 == x.0)).count();
-    let mut delta: Vec<Option<Pt>> = vec![None; n];
-    let mut rects: Vec<Rect> = Vec::new();
-    // Groups go wherever their partners are; the whole arrangement must fit the page at the end.
-    let fits = |r: &Rect, rects: &[Rect]| !rects.iter().any(|o| r.inflate(GAP).overlaps(o));
-
-    // Start with the biggest group in the top-left corner.
-    let first = (0..n).max_by_key(|&i| (boxes[i].total.w() * boxes[i].total.h(), std::cmp::Reverse(i)))?;
-    let d0 = pt(-boxes[first].total.x0, -boxes[first].total.y0);
-    if !fits(&boxes[first].total.translate(d0), &rects) {
-        return None;
-    }
-    rects.push(boxes[first].total.translate(d0));
-    delta[first] = Some(d0);
-
-    for _ in 1..n {
-        let next = (0..n)
-            .filter(|&i| delta[i].is_none())
-            .max_by_key(|&i| ((0..n).filter(|&j| delta[j].is_some()).map(|j| shared(i, j)).sum::<usize>(), std::cmp::Reverse(i)))?;
-        let partner = (0..n).filter(|&j| delta[j].is_some()).max_by_key(|&j| (shared(next, j), std::cmp::Reverse(j))).unwrap();
-        let total = boxes[next].total;
-        let desired = match labels[next].iter().find_map(|x| labels[partner].iter().find(|y| y.0 == x.0).map(|y| (x, y))) {
-            Some((mine, theirs)) if shared(next, partner) > 0 => {
-                let p = theirs.1 + delta[partner].unwrap();
-                p + dir_vec(theirs.2) * PARTNER - mine.1
+        match rows.last_mut() {
+            Some(row) if width + GUTTER_X + bw <= w => {
+                row.push(i);
+                width += GUTTER_X + bw;
             }
             _ => {
-                let all = rects.iter().copied().reduce(Rect::union).unwrap();
-                pt(all.x1 + GAP - total.x0, -total.y0)
-            }
-        };
-        let desired = pt(snap(desired.x), snap(desired.y));
-        let mut found = None;
-        'search: for r in (0..=12000i32).step_by(100) {
-            for dx in (-r..=r).step_by(100).map(|v: i32| v) {
-                for dy in [r - dx.abs(), -(r - dx.abs())] {
-                    let d = desired + pt(dx, dy);
-                    if fits(&total.translate(d), &rects) {
-                        found = Some(d);
-                        break 'search;
-                    }
-                }
+                rows.push(vec![i]);
+                width = bw;
             }
         }
-        let d = found?;
-        rects.push(total.translate(d));
-        delta[next] = Some(d);
     }
-    let all = rects.iter().copied().reduce(Rect::union)?;
-    if all.w() > w || all.h() > h {
+    let heights: Vec<i32> = rows.iter().map(|r| r.iter().map(|&i| boxes[i].content.h()).max().unwrap()).collect();
+    let used: i32 = heights.iter().sum::<i32>() + GUTTER_Y * rows.len() as i32;
+    if used > h {
         return None;
     }
-    let shift = pt(-all.x0, -all.y0);
-    Some((0..n).map(|i| pt(boxes[i].total.x0, boxes[i].total.y0) + delta[i].unwrap() + shift).collect())
+    // Every row gets the width of the widest one (the page width when that is close), so the
+    // frames form one aligned grid without blowing a sparse sheet up to the whole page.
+    let widest = rows.iter().map(|r| r.iter().map(|&i| boxes[i].content.w()).sum::<i32>() + GUTTER_X * (r.len() as i32 - 1)).max().unwrap_or(0);
+    let w = if (w - widest) as f64 <= w as f64 * 0.3 { w } else { widest };
+    // Spread the spare height over the rows, within limits.
+    let spare = h - used;
+    let total: i32 = heights.iter().sum();
+    let mut frames = HashMap::new();
+    let mut y = GUTTER_Y;
+    for (row, &rh) in rows.iter().zip(&heights) {
+        let grow = ((spare as f64 * rh as f64 / total as f64).min(rh as f64 * MAX_ROW_GROWTH)) as i32;
+        let rh = snap_down(rh + grow);
+        let natural: i32 = row.iter().map(|&i| boxes[i].content.w()).sum::<i32>() + GUTTER_X * (row.len() as i32 - 1);
+        let extra = (w - natural) / row.len() as i32;
+        let mut x = 0;
+        for (k, &i) in row.iter().enumerate() {
+            let fw = if k + 1 == row.len() { w - x } else { snap_down(boxes[i].content.w() + extra) };
+            frames.insert(i, Rect::new(x, y, x + fw, y + rh));
+            x += fw + GUTTER_X;
+        }
+        y += rh + GUTTER_Y;
+    }
+    Some(frames)
 }
 
 fn usable(p: Paper) -> (i32, i32) {
     let (w, h) = p.size();
-    (w - 2 * MARGIN, h - 2 * MARGIN - TITLE_BLOCK)
+    (snap_down(w - 2 * MARGIN), snap_down(h - 2 * MARGIN - TITLE_BLOCK))
+}
+
+/// Move a group into its frame (circuit centred) and add the frame.
+fn emit(b: Boxed, frame: Rect, items: &mut Vec<Item>) {
+    let c = b.content;
+    let target = pt(frame.x0 + (frame.w() - c.w()) / 2, frame.y0 + (frame.h() - c.h()) / 2);
+    let delta = pt(snap_down(target.x - c.x0), snap_down(target.y - c.y0));
+    for mut it in b.out.items {
+        it.translate(delta);
+        items.push(it);
+    }
+    items.push(Item::Block { name: b.out.name, rect: frame });
 }
 
 pub fn pack(d: &Design, groups: Vec<GroupOut>, diags: &mut Vec<Diagnostic>) -> Vec<SheetOut> {
@@ -148,56 +161,74 @@ pub fn pack(d: &Design, groups: Vec<GroupOut>, diags: &mut Vec<Diagnostic>) -> V
             continue;
         }
         let name = d.sheets[si].name.clone();
-        let sizes: Vec<(i32, i32)> = boxes.iter().map(|b| (b.total.w(), b.total.h())).collect();
+        let order = connection_order(&boxes);
+        let origin = pt(MARGIN, MARGIN);
         let fit = [Paper::A4, Paper::A3, Paper::A2].into_iter().find_map(|p| {
             let (w, h) = usable(p);
-            connected(&boxes, w, h).or_else(|| shelf(&sizes, w, h)).map(|pos| (p, pos))
+            tile(&boxes, &order, w, h).map(|f| (p, f))
         });
-        let pages: Vec<(Paper, Vec<(Boxed, Pt)>)> = match fit {
-            Some((paper, pos)) => vec![(paper, boxes.into_iter().zip(pos).collect())],
-            None => {
-                // Too much for one A2 sheet: continue on more A3 sheets.
-                let (w, h) = usable(Paper::A3);
-                let mut pages: Vec<(Paper, Vec<(Boxed, Pt)>)> = Vec::new();
-                let mut cur: Vec<Boxed> = Vec::new();
-                for b in boxes {
-                    let mut trial: Vec<(i32, i32)> = cur.iter().map(|b| (b.total.w(), b.total.h())).collect();
-                    trial.push((b.total.w(), b.total.h()));
-                    if shelf(&trial, w, h).is_none() && !cur.is_empty() {
-                        let sz: Vec<(i32, i32)> = cur.iter().map(|b| (b.total.w(), b.total.h())).collect();
-                        let pos = shelf(&sz, w, h).unwrap_or_else(|| vec![pt(0, 0); sz.len()]);
-                        pages.push((Paper::A3, std::mem::take(&mut cur).into_iter().zip(pos).collect()));
-                    }
-                    cur.push(b);
+        let mut pages: Vec<(Paper, Vec<(Boxed, Rect)>)> = Vec::new();
+        match fit {
+            Some((paper, mut frames)) => {
+                // Centre the grid across the page; keep it at the top.
+                let (w, _) = usable(paper);
+                let all = frames.values().copied().reduce(Rect::union).unwrap();
+                let shift = pt(snap_down((w - all.w()) / 2 - all.x0), 0);
+                for f in frames.values_mut() {
+                    *f = f.translate(shift);
                 }
-                if !cur.is_empty() {
-                    let sz: Vec<(i32, i32)> = cur.iter().map(|b| (b.total.w(), b.total.h())).collect();
-                    let (paper, pos) = match shelf(&sz, w, h) {
-                        Some(pos) => (Paper::A3, pos),
+                let mut list: Vec<(Boxed, Rect)> = boxes.into_iter().enumerate().map(|(i, b)| (b, frames[&i])).collect();
+                list.sort_by_key(|(_, f)| (f.y0, f.x0));
+                pages.push((paper, list));
+            }
+            None => {
+                // Too much for one A2 page: continue on more A3 pages, in connection order.
+                let (w, h) = usable(Paper::A3);
+                let mut slots: Vec<Option<Boxed>> = boxes.into_iter().map(Some).collect();
+                let mut current: Vec<usize> = Vec::new();
+                let flush = |current: &mut Vec<usize>, slots: &mut Vec<Option<Boxed>>, pages: &mut Vec<(Paper, Vec<(Boxed, Rect)>)>, diags: &mut Vec<Diagnostic>| {
+                    if current.is_empty() {
+                        return;
+                    }
+                    let sub: Vec<Boxed> = current.iter().map(|&i| slots[i].take().unwrap()).collect();
+                    let sub_order: Vec<usize> = (0..sub.len()).collect();
+                    let (paper, frames) = match tile(&sub, &sub_order, w, h) {
+                        Some(f) => (Paper::A3, f),
                         None => {
-                            diags.push(Diagnostic::warning("sheet_overflow", format!("a group on sheet `{name}` is larger than an A2 page")));
-                            let (w2, _) = usable(Paper::A2);
-                            (Paper::A2, shelf(&sz, w2, i32::MAX).unwrap_or_else(|| vec![pt(0, 0); sz.len()]))
+                            diags.push(Diagnostic::warning("sheet_overflow", "a group is larger than an A3 page; it was put on an A2 page"));
+                            let (w2, h2) = usable(Paper::A2);
+                            let f = tile(&sub, &sub_order, w2, h2.max(sub.iter().map(|b| b.content.h()).sum::<i32>() + 2000)).unwrap_or_default();
+                            (Paper::A2, f)
                         }
                     };
-                    pages.push((paper, cur.into_iter().zip(pos).collect()));
+                    pages.push((paper, sub.into_iter().enumerate().map(|(i, b)| (b, frames.get(&i).copied().unwrap_or(Rect::new(0, 0, 100, 100)))).collect()));
+                    current.clear();
+                };
+                for &i in &order {
+                    current.push(i);
+                    let fits = {
+                        let sizes: Vec<&Boxed> = current.iter().map(|&j| slots[j].as_ref().unwrap()).collect();
+                        let tmp: Vec<Boxed> = sizes
+                            .iter()
+                            .map(|b| Boxed { out: GroupOut { group: b.out.group, name: String::new(), items: vec![], bbox: b.out.bbox }, content: b.content, nets: HashSet::new() })
+                            .collect();
+                        let o: Vec<usize> = (0..tmp.len()).collect();
+                        tile(&tmp, &o, w, h).is_some()
+                    };
+                    if !fits && current.len() > 1 {
+                        current.pop();
+                        flush(&mut current, &mut slots, &mut pages, diags);
+                        current.push(i);
+                    }
                 }
-                pages
+                flush(&mut current, &mut slots, &mut pages, diags);
             }
-        };
+        }
         let count = pages.len();
-        for (pi, (paper, placed)) in pages.into_iter().enumerate() {
+        for (pi, (paper, list)) in pages.into_iter().enumerate() {
             let mut items = Vec::new();
-            for (b, pos) in placed {
-                let target = pt(MARGIN, MARGIN) + pos;
-                let delta = pt(snap(target.x - b.total.x0), snap(target.y - b.total.y0));
-                for mut it in b.out.items {
-                    it.translate(delta);
-                    items.push(it);
-                }
-                if let Some(f) = b.frame {
-                    items.push(Item::Block { name: b.out.name.clone(), rect: f.translate(delta) });
-                }
+            for (b, frame) in list {
+                emit(b, frame.translate(origin), &mut items);
             }
             let sheet_name = if count > 1 { format!("{name} ({})", pi + 1) } else { name.clone() };
             sheets.push(SheetOut { name: sheet_name, paper, items });
