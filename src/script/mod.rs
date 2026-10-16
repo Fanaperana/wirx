@@ -654,6 +654,13 @@ fn build_engine(st: &Shared, base_dir: &Path) -> Engine {
             Ok(())
         });
     }
+    // `version("1.2")` is another name for the revision.
+    {
+        let st = st.clone();
+        e.register_fn("version", move |v: ImmutableString| {
+            st.borrow_mut().b.design.meta.insert("revision".to_string(), v.to_string());
+        });
+    }
     for key in ["title", "revision", "author", "company", "date", "comment"] {
         let st = st.clone();
         e.register_fn(key, move |v: ImmutableString| {

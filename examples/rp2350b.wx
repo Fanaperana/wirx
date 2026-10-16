@@ -1,0 +1,269 @@
+// RP2350B development board: USB-C power and data, 3.3 V LDO, the RP2350B's own 1.1 V core
+// regulator, 16 MB QSPI flash, 12 MHz crystal, BOOTSEL / RESET buttons, SWD and all 48 GPIOs on
+// headers. Follows the Raspberry Pi "minimal design" (same netlist as eleceda's reference board).
+
+title("RP2350B development board");
+version("1.0");
+date("2026-10-16");
+company("wirx examples");
+
+// ---------------------------------------------------------------- parts
+
+// RP2350B, QFN-80 (pin numbers from the datasheet; 81 is the exposed pad).
+fn RP2350B() {
+    let pins = [
+        // Supplies along the top, grouped by rail so each rail gets one power symbol.
+        [[5, 15, 24, 29, 41, 50, 60, 76], "IOVDD", power_in, top],
+        [68, "USB_OTP_VDD", power_in, top],
+        [69, "QSPI_IOVDD", power_in, top],
+        [59, "ADC_AVDD", power_in, top],
+        [64, "VREG_VIN", power_in, top],
+        [61, "VREG_AVDD", power_in, top],
+        [63, "VREG_LX", power_out, top],
+        [65, "VREG_FB", passive, top],
+        [[10, 32, 51], "DVDD", power_in, top],
+        [[62, 81], "GND", power_in, bottom],
+        // System pins on the left.
+        [30, "XIN", input, left],
+        [31, "XOUT", output, left],
+        [35, "RUN", input, left],
+        [33, "SWCLK", input, left],
+        [34, "SWDIO", bidirectional, left],
+        [67, "USB_DP", bidirectional, left],
+        [66, "USB_DM", bidirectional, left],
+        [75, "QSPI_SS", output, left],
+        [71, "QSPI_SCLK", output, left],
+        [72, "QSPI_SD0", bidirectional, left],
+        [74, "QSPI_SD1", bidirectional, left],
+        [73, "QSPI_SD2", bidirectional, left],
+        [70, "QSPI_SD3", bidirectional, left],
+    ];
+    // GPIO0..47: 0-31 on the right, 32-47 (with the ADC inputs) on the left.
+    let numbers = [77, 78, 79, 80, 1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23,
+                   25, 26, 27, 28, 36, 37, 38, 39, 40, 42, 43, 44, 45, 46, 47, 48, 49, 52, 53, 54, 55, 56, 57, 58];
+    for i in 0..48 {
+        pins.push([numbers[i], `GPIO${i}`, bidirectional, if i < 32 { right } else { left }]);
+    }
+    part(#{
+        name: "RP2350B",
+        prefix: "U",
+        description: "Raspberry Pi RP2350B, dual Cortex-M33 / Hazard3, 520 KB SRAM, QFN-80",
+        footprint: "Package_DFN_QFN:QFN-80-1EP_10x10mm_P0.4mm_EP3.4x3.4mm",
+        datasheet: "https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf",
+        pins: pins,
+    })
+}
+
+// USB Type-C receptacle, USB 2.0 (16 pins; shield tabs to ground).
+fn USB_C() {
+    part(#{
+        name: "TYPE-C-31-M-12",
+        prefix: "J",
+        footprint: "Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12",
+        fields: #{ LCSC: "C165948" },
+        pins: [
+            [["A4B9", "B4A9"], "VBUS", passive, right],
+            ["A5", "CC1", passive, right],
+            ["B5", "CC2", passive, right],
+            [["A6", "B6"], "DP", bidirectional, right],
+            [["A7", "B7"], "DM", bidirectional, right],
+            ["A8", "SBU1", bidirectional, right],
+            ["B8", "SBU2", bidirectional, right],
+            [["A1B12", "B1A12", "1", "2", "3", "4"], "GND", passive, right],
+        ],
+    })
+}
+
+// USB ESD protection: two data lines plus VBUS.
+fn USBLC6_2SC6() {
+    part(#{
+        name: "USBLC6-2SC6",
+        prefix: "U",
+        footprint: "Package_TO_SOT_SMD:SOT-23-6",
+        pins: [[[1, 6], "IO1", passive, left], [[3, 4], "IO2", passive, left], [5, "VBUS", passive, top], [2, "GND", passive, bottom]],
+    })
+}
+
+// 600 mA 3.3 V LDO.
+fn AP2112K_3V3() {
+    part(#{
+        name: "AP2112K-3.3",
+        prefix: "U",
+        footprint: "Package_TO_SOT_SMD:SOT-23-5",
+        pins: [[1, "VIN", power_in, left], [3, "EN", input, left], [5, "VOUT", power_out, right], [4, "NC", no_connect, right], [2, "GND", power_in, bottom]],
+    })
+}
+
+// 16 MB QSPI flash.
+fn W25Q128JV() {
+    part(#{
+        name: "W25Q128JVSIQ",
+        prefix: "U",
+        footprint: "Package_SO:SOIC-8_5.3x5.3mm_P1.27mm",
+        pins: [
+            [1, "CS", input, left], [6, "CLK", input, left], [5, "DI", bidirectional, left], [2, "DO", bidirectional, left],
+            [3, "IO2", bidirectional, left], [7, "IO3", bidirectional, left], [8, "VCC", power_in, top], [4, "GND", power_in, bottom],
+        ],
+    })
+}
+
+// 12 MHz crystal, 3225 package; pins 2 and 4 are the case.
+fn Crystal_3225() {
+    part(#{
+        name: "Crystal_12MHz_3225",
+        prefix: "Y",
+        value: "12MHz",
+        footprint: "Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm",
+        pins: [[1, "X1", passive, left], [3, "X2", passive, right], [[2, 4], "GND", passive, bottom]],
+    })
+}
+
+// ---------------------------------------------------------------- power sheet
+
+fn usb_input(vbus) {
+    let j = USB_C();
+    let esd = USBLC6_2SC6();
+    j.VBUS -> vbus;
+    j.GND -> GND;
+    j.CC1 -> R("5k1", "0402") -> GND;
+    j.CC2 -> R("5k1", "0402") -> GND;
+    nc([j.SBU1, j.SBU2]);
+    // Data: connector -> ESD -> 27 R series -> chip.
+    j.DP -> esd.IO2 -> R("27", "0402") -> net("USB_DP");
+    j.DM -> esd.IO1 -> R("27", "0402") -> net("USB_DM");
+    esd.VBUS -> vbus;
+    esd.GND -> GND;
+}
+
+fn ldo_3v3(vin, vout) {
+    let u = AP2112K_3V3();
+    vin -> [u.VIN, u.EN];
+    vin -> C("10uF", "0603") -> GND;
+    u.VOUT -> vout;
+    vout -> C("10uF", "0603") -> GND;
+    u.GND -> GND;
+}
+
+fn power_led(rail) {
+    rail -> R("1k", "0402") -> LED("green", "0603") -> GND;
+}
+
+// ---------------------------------------------------------------- MCU sheet
+
+fn mcu() {
+    let u = RP2350B();
+    let v1v1 = supply("+1V1").driven();   // made by the chip's own regulator, through L1
+
+    P3V3 -> [u.IOVDD, u.USB_OTP_VDD, u.QSPI_IOVDD, u.ADC_AVDD, u.VREG_VIN];
+    u.GND -> GND;
+
+    // Core regulator: VREG_LX -> 3.3 uH -> 1.1 V core; VREG_AVDD filtered from 3.3 V.
+    u.VREG_LX -> L("3.3uH", #{ footprint: "Inductor_SMD:L_Murata_DFE201610P", value: "3.3uH" }) -> v1v1;
+    v1v1 -> [u.DVDD, u.VREG_FB];
+    let avdd = net("VREG_AVDD").driven();          // 3.3 V through an RC filter
+    P3V3 -> R("33", "0402") -> avdd -> C("4.7uF", "0402") -> GND;
+    avdd -> u.VREG_AVDD;
+
+    // Decoupling: one 100 nF per supply pin, plus bulk.
+    for i in 0..10 { P3V3 -> C("100nF", "0402") -> GND; }
+    P3V3 -> C("4.7uF", "0402") -> GND;
+    for i in 0..3 { v1v1 -> C("100nF", "0402") -> GND; }
+    v1v1 -> C("4.7uF", "0402") -> GND;
+
+    u.USB_DP -> net("USB_DP");
+    u.USB_DM -> net("USB_DM");
+    u.RUN -> net("RUN");
+    u.SWCLK -> net("SWCLK");
+    u.SWDIO -> net("SWDIO");
+    u.XIN -> net("XIN");
+    u.XOUT -> net("XOUT");
+    for s in ["QSPI_SS", "QSPI_SCLK", "QSPI_SD0", "QSPI_SD1", "QSPI_SD2", "QSPI_SD3"] {
+        u.pin(s) -> net(s);
+    }
+    for i in 0..48 {
+        u.pin(`GPIO${i}`) -> net(`GPIO${i}`);
+    }
+}
+
+fn crystal() {
+    let y = Crystal_3225();
+    net("XIN") -> y.X1 -> C("33pF", "0402") -> GND;
+    net("XOUT") -> R("1k", "0402") -> y.X2 -> C("33pF", "0402") -> GND;
+    y.GND -> GND;
+}
+
+fn flash() {
+    let f = W25Q128JV();
+    net("QSPI_SS") -> f.CS;
+    net("QSPI_SCLK") -> f.CLK;
+    net("QSPI_SD0") -> f.DI;
+    net("QSPI_SD1") -> f.DO;
+    net("QSPI_SD2") -> f.IO2;
+    net("QSPI_SD3") -> f.IO3;
+    P3V3 -> f.VCC;
+    f.GND -> GND;
+    P3V3 -> C("100nF", "0402") -> GND;
+    P3V3 -> R("10k", "0402") -> net("QSPI_SS");   // keep the flash deselected at reset
+}
+
+fn buttons() {
+    // BOOTSEL pulls QSPI_SS low through 1k; RESET pulls RUN low.
+    net("QSPI_SS") -> R("1k", "0402") -> SW_Push("BOOTSEL") -> GND;
+    net("RUN") -> SW_Push("RESET") -> GND;
+}
+
+fn swd() {
+    let j = Conn(3, "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical", #{ value: "SWD" });
+    j[1] -> net("SWCLK");
+    j[2] -> GND;
+    j[3] -> net("SWDIO");
+}
+
+// ---------------------------------------------------------------- IO sheet
+
+fn headers() {
+    let a = Conn2(20, "Connector_PinHeader_2.54mm:PinHeader_2x20_P2.54mm_Vertical", #{ value: "GPIO 0-31" });
+    for i in 0..32 {
+        a[i + 1] -> net(`GPIO${i}`);
+    }
+    [a[33], a[34]] -> P3V3;
+    a[35] -> P5V;
+    a[36] -> VBUS;
+    [a[37], a[38], a[39], a[40]] -> GND;
+
+    let b = Conn(20, "Connector_PinHeader_2.54mm:PinHeader_1x20_P2.54mm_Vertical", #{ value: "GPIO 32-47" });
+    for i in 0..16 {
+        b[i + 1] -> net(`GPIO${i + 32}`);
+    }
+    b[17] -> net("RUN");
+    b[18] -> P3V3;
+    [b[19], b[20]] -> GND;
+}
+
+fn status_led() {
+    net("GPIO25") -> R("330", "0402") -> LED("blue", "0603") -> GND;
+}
+
+// ---------------------------------------------------------------- sheets
+
+sheet("Power", || {
+    let vbus = VBUS.driven();
+    GND.driven();
+    usb_input(vbus);
+    vbus -> D_Schottky("SS34", "Diode_SMD:D_SMA") -> P5V.driven();
+    ldo_3v3(P5V, P3V3);
+    power_led(P3V3);
+});
+
+sheet("MCU", || {
+    mcu();
+    crystal();
+    flash();
+    buttons();
+    swd();
+});
+
+sheet("IO", || {
+    headers();
+    status_led();
+});

@@ -204,7 +204,7 @@ fn main() -> ExitCode {
                     let dir = out.unwrap_or_else(|| file.parent().map(Path::to_path_buf).unwrap_or_default());
                     let _ = std::fs::create_dir_all(&dir);
                     let stem = file.file_stem().and_then(|s| s.to_str()).unwrap_or("design");
-                    for (name, svg) in wirx::backend::svg::render(&sch) {
+                    for (name, svg) in wirx::backend::svg::render(design, &sch) {
                         let safe: String = name.chars().map(|c| if c.is_ascii_alphanumeric() { c } else { '_' }).collect();
                         let path = dir.join(format!("{stem}-{safe}.svg"));
                         if let Err(e) = std::fs::write(&path, svg) {

@@ -258,3 +258,17 @@ fn layout_fixtures() {
         assert_eq!((g.crossings, g.collisions, g.unrouted, g.four_way), (0, 0, 0, 0), "{name}/{group}: {g:?}");
     }
 }
+
+/// The RP2350B board (examples/rp2350b.wx) passes the electrical checks, builds, verifies and
+/// is deterministic.
+#[test]
+fn rp2350b_board_builds() {
+    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("examples/rp2350b.wx");
+    let c = wirx::check_file(&path).unwrap();
+    assert!(c.diags.iter().all(|d| d.severity == Severity::Info), "{:#?}", messages(&c));
+    let design = c.design.unwrap();
+    assert_eq!((design.instances.len(), design.nets.len(), design.sheets.len()), (46, 79, 3));
+    let (a, _) = wirx::build(&design).unwrap();
+    let (b, _) = wirx::build(&design).unwrap();
+    assert_eq!(a, b);
+}

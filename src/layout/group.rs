@@ -299,20 +299,29 @@ impl Ctx<'_> {
                 }
                 let (first, last) = (ends[0], *ends.last().unwrap());
                 wires.push((first, last));
-                let s = if out == kind.natural_dir() {
-                    ends[ends.len() / 2]
+                // The bus end the symbol does not use: a PWR_FLAG continues the bus from there, so its
+                // wire never runs along the bus.
+                let direction = |from: Pt, to: Pt| -> Rot {
+                    let v = to - from;
+                    if v.x > 0 { 0 } else if v.x < 0 { 180 } else if v.y < 0 { 90 } else { 270 }
+                };
+                let (s, free_end) = if out == kind.natural_dir() {
+                    (ends[ends.len() / 2], (last, direction(first, last)))
                 } else {
                     // Along the bus to the end nearest the symbol's direction, then one step out.
                     let toward = dir_vec(kind.natural_dir());
-                    let tip = if (last - first).x * toward.x + (last - first).y * toward.y >= 0 { last } else { first };
+                    let (tip, other) = if (last - first).x * toward.x + (last - first).y * toward.y >= 0 { (last, first) } else { (first, last) };
                     let s = tip + toward * STUB;
                     wires.push((tip, s));
-                    s
+                    (s, (other, direction(tip, other)))
                 };
                 pois.push(s);
                 let flag = run.iter().any(|&k| self.flag_pin.get(&n) == Some(&(inst, k)));
                 let key = format!("pwr:{}:{}", i.path, sym.pins[run[0]].number);
-                decor.push(self.rail_decor(n, kind, key, wires, pois, s, flag, out));
+                // Side buses: the flag leads straight out, away from the part. Top/bottom buses: it
+                // continues the bus from its free end, so it never runs along the bus.
+                let flag_at = if is_horizontal(out) { (s, out) } else { free_end };
+                decor.push(self.rail_decor(n, kind, key, wires, pois, s, flag.then_some(flag_at)));
             }
         }
         for (k, pp) in pins.iter().enumerate() {
@@ -335,7 +344,8 @@ impl Ctx<'_> {
                 let (wires, s) = stub_to(t, out, kind.natural_dir(), if crowded { 250 } else { STUB });
                 let flag = self.flag_pin.get(&n) == Some(&(inst, k));
                 let key = format!("pwr:{}:{}", i.path, sym.pins[k].number);
-                decor.push(self.rail_decor(n, kind, key, wires, vec![t, s], s, flag, out));
+                let side = if is_horizontal(out) { out } else { 0 };
+                decor.push(self.rail_decor(n, kind, key, wires, vec![t, s], s, flag.then_some((s, side))));
             } else if self.label_pin.get(&n) == Some(&(inst, k)) {
                 let s = t + dir_vec(out) * STUB;
                 let mut dc = Decor { net: n as i32, wires: vec![(t, s)], pois: vec![t, s], ..Default::default() };
@@ -363,9 +373,10 @@ impl Ctx<'_> {
         Placed { inst, origin: pt(0, 0), orient, pins, body, rects, decor, fields, field_rects }
     }
 
-    /// A power symbol for rail `n` at `s`, reached through `wires`; optionally with a PWR_FLAG.
+    /// A power symbol for rail `n` at `s`, reached through `wires`; optionally a PWR_FLAG on a wire
+    /// leaving `flag.0` in direction `flag.1`.
     #[allow(clippy::too_many_arguments)]
-    fn rail_decor(&mut self, n: usize, kind: RailKind, key: String, wires: Vec<(Pt, Pt)>, pois: Vec<Pt>, s: Pt, flag: bool, out: Rot) -> Decor {
+    fn rail_decor(&mut self, n: usize, kind: RailKind, key: String, wires: Vec<(Pt, Pt)>, pois: Vec<Pt>, s: Pt, flag: Option<(Pt, Rot)>) -> Decor {
         let netd = &self.d.nets[n];
         let mut dc = Decor { net: n as i32, wires, pois, ..Default::default() };
         dc.block.push(rail_extent(&netd.name, kind).translate(s));
@@ -387,10 +398,9 @@ impl Ctx<'_> {
             ],
             inst: None,
         });
-        if flag {
-            let side = if is_horizontal(out) { out } else { 0 };
-            let f = s + dir_vec(side) * 200;
-            dc.wires.push((s, f));
+        if let Some((from, dir)) = flag {
+            let f = from + dir_vec(dir) * 200;
+            dc.wires.push((from, f));
             dc.pois.push(f);
             dc.block.push(Rect::new(-130, -190, 130, 0).translate(f));
             dc.items.push(self.flag_item(n, f));
