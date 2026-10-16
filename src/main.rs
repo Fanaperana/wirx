@@ -47,6 +47,9 @@ enum Cmd {
         /// Only the default placement (no candidate search).
         #[arg(long)]
         no_candidates: bool,
+        /// No crossing-driven rerouting.
+        #[arg(long)]
+        no_reroute: bool,
     },
     /// Export the netlist for a PCB tool or for scripts.
     Netlist {
@@ -217,7 +220,7 @@ fn main() -> ExitCode {
             }
         }
         Cmd::Import { file, out, force } => import(&file, out.as_deref(), force),
-        Cmd::Stats { file, json, no_candidates } => {
+        Cmd::Stats { file, json, no_candidates, no_reroute } => {
             let c = match wirx::check_file(&file) {
                 Ok(c) => c,
                 Err(e) => return fail(&e),
@@ -226,7 +229,7 @@ fn main() -> ExitCode {
                 report(&c.sources, &c.diags, false);
                 return fail("the design has errors");
             };
-            let opts = wirx::layout::Options { candidates: !no_candidates };
+            let opts = wirx::layout::Options { candidates: !no_candidates, reroute: !no_reroute };
             let start = std::time::Instant::now();
             let sch = match wirx::draw_with(design, &opts) {
                 Ok((s, _)) => s,

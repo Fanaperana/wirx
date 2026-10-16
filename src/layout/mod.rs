@@ -108,18 +108,20 @@ pub struct Schematic {
 pub struct Options {
     /// Try several placements per group and keep the best routed one.
     pub candidates: bool,
+    /// Rip up and reroute nets involved in crossings, with congestion history.
+    pub reroute: bool,
 }
 
 impl Default for Options {
     fn default() -> Self {
-        Options { candidates: true }
+        Options { candidates: true, reroute: true }
     }
 }
 
 impl Options {
     /// Every optimisation off: the plain default layout.
     pub fn none() -> Self {
-        Options { candidates: false }
+        Options { candidates: false, reroute: false }
     }
 }
 

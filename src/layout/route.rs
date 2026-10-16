@@ -96,6 +96,11 @@ impl Grid {
         }
     }
 
+    /// Extra cost for one cell (congestion history).
+    pub fn add_soft(&mut self, cell: usize, cost: u16) {
+        self.soft[cell] = self.soft[cell].saturating_add(cost);
+    }
+
     pub fn soft_rect(&mut self, r: Rect, cost: u16) {
         for i in self.cells_in(r) {
             self.soft[i] = self.soft[i].max(cost);

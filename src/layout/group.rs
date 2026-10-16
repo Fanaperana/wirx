@@ -153,6 +153,7 @@ impl Placed {
 
 struct Ctx<'a> {
     v: Variant,
+    opts: super::Options,
     d: &'a Design,
     g: usize,
     in_group: HashSet<usize>,
@@ -561,7 +562,7 @@ pub fn layout_group(d: &Design, g: usize, opts: &super::Options, extra_symbols: 
     for (ci, &v) in candidates.iter().enumerate() {
         let mut flags = flags_done.clone();
         let mut local_diags = Vec::new();
-        let mut out = layout_candidate(d, g, v, extra_symbols, &mut flags, &mut local_diags);
+        let mut out = layout_candidate(d, g, v, opts, extra_symbols, &mut flags, &mut local_diags);
         if ci == 0 {
             base_positions = out.positions.clone();
             base = Some(out.stats.clone());
@@ -589,7 +590,7 @@ pub fn layout_group(d: &Design, g: usize, opts: &super::Options, extra_symbols: 
     out
 }
 
-fn layout_candidate(d: &Design, g: usize, v: Variant, extra_symbols: &mut Vec<SymbolDef>, flags_done: &mut HashSet<usize>, diags: &mut Vec<Diagnostic>) -> GroupOut {
+fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, extra_symbols: &mut Vec<SymbolDef>, flags_done: &mut HashSet<usize>, diags: &mut Vec<Diagnostic>) -> GroupOut {
     let group = &d.groups[g];
     let in_group: HashSet<usize> = group.instances.iter().copied().collect();
 
@@ -618,7 +619,7 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, extra_symbols: &mut Vec<Sy
         }
     }
 
-    let mut ctx = Ctx { v, d, g, in_group, label_pin, flag_pin, extra_symbols, diags };
+    let mut ctx = Ctx { v, opts: *opts, d, g, in_group, label_pin, flag_pin, extra_symbols, diags };
     let mut placed: HashMap<usize, Placed> = HashMap::new();
     let mut order: Vec<usize> = Vec::new();
     let mut occupied: Vec<Rect> = Vec::new();
@@ -1116,6 +1117,105 @@ fn route_net(g: &mut Grid, ni: usize, net: &(usize, Vec<(usize, usize)>), placed
     }
 }
 
+/// Iteration and time budget for crossing-driven rerouting (per placement candidate).
+const REROUTE_ITERATIONS: usize = 12;
+const REROUTE_BUDGET: std::time::Duration = std::time::Duration::from_millis(20);
+/// Stop after this many attempts in a row without improvement.
+const REROUTE_PATIENCE: usize = 4;
+/// Extra cost added around a contested crossing each time it recurs.
+const HISTORY_STEP: u16 = 60;
+
+impl Metrics {
+    /// Lexicographic quality: unreachable pins, crossings, bends, length (lower is better).
+    fn rank(&self, failed: usize) -> (usize, usize, usize, i64) {
+        (failed, self.crossings.len(), self.bends, self.length)
+    }
+}
+
+/// Rip up the nets involved in crossings and reroute them, with every other net in place, in a
+/// few deterministic orders. Cells around crossings that keep coming back get more expensive
+/// (congestion history). Only a strictly better result replaces `best`, so this never makes the
+/// drawing worse.
+#[allow(clippy::too_many_arguments)]
+fn reroute_crossings(
+    grid: &Grid,
+    nets: &[(usize, Vec<(usize, usize)>)],
+    mut best: Routing,
+    base_order: &[usize],
+    placed: &HashMap<usize, Placed>,
+    label_pin: &HashMap<usize, (usize, usize)>,
+    decor: &[(Pt, Pt, i32)],
+) -> Routing {
+    let start = std::time::Instant::now();
+    let mut best_metrics = best.metrics(decor);
+    let mut history: HashMap<usize, u16> = HashMap::new();
+    let mut current = best.clone();
+    let mut current_metrics = best_metrics.clone();
+    let mut stale = 0;
+    for iteration in 0..REROUTE_ITERATIONS {
+        if current_metrics.crossings.is_empty() || start.elapsed() > REROUTE_BUDGET || stale >= REROUTE_PATIENCE {
+            break;
+        }
+        // Nets (group indices) touching a crossing. Decoration wires carry design net ids; map
+        // them back to the group's nets where they belong to one.
+        let to_group = |id: usize| -> Option<usize> {
+            if id >= 1_000_000 { Some(id - 1_000_000) } else { nets.iter().position(|n| n.0 == id) }
+        };
+        let affected: HashSet<usize> = current_metrics.crossings.iter().flat_map(|c| [to_group(c.1), to_group(c.2)]).flatten().collect();
+        if affected.is_empty() {
+            break;
+        }
+        for c in &current_metrics.crossings {
+            for dy in -1..=1 {
+                for dx in -1..=1 {
+                    if let Some(cell) = grid.idx(c.0 + pt(dx * GRID, dy * GRID)) {
+                        *history.entry(cell).or_insert(0) += HISTORY_STEP;
+                    }
+                }
+            }
+        }
+        // Keep the other nets; rip up the affected ones.
+        let mut g = grid.clone();
+        for (&cell, &v) in &history {
+            g.add_soft(cell, v);
+        }
+        let mut trial = Routing {
+            paths: current.paths.iter().filter(|(n, _)| !affected.contains(n)).cloned().collect(),
+            failed: current.failed.iter().filter(|f| !affected.contains(&f.0)).cloned().collect(),
+        };
+        for (n, path) in &trial.paths {
+            for w in path.windows(2) {
+                g.mark_wire(w[0], w[1], nets[*n].0 as i32);
+            }
+        }
+        let mut order: Vec<usize> = base_order.iter().copied().filter(|n| affected.contains(n)).collect();
+        match iteration % 3 {
+            0 => {}
+            1 => order.reverse(),
+            _ => {
+                let k = 1.min(order.len());
+                order.rotate_left(k);
+            }
+        }
+        for ni in order {
+            route_net(&mut g, ni, &nets[ni], placed, label_pin, &mut trial);
+        }
+        let m = trial.metrics(decor);
+        if m.rank(trial.failed.len()) < best_metrics.rank(best.failed.len()) {
+            best = trial.clone();
+            best_metrics = m.clone();
+            stale = 0;
+        } else {
+            stale += 1;
+        }
+        // Continue from the new attempt (even when it is not better) so the history keeps
+        // pushing wires away from the contested spots.
+        current = trial;
+        current_metrics = m;
+    }
+    best
+}
+
 fn route_group(ctx: &mut Ctx, placed: &HashMap<usize, Placed>, order: &[usize], occupied: &[Rect]) -> GroupOut {
     let d = ctx.d;
     let bbox = occupied.iter().copied().reduce(Rect::union).unwrap_or(Rect::new(0, 0, 0, 0)).inflate(800);
@@ -1194,7 +1294,10 @@ fn route_group(ctx: &mut Ctx, placed: &HashMap<usize, Placed>, order: &[usize], 
         }
         net_order.sort_by_key(|&i| !failing.contains(&i));
     }
-    let best = best.unwrap_or_default();
+    let mut best = best.unwrap_or_default();
+    if ctx.opts.reroute {
+        best = reroute_crossings(&grid, &nets, best, &net_order, placed, &ctx.label_pin, &decor_wires);
+    }
     let metrics = best.metrics(&decor_wires);
     let wires: Vec<(Pt, Pt)> = best.paths.iter().flat_map(|(_, p)| p.windows(2).map(|w| (w[0], w[1])).collect::<Vec<_>>()).collect();
     let failed: Vec<(usize, (usize, usize))> = best.failed.iter().map(|&(ni, t)| (nets[ni].0, t)).collect();
