@@ -13,15 +13,69 @@ use std::sync::OnceLock;
 /// Free space kept between neighbouring parts (mils).
 const CLEAR: i32 = 100;
 /// Length of the wire between a pin and the part placed in front of it.
-const GAP: i32 = 300;
 const STUB: i32 = 100;
 const TEXT: i32 = 50;
+
+/// One way to place a group: the knobs candidate placement turns. Candidate 0 is the default.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Variant {
+    /// Length of the wire between a pin and the part placed in front of it.
+    pub gap: i32,
+    /// Grow branches from the top pin down instead of bottom-up.
+    pub top_down: bool,
+    /// When a part must move off its pin's line, try the other direction first.
+    pub flip: bool,
+}
+
+impl Variant {
+    pub const DEFAULT: Variant = Variant { gap: 300, top_down: false, flip: false };
+
+    /// The bounded, deterministic candidate set; the default comes first.
+    pub fn candidates() -> Vec<Variant> {
+        let mut v = vec![Variant::DEFAULT];
+        for gap in [300, 400] {
+            for top_down in [false, true] {
+                for flip in [false, true] {
+                    let c = Variant { gap, top_down, flip };
+                    if c != Variant::DEFAULT {
+                        v.push(c);
+                    }
+                }
+            }
+        }
+        v
+    }
+}
+
+/// How one group came out, for comparing candidates and for `wirx stats`.
+#[derive(Debug, Clone, Default, serde::Serialize)]
+pub struct GroupStats {
+    pub group: String,
+    /// Index into `Variant::candidates()` of the placement used.
+    pub candidate: usize,
+    pub candidates_tried: usize,
+    /// Wires of different nets crossing (stubs to labels and power symbols included).
+    pub crossings: usize,
+    pub bends: usize,
+    /// Routed wire length, mils.
+    pub length: i64,
+    /// Visible text or symbols covering wires, labels, other parts or other text.
+    pub collisions: usize,
+    /// Pins that had to be connected by label because no wire could reach them.
+    pub unrouted: usize,
+    /// Total movement of parts from the default candidate's positions, mils.
+    pub displacement: i64,
+    pub micros: u128,
+}
 
 pub struct GroupOut {
     pub group: usize,
     pub name: String,
     pub items: Vec<Item>,
     pub bbox: Rect,
+    pub stats: GroupStats,
+    /// Where each part ended up (for displacement).
+    pub positions: HashMap<usize, Pt>,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -98,6 +152,7 @@ impl Placed {
 }
 
 struct Ctx<'a> {
+    v: Variant,
     d: &'a Design,
     g: usize,
     in_group: HashSet<usize>,
@@ -493,7 +548,48 @@ fn place_near(proto: &Placed, desired: Pt, occupied: &[Rect]) -> Placed {
     p
 }
 
-pub fn layout_group(d: &Design, g: usize, extra_symbols: &mut Vec<SymbolDef>, flags_done: &mut HashSet<usize>, diags: &mut Vec<Diagnostic>) -> GroupOut {
+/// Lay out a group: route every candidate placement independently and keep the best. A candidate
+/// with more collisions or unreachable pins than the default is rejected; the rest are ranked by
+/// (crossings, bends, wire length, displacement from the default), and only a strictly better one
+/// replaces the default.
+pub fn layout_group(d: &Design, g: usize, opts: &super::Options, extra_symbols: &mut Vec<SymbolDef>, flags_done: &mut HashSet<usize>, diags: &mut Vec<Diagnostic>) -> GroupOut {
+    let start = std::time::Instant::now();
+    let candidates = if opts.candidates { Variant::candidates() } else { vec![Variant::DEFAULT] };
+    let mut best: Option<(GroupOut, HashSet<usize>, Vec<Diagnostic>)> = None;
+    let mut base_positions: HashMap<usize, Pt> = HashMap::new();
+    let mut base: Option<GroupStats> = None;
+    for (ci, &v) in candidates.iter().enumerate() {
+        let mut flags = flags_done.clone();
+        let mut local_diags = Vec::new();
+        let mut out = layout_candidate(d, g, v, extra_symbols, &mut flags, &mut local_diags);
+        if ci == 0 {
+            base_positions = out.positions.clone();
+            base = Some(out.stats.clone());
+        }
+        out.stats.candidate = ci;
+        out.stats.displacement = out.positions.iter().map(|(i, p)| base_positions.get(i).map(|b| b.manhattan(*p) as i64).unwrap_or(0)).sum();
+        let rank = |s: &GroupStats| (s.crossings, s.bends, s.length, s.displacement);
+        let better = match &best {
+            None => true,
+            Some((b, _, _)) => {
+                let base = base.as_ref().unwrap();
+                let valid = out.stats.collisions <= base.collisions && out.stats.unrouted <= base.unrouted;
+                valid && rank(&out.stats) < rank(&b.stats)
+            }
+        };
+        if better {
+            best = Some((out, flags, local_diags));
+        }
+    }
+    let (mut out, flags, local_diags) = best.unwrap();
+    *flags_done = flags;
+    diags.extend(local_diags);
+    out.stats.candidates_tried = candidates.len();
+    out.stats.micros = start.elapsed().as_micros();
+    out
+}
+
+fn layout_candidate(d: &Design, g: usize, v: Variant, extra_symbols: &mut Vec<SymbolDef>, flags_done: &mut HashSet<usize>, diags: &mut Vec<Diagnostic>) -> GroupOut {
     let group = &d.groups[g];
     let in_group: HashSet<usize> = group.instances.iter().copied().collect();
 
@@ -522,7 +618,7 @@ pub fn layout_group(d: &Design, g: usize, extra_symbols: &mut Vec<SymbolDef>, fl
         }
     }
 
-    let mut ctx = Ctx { d, g, in_group, label_pin, flag_pin, extra_symbols, diags };
+    let mut ctx = Ctx { v, d, g, in_group, label_pin, flag_pin, extra_symbols, diags };
     let mut placed: HashMap<usize, Placed> = HashMap::new();
     let mut order: Vec<usize> = Vec::new();
     let mut occupied: Vec<Rect> = Vec::new();
@@ -584,7 +680,7 @@ pub fn layout_group(d: &Design, g: usize, extra_symbols: &mut Vec<SymbolDef>, fl
                 };
                 // Bottom-up on the sides: parts hanging down off lower pins take the near spots, so
                 // the wires of the pins above pass over them instead of crossing.
-                (side, if is_horizontal(pp[k].out) { -pp[k].at.y } else { pp[k].at.x })
+                (side, if is_horizontal(pp[k].out) { if ctx.v.top_down { pp[k].at.y } else { -pp[k].at.y } } else { pp[k].at.x })
             });
             for k in pin_order {
                 let Some(n) = d.instances[parent].pin_net[k] else { continue };
@@ -881,10 +977,10 @@ fn bridge_child(ctx: &mut Ctx, ci: usize, ck: usize, parent: usize, pp: &[Placed
     let pins_mid = pt((proto.pins[ck].at.x + proto.pins[ok].at.x) / 2, (proto.pins[ck].at.y + proto.pins[ok].at.y) / 2);
     let ext = proto.rects[0];
     let depth = if is_horizontal(out) { ext.w() } else { ext.h() } / 2;
-    let target = mid + dir_vec(out) * (GAP + depth) - pins_mid;
+    let target = mid + dir_vec(out) * (ctx.v.gap + depth) - pins_mid;
     let base = pt(snap50(target.x), snap50(target.y));
     let along = dir_vec(out);
-    let across = dir_vec(crate::geom::norm_rot(out as i32 - 90));
+    let across = dir_vec(crate::geom::norm_rot(out as i32 - 90)) * if ctx.v.flip { -1 } else { 1 };
     for &(a, p) in front_offsets() {
         let off = base + along * a + across * p;
         if !collides(&proto, off, occupied) {
@@ -911,15 +1007,15 @@ fn place_child(ctx: &mut Ctx, ci: usize, ck: usize, at: Pt, out: Rot, occupied: 
     let proto = ctx.make_placed(ci, orient);
     let q = proto.pins[ck];
     let tip = if q.out == want {
-        at + dir_vec(out) * GAP
+        at + dir_vec(out) * ctx.v.gap
     } else if is_horizontal(q.out) != is_horizontal(out) {
-        at + dir_vec(out) * GAP + dir_vec(opposite(q.out)) * 100
+        at + dir_vec(out) * ctx.v.gap + dir_vec(opposite(q.out)) * 100
     } else {
-        at + dir_vec(out) * (GAP * 2)
+        at + dir_vec(out) * (ctx.v.gap * 2)
     };
     let base = tip - q.at;
     let along = dir_vec(out);
-    let across = dir_vec(crate::geom::norm_rot(out as i32 - 90));
+    let across = dir_vec(crate::geom::norm_rot(out as i32 - 90)) * if ctx.v.flip { -1 } else { 1 };
     let hanging = is_horizontal(q.out) != is_horizontal(out);
     for &(a, p) in if hanging { along_offsets() } else { front_offsets() } {
         let off = base + along * a + across * p;
@@ -930,6 +1026,94 @@ fn place_child(ctx: &mut Ctx, ci: usize, ck: usize, at: Pt, out: Rot, occupied: 
         }
     }
     place_near(&proto, base, occupied)
+}
+
+/// One routing attempt: the paths drawn per net (index into the group's net list) and the pins
+/// that could not be reached.
+#[derive(Default, Clone)]
+struct Routing {
+    paths: Vec<(usize, Vec<Pt>)>,
+    failed: Vec<(usize, (usize, usize))>,
+}
+
+/// Quality of a routing attempt.
+#[derive(Debug, Clone, Default)]
+struct Metrics {
+    /// (point, net, net) for wires of different nets crossing.
+    crossings: Vec<(Pt, usize, usize)>,
+    bends: usize,
+    length: i64,
+}
+
+impl Routing {
+    fn metrics(&self, decor: &[(Pt, Pt, i32)]) -> Metrics {
+        // Decoration wires (stubs to labels and power symbols) carry negative ids so two of them
+        // never count against each other.
+        let mut segs: Vec<(Pt, Pt, i64)> = decor.iter().map(|&(a, b, n)| (a, b, n as i64)).collect();
+        for (n, path) in &self.paths {
+            for w in path.windows(2) {
+                segs.push((w[0], w[1], 1_000_000 + *n as i64));
+            }
+        }
+        let inside = |p: Pt, s: Pt, t: Pt| crate::geom::on_segment(p, s, t) && p != s && p != t;
+        let mut crossings = Vec::new();
+        for &(a, b, n) in &segs {
+            if a.y != b.y || a == b {
+                continue;
+            }
+            for &(c, e, m) in &segs {
+                if c.x != e.x || c == e || m == n || (n < 1_000_000 && m < 1_000_000) {
+                    continue;
+                }
+                let p = pt(c.x, a.y);
+                if inside(p, a, b) && inside(p, c, e) {
+                    crossings.push((p, n.max(0) as usize, m.max(0) as usize));
+                }
+            }
+        }
+        let bends = self.paths.iter().map(|(_, p)| p.len().saturating_sub(2)).sum();
+        let length = self.paths.iter().flat_map(|(_, p)| p.windows(2).map(|w| w[0].manhattan(w[1]) as i64)).sum();
+        Metrics { crossings, bends, length }
+    }
+}
+
+/// Route one net into `g` as a tree: start at its label pin (or first pin), then connect the
+/// nearest remaining pin to any point of the tree, until all are reached.
+fn route_net(g: &mut Grid, ni: usize, net: &(usize, Vec<(usize, usize)>), placed: &HashMap<usize, Placed>, label_pin: &HashMap<usize, (usize, usize)>, out: &mut Routing) {
+    let (n, terms) = (net.0, &net.1);
+    let tip = |t: &(usize, usize)| placed[&t.0].pins[t.1];
+    let first = label_pin.get(&n).copied().filter(|p| terms.contains(p)).unwrap_or(terms[0]);
+    let mut tree: HashSet<usize> = HashSet::new();
+    let mut tree_pts: Vec<Pt> = vec![tip(&first).at];
+    tree.extend(g.idx(tip(&first).at));
+    for dc in &placed[&first.0].decor {
+        if dc.net == n as i32 {
+            for &(a, b) in &dc.wires {
+                tree.extend(g.segment_cells(a, b));
+            }
+        }
+    }
+    let mut rest: Vec<(usize, usize)> = terms.iter().copied().filter(|t| *t != first).collect();
+    while !rest.is_empty() {
+        // Nearest remaining pin to the tree so far.
+        let (ri, _) = rest.iter().enumerate().min_by_key(|(_, t)| tree_pts.iter().map(|q| q.manhattan(tip(t).at)).min().unwrap_or(0)).unwrap();
+        let t = rest.remove(ri);
+        let tp = tip(&t);
+        if g.idx(tp.at).is_some_and(|c| tree.contains(&c)) {
+            continue;
+        }
+        match g.route(n as i32, tp.at, tp.out, &tree) {
+            Some(path) => {
+                for w in path.windows(2) {
+                    g.mark_wire(w[0], w[1], n as i32);
+                    tree.extend(g.segment_cells(w[0], w[1]));
+                }
+                tree_pts.extend(path.iter().copied());
+                out.paths.push((ni, path));
+            }
+            None => out.failed.push((ni, t)),
+        }
+    }
 }
 
 fn route_group(ctx: &mut Ctx, placed: &HashMap<usize, Placed>, order: &[usize], occupied: &[Rect]) -> GroupOut {
@@ -989,68 +1173,34 @@ fn route_group(ctx: &mut Ctx, placed: &HashMap<usize, Placed>, order: &[usize], 
         .map(|(n, net)| (n, net.pins.iter().copied().filter(|p| ctx.in_group.contains(&p.0) && !d.instances[p.0].nc[p.1]).collect::<Vec<_>>()))
         .filter(|(_, terms)| terms.len() >= 2)
         .collect();
+    let decor_wires: Vec<(Pt, Pt, i32)> = order.iter().flat_map(|i| placed[i].decor.iter().flat_map(|dc| dc.wires.iter().map(move |w| (w.0, w.1, dc.net)))).collect();
     let span = |terms: &[(usize, usize)]| bounds(terms.iter().map(|t| tip(t).at)).map(|r| r.w() + r.h()).unwrap_or(0);
     let mut net_order: Vec<usize> = (0..nets.len()).collect();
     net_order.sort_by_key(|&i| (span(&nets[i].1), nets[i].0));
-    type Attempt = (Vec<(Pt, Pt)>, Vec<(usize, (usize, usize))>);
-    let mut best: Option<Attempt> = None;
+    let mut best: Option<Routing> = None;
     for _attempt in 0..4 {
         let mut g = grid.clone();
-        let mut wires = Vec::new();
-        let mut failed = Vec::new();
+        let mut r = Routing::default();
         for &ni in &net_order {
-            let (n, terms) = (&nets[ni].0, &nets[ni].1);
-            let n = *n;
-            let first = ctx.label_pin.get(&n).copied().filter(|p| terms.contains(p)).unwrap_or(terms[0]);
-            let mut tree: HashSet<usize> = HashSet::new();
-            let mut tree_pts: Vec<Pt> = vec![tip(&first).at];
-            tree.extend(g.idx(tip(&first).at));
-            for dc in &placed[&first.0].decor {
-                if dc.net == n as i32 {
-                    for &(a, b) in &dc.wires {
-                        tree.extend(g.segment_cells(a, b));
-                    }
-                }
-            }
-            let mut rest: Vec<(usize, usize)> = terms.iter().copied().filter(|t| *t != first).collect();
-            while !rest.is_empty() {
-                // Nearest remaining pin to the tree so far.
-                let (ri, _) = rest
-                    .iter()
-                    .enumerate()
-                    .min_by_key(|(_, t)| tree_pts.iter().map(|q| q.manhattan(tip(t).at)).min().unwrap_or(0))
-                    .unwrap();
-                let t = rest.remove(ri);
-                let tp = tip(&t);
-                if g.idx(tp.at).is_some_and(|c| tree.contains(&c)) {
-                    continue;
-                }
-                match g.route(n as i32, tp.at, tp.out, &tree) {
-                    Some(path) => {
-                        for w in path.windows(2) {
-                            g.mark_wire(w[0], w[1], n as i32);
-                            tree.extend(g.segment_cells(w[0], w[1]));
-                            wires.push((w[0], w[1]));
-                        }
-                        tree_pts.extend(path.iter().copied());
-                    }
-                    None => failed.push((n, t)),
-                }
-            }
+            route_net(&mut g, ni, &nets[ni], placed, &ctx.label_pin, &mut r);
         }
-        let done = failed.is_empty();
-        if best.as_ref().is_none_or(|b| failed.len() < b.1.len()) {
-            best = Some((wires, failed.clone()));
+        let done = r.failed.is_empty();
+        let failing: HashSet<usize> = r.failed.iter().map(|f| f.0).collect();
+        if best.as_ref().is_none_or(|b| r.failed.len() < b.failed.len()) {
+            best = Some(r);
         }
         if done {
             break;
         }
-        let failing: HashSet<usize> = failed.iter().map(|f| f.0).collect();
-        net_order.sort_by_key(|&i| !failing.contains(&nets[i].0));
+        net_order.sort_by_key(|&i| !failing.contains(&i));
     }
-    let (wires, failed) = best.unwrap_or_default();
+    let best = best.unwrap_or_default();
+    let metrics = best.metrics(&decor_wires);
+    let wires: Vec<(Pt, Pt)> = best.paths.iter().flat_map(|(_, p)| p.windows(2).map(|w| (w[0], w[1])).collect::<Vec<_>>()).collect();
+    let failed: Vec<(usize, (usize, usize))> = best.failed.iter().map(|&(ni, t)| (nets[ni].0, t)).collect();
     let mut extra_labels: Vec<Item> = Vec::new();
     let mut labeled: HashSet<usize> = ctx.label_pin.keys().copied().collect();
+    let unrouted = failed.len();
     for (n, t) in failed {
         let net = &d.nets[n];
         let tp = tip(&t);
@@ -1101,7 +1251,17 @@ fn route_group(ctx: &mut Ctx, placed: &HashMap<usize, Placed>, order: &[usize], 
         bb = Some(bb.map_or(r, |x| x.union(r)));
     }
     let group = &d.groups[ctx.g];
-    GroupOut { group: ctx.g, name: group.name.clone(), items, bbox: bb.unwrap_or(Rect::new(0, 0, 100, 100)) }
+    let positions: HashMap<usize, Pt> = order.iter().map(|&i| (i, placed[&i].origin)).collect();
+    let stats = GroupStats {
+        group: group.name.clone(),
+        crossings: metrics.crossings.len(),
+        bends: metrics.bends,
+        length: metrics.length,
+        collisions: super::text::collisions(d, &items, ctx.extra_symbols),
+        unrouted,
+        ..Default::default()
+    };
+    GroupOut { group: ctx.g, name: group.name.clone(), items, bbox: bb.unwrap_or(Rect::new(0, 0, 100, 100)), stats, positions }
 }
 
 /// A junction dot wherever three or more connections meet at a point.

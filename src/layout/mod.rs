@@ -9,6 +9,7 @@
 //! 4. Groups are packed onto sheets, framed and named.
 
 mod group;
+pub use group::{GroupStats, Variant};
 mod pack;
 mod route;
 mod text;
@@ -96,11 +97,37 @@ pub struct SheetOut {
 #[derive(Debug, Clone)]
 pub struct Schematic {
     pub sheets: Vec<SheetOut>,
+    /// Layout quality per group, in group order.
+    pub stats: Vec<GroupStats>,
     /// Every symbol definition the sheets use.
     pub symbols: Vec<SymbolDef>,
 }
 
+/// Which layout optimisations run (all by default; switch them off to measure each one).
+#[derive(Debug, Clone, Copy)]
+pub struct Options {
+    /// Try several placements per group and keep the best routed one.
+    pub candidates: bool,
+}
+
+impl Default for Options {
+    fn default() -> Self {
+        Options { candidates: true }
+    }
+}
+
+impl Options {
+    /// Every optimisation off: the plain default layout.
+    pub fn none() -> Self {
+        Options { candidates: false }
+    }
+}
+
 pub fn layout(d: &Design) -> (Schematic, Vec<Diagnostic>) {
+    layout_with(d, &Options::default())
+}
+
+pub fn layout_with(d: &Design, opts: &Options) -> (Schematic, Vec<Diagnostic>) {
     let mut diags = Vec::new();
     let mut extra_symbols: Vec<SymbolDef> = Vec::new();
     let mut groups = Vec::new();
@@ -109,9 +136,10 @@ pub fn layout(d: &Design) -> (Schematic, Vec<Diagnostic>) {
         if d.groups[g].instances.is_empty() {
             continue;
         }
-        let out = group::layout_group(d, g, &mut extra_symbols, &mut flags_done, &mut diags);
+        let out = group::layout_group(d, g, opts, &mut extra_symbols, &mut flags_done, &mut diags);
         groups.push(out);
     }
+    let stats: Vec<GroupStats> = groups.iter().map(|g| g.stats.clone()).collect();
     let sheets = pack::pack(d, groups, &mut diags);
     let mut symbols: Vec<SymbolDef> = Vec::new();
     let mut seen = std::collections::HashSet::new();
@@ -120,5 +148,5 @@ pub fn layout(d: &Design) -> (Schematic, Vec<Diagnostic>) {
             symbols.push(s.clone());
         }
     }
-    (Schematic { sheets, symbols }, diags)
+    (Schematic { sheets, stats, symbols }, diags)
 }

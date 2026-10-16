@@ -210,7 +210,7 @@ pub fn pack(d: &Design, groups: Vec<GroupOut>, diags: &mut Vec<Diagnostic>) -> V
                         let sizes: Vec<&Boxed> = current.iter().map(|&j| slots[j].as_ref().unwrap()).collect();
                         let tmp: Vec<Boxed> = sizes
                             .iter()
-                            .map(|b| Boxed { out: GroupOut { group: b.out.group, name: String::new(), items: vec![], bbox: b.out.bbox }, content: b.content, nets: HashSet::new() })
+                            .map(|b| Boxed { out: GroupOut { group: b.out.group, name: String::new(), items: vec![], bbox: b.out.bbox, stats: Default::default(), positions: Default::default() }, content: b.content, nets: HashSet::new() })
                             .collect();
                         let o: Vec<usize> = (0..tmp.len()).collect();
                         tile(&tmp, &o, w, h).is_some()

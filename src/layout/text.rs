@@ -182,3 +182,51 @@ pub fn field_rects(items: &[Item]) -> Vec<Rect> {
     }
     out
 }
+
+/// Visible text covering anything that is not its own symbol, plus part bodies that overlap:
+/// the same rule as eleceda's text-overlap check, used to compare layouts.
+pub fn collisions(d: &Design, items: &[Item], extra: &[SymbolDef]) -> usize {
+    let def_of = |lib_id: &str, inst: Option<usize>| -> Option<SymbolDef> {
+        match inst {
+            Some(i) => Some(d.symbols[d.instances[i].part].clone()),
+            None => extra.iter().find(|s| s.id == lib_id).cloned(),
+        }
+    };
+    const NONE: usize = usize::MAX;
+    let mut ink: Vec<(Rect, usize)> = Vec::new();
+    let mut texts: Vec<(Rect, usize)> = Vec::new();
+    let mut bodies: Vec<Rect> = Vec::new();
+    for (idx, it) in items.iter().enumerate() {
+        match it {
+            Item::Wire { a, b } => ink.push((Rect::from_points(*a, *b).inflate(10), NONE)),
+            Item::Junction(p) | Item::NoConnect(p) => ink.push((Rect::point(*p).inflate(30), NONE)),
+            Item::Label { text, at, rot, .. } => ink.push((super::group::label_rect(*at, *rot, text), NONE)),
+            Item::Symbol { lib_id, at, orient, inst, fields, .. } => {
+                let Some(def) = def_of(lib_id, *inst) else { continue };
+                let local = if def.is_power() { def.extent() } else { def.body() };
+                let body = orient.rect(local).translate(*at);
+                ink.push((body, idx));
+                if inst.is_some() {
+                    bodies.push(orient.rect(def.body()).translate(*at));
+                }
+                for f in fields.iter().filter(|f| f.visible && !f.value.is_empty() && (!def.is_power() || f.name == "Value")) {
+                    let r = text_rect(*at + f.at, &f.value, f.justify.unwrap_or(Justify::Center));
+                    texts.push((r, idx));
+                }
+            }
+            Item::Block { .. } => {}
+        }
+    }
+    let mut count = 0;
+    for (i, &(r, own)) in texts.iter().enumerate() {
+        let r = r.inflate(-5);
+        let hit = ink.iter().any(|(o, who)| *who != own && o.intersects(&r)) || texts.iter().enumerate().any(|(j, (o, who))| j != i && *who != own && o.intersects(&r));
+        count += usize::from(hit);
+    }
+    for a in 0..bodies.len() {
+        for b in a + 1..bodies.len() {
+            count += usize::from(bodies[a].inflate(-40).overlaps(&bodies[b].inflate(-40)));
+        }
+    }
+    count
+}

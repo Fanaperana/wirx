@@ -44,7 +44,12 @@ pub fn check_file(path: &Path) -> Result<Compiled, String> {
 
 /// Lay out a checked design; the drawing is verified against the design before it is returned.
 pub fn draw(design: &ir::Design) -> Result<(layout::Schematic, Vec<Diagnostic>), Vec<String>> {
-    let (schematic, diags) = layout::layout(design);
+    draw_with(design, &layout::Options::default())
+}
+
+/// [`draw`] with chosen layout optimisations (for measuring them).
+pub fn draw_with(design: &ir::Design, opts: &layout::Options) -> Result<(layout::Schematic, Vec<Diagnostic>), Vec<String>> {
+    let (schematic, diags) = layout::layout_with(design, opts);
     let problems = verify::check(design, &schematic);
     if !problems.is_empty() {
         return Err(problems);

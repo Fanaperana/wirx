@@ -222,3 +222,38 @@ fn multi_pin_part_cannot_sit_inline() {
     let c = check("let u = NE555();\nP5V -> u -> GND;");
     assert!(codes(&c, Severity::Error).contains(&"not_inline"));
 }
+
+/// Layout optimisations may never replace a better default result with a worse one: for every
+/// group of every example, the optimised layout has no more collisions or unrouted pins, and
+/// ranks no worse on (crossings, bends, wire length).
+#[test]
+fn optimisations_never_make_a_group_worse() {
+    use wirx::layout::Options;
+    for name in ["ldo", "blinker", "mcu"] {
+        let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("examples").join(format!("{name}.wx"));
+        let design = wirx::check_file(&path).unwrap().design.unwrap();
+        let (plain, _) = wirx::draw_with(&design, &Options::none()).unwrap();
+        let (best, _) = wirx::draw_with(&design, &Options::default()).unwrap();
+        for (a, b) in plain.stats.iter().zip(&best.stats) {
+            assert_eq!(a.group, b.group);
+            assert!(b.collisions <= a.collisions && b.unrouted <= a.unrouted, "{name}/{}: {a:?} -> {b:?}", a.group);
+            assert!((b.crossings, b.bends, b.length) <= (a.crossings, a.bends, a.length), "{name}/{}: {a:?} -> {b:?}", a.group);
+        }
+    }
+}
+
+/// The fixtures: the USB, LDO and blinker groups stay crossing-free, and the MCU group (which
+/// had one crossing with the default placement) has none.
+#[test]
+fn layout_fixtures() {
+    let stats = |name: &str| {
+        let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("examples").join(format!("{name}.wx"));
+        let design = wirx::check_file(&path).unwrap().design.unwrap();
+        wirx::draw(&design).unwrap().0.stats
+    };
+    for (name, group) in [("ldo", "Power"), ("ldo", "ldo"), ("blinker", "astable"), ("mcu", "mcu"), ("mcu", "Power")] {
+        let s = stats(name);
+        let g = s.iter().find(|g| g.group == group).unwrap();
+        assert_eq!((g.crossings, g.collisions, g.unrouted), (0, 0, 0), "{name}/{group}: {g:?}");
+    }
+}
