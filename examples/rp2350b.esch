@@ -13,7 +13,7 @@
           "id": "1860676c-b95a-5699-980e-951588d2b28c",
           "libId": "wirx:TYPE-C-31-M-12",
           "at": {
-            "x": 2600,
+            "x": 2550,
             "y": 2400
           },
           "rot": 0,
@@ -76,7 +76,7 @@
           "id": "824ca2d1-9446-54d4-80f1-ff1dae9f680f",
           "libId": "power:GND",
           "at": {
-            "x": 3000,
+            "x": 2950,
             "y": 3250
           },
           "rot": 0,
@@ -130,7 +130,7 @@
           "id": "1b627864-fc3a-57bc-97ae-b2569cc5c381",
           "libId": "power:PWR_FLAG",
           "at": {
-            "x": 3200,
+            "x": 3150,
             "y": 3250
           },
           "rot": 0,
@@ -181,109 +181,109 @@
         },
         {
           "kind": "wire",
-          "id": "9b623617-709c-590f-8acb-23d541f68a0a",
+          "id": "a4cff0fa-e93b-5df2-afad-b629e6334e05",
           "a": {
-            "x": 2900,
+            "x": 2850,
             "y": 2650
           },
           "b": {
-            "x": 3000,
+            "x": 2950,
             "y": 2650
           }
         },
         {
           "kind": "wire",
-          "id": "02d86a63-ed06-58f0-8dc4-1092071b3ebe",
+          "id": "5ab6d2d5-8a2c-5d06-9d46-a2bc5f259ac3",
           "a": {
-            "x": 2900,
+            "x": 2850,
             "y": 2750
           },
           "b": {
-            "x": 3000,
+            "x": 2950,
             "y": 2750
           }
         },
         {
           "kind": "wire",
-          "id": "ecde182c-8400-54f1-b4ff-d126f8ec2044",
+          "id": "b8901ad4-22ff-501c-a7d4-72452eb3184b",
           "a": {
-            "x": 2900,
+            "x": 2850,
             "y": 2850
           },
           "b": {
-            "x": 3000,
+            "x": 2950,
             "y": 2850
           }
         },
         {
           "kind": "wire",
-          "id": "4cdf7b42-f4cb-5a00-a9a7-afcf56b75160",
+          "id": "cd64f7b4-b0ac-5fb0-9804-bc08618e6971",
           "a": {
-            "x": 2900,
+            "x": 2850,
             "y": 2950
           },
           "b": {
-            "x": 3000,
+            "x": 2950,
             "y": 2950
           }
         },
         {
           "kind": "wire",
-          "id": "6f1b0698-e088-5a38-ac6d-2e991aa6076d",
+          "id": "610782fa-63f1-5c83-a9ee-db4fb9d10273",
           "a": {
-            "x": 2900,
+            "x": 2850,
             "y": 3050
           },
           "b": {
-            "x": 3000,
+            "x": 2950,
             "y": 3050
           }
         },
         {
           "kind": "wire",
-          "id": "84630103-2155-5d2c-9216-b6f1e5d230f2",
+          "id": "2585056e-6eed-5c62-8e81-833a005cea58",
           "a": {
-            "x": 2900,
+            "x": 2850,
             "y": 3150
           },
           "b": {
-            "x": 3000,
+            "x": 2950,
             "y": 3150
           }
         },
         {
           "kind": "wire",
-          "id": "858b4542-2371-580b-85ee-4ffcd11fa78e",
+          "id": "066d8eb6-f96e-54eb-816e-63a50b8106b6",
           "a": {
-            "x": 3000,
+            "x": 2950,
             "y": 2650
           },
           "b": {
-            "x": 3000,
+            "x": 2950,
             "y": 3150
           }
         },
         {
           "kind": "wire",
-          "id": "8649aa50-dbd1-51e8-a520-2b276eb3aa47",
+          "id": "3e1210bf-d29d-5e01-90e4-3112487e6da4",
           "a": {
-            "x": 3000,
+            "x": 2950,
             "y": 3150
           },
           "b": {
-            "x": 3000,
+            "x": 2950,
             "y": 3250
           }
         },
         {
           "kind": "wire",
-          "id": "66dd0aaf-1a5f-59b5-aef0-cc21b16c2071",
+          "id": "e8abb946-8805-51ce-9232-96b1439c2525",
           "a": {
-            "x": 3000,
+            "x": 2950,
             "y": 3250
           },
           "b": {
-            "x": 3200,
+            "x": 3150,
             "y": 3250
           }
         },
@@ -292,7 +292,7 @@
           "id": "a43687ac-c870-5465-ae51-d559f88b4f49",
           "libId": "power:VBUS",
           "at": {
-            "x": 3000,
+            "x": 2950,
             "y": 1550
           },
           "rot": 0,
@@ -346,7 +346,7 @@
           "id": "98c52e76-b2dd-5010-a3e2-d579a66a72ea",
           "libId": "power:PWR_FLAG",
           "at": {
-            "x": 3200,
+            "x": 3150,
             "y": 1550
           },
           "rot": 0,
@@ -397,512 +397,86 @@
         },
         {
           "kind": "wire",
-          "id": "6e7ee6a3-a935-5f1f-960d-6c504813c101",
+          "id": "4b57fa2e-f256-5954-b046-8e33a51bcc09",
           "a": {
-            "x": 2900,
+            "x": 2850,
             "y": 1650
           },
           "b": {
-            "x": 3000,
+            "x": 2950,
             "y": 1650
           }
         },
         {
           "kind": "wire",
-          "id": "5a004d84-00f2-5342-ae43-d5f042dcc2c8",
+          "id": "06edbe2c-9187-5cf3-aea5-8e77d3ebeabc",
           "a": {
-            "x": 2900,
+            "x": 2850,
             "y": 1750
           },
           "b": {
-            "x": 3000,
-            "y": 1750
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "7477b61e-2f4f-514f-b2ae-b965ca13df8b",
-          "a": {
-            "x": 3000,
-            "y": 1650
-          },
-          "b": {
-            "x": 3000,
+            "x": 2950,
             "y": 1750
           }
         },
         {
           "kind": "wire",
-          "id": "1d680529-e41b-5c49-86e9-ea0e1771d217",
+          "id": "15e3987d-212f-5f33-83e3-b7a457c2f774",
           "a": {
-            "x": 3000,
+            "x": 2950,
             "y": 1650
           },
           "b": {
-            "x": 3000,
+            "x": 2950,
+            "y": 1750
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "0404866a-7e6b-5736-9988-078697d01950",
+          "a": {
+            "x": 2950,
+            "y": 1650
+          },
+          "b": {
+            "x": 2950,
             "y": 1550
           }
         },
         {
           "kind": "wire",
-          "id": "78a92d7f-909d-59ce-85fc-cfd694d1bf83",
+          "id": "eb690ebf-f7ce-56f1-a511-d635dd5575b5",
           "a": {
-            "x": 3000,
+            "x": 2950,
             "y": 1550
           },
           "b": {
-            "x": 3200,
+            "x": 3150,
             "y": 1550
           }
         },
         {
           "kind": "noconnect",
-          "id": "fc7c8b47-7cb4-50be-8127-a8112bd9a6ec",
+          "id": "f9d2ab1e-e610-5b4b-a8a8-a0c1956da9aa",
           "at": {
-            "x": 2900,
+            "x": 2850,
             "y": 2450
           }
         },
         {
           "kind": "noconnect",
-          "id": "1b2b3915-740a-51bb-876a-f99153b666fe",
+          "id": "97ed467b-9bc2-589f-aaaa-9c923a4a26af",
           "at": {
-            "x": 2900,
+            "x": 2850,
             "y": 2550
           }
-        },
-        {
-          "kind": "symbol",
-          "id": "456c6cdb-4945-519d-9eba-6a0c00679cb1",
-          "libId": "wirx:USBLC6-2SC6",
-          "at": {
-            "x": 3650,
-            "y": 2300
-          },
-          "rot": 0,
-          "mirror": false,
-          "unit": 1,
-          "fields": [
-            {
-              "name": "Reference",
-              "value": "U1",
-              "at": {
-                "x": -200,
-                "y": -750
-              },
-              "visible": true,
-              "justify": "left",
-              "rot": 0
-            },
-            {
-              "name": "Value",
-              "value": "USBLC6-2SC6",
-              "at": {
-                "x": -200,
-                "y": 750
-              },
-              "visible": true,
-              "justify": "left",
-              "rot": 0
-            },
-            {
-              "name": "Footprint",
-              "value": "Package_TO_SOT_SMD:SOT-23-6",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            },
-            {
-              "name": "Datasheet",
-              "value": "",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            }
-          ]
-        },
-        {
-          "kind": "symbol",
-          "id": "f692fc1b-3328-5b0f-b60c-d8cc22f65156",
-          "libId": "power:VBUS",
-          "at": {
-            "x": 3650,
-            "y": 1900
-          },
-          "rot": 0,
-          "mirror": false,
-          "unit": 1,
-          "fields": [
-            {
-              "name": "Reference",
-              "value": "#PWR03",
-              "at": {
-                "x": 0,
-                "y": 250
-              },
-              "visible": false,
-              "justify": "center",
-              "rot": 0
-            },
-            {
-              "name": "Value",
-              "value": "VBUS",
-              "at": {
-                "x": 0,
-                "y": -150
-              },
-              "visible": true,
-              "justify": "center",
-              "rot": 0
-            },
-            {
-              "name": "Footprint",
-              "value": "",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            },
-            {
-              "name": "Datasheet",
-              "value": "",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            }
-          ]
-        },
-        {
-          "kind": "symbol",
-          "id": "a22abfb0-cbbb-5abc-b165-9b7a3eea0dc1",
-          "libId": "power:GND",
-          "at": {
-            "x": 3650,
-            "y": 2700
-          },
-          "rot": 0,
-          "mirror": false,
-          "unit": 1,
-          "fields": [
-            {
-              "name": "Reference",
-              "value": "#PWR04",
-              "at": {
-                "x": 0,
-                "y": 250
-              },
-              "visible": false,
-              "justify": "center",
-              "rot": 0
-            },
-            {
-              "name": "Value",
-              "value": "GND",
-              "at": {
-                "x": 0,
-                "y": 160
-              },
-              "visible": true,
-              "justify": "center",
-              "rot": 0
-            },
-            {
-              "name": "Footprint",
-              "value": "",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            },
-            {
-              "name": "Datasheet",
-              "value": "",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            }
-          ]
-        },
-        {
-          "kind": "symbol",
-          "id": "5d910fe8-3bf6-55f0-89d6-e992ead3a473",
-          "libId": "wirx:R",
-          "at": {
-            "x": 3500,
-            "y": 3500
-          },
-          "rot": 90,
-          "mirror": false,
-          "unit": 1,
-          "fields": [
-            {
-              "name": "Reference",
-              "value": "R4",
-              "at": {
-                "x": 0,
-                "y": -90
-              },
-              "visible": true,
-              "justify": "center",
-              "rot": 0
-            },
-            {
-              "name": "Value",
-              "value": "27",
-              "at": {
-                "x": 0,
-                "y": 90
-              },
-              "visible": true,
-              "justify": "center",
-              "rot": 0
-            },
-            {
-              "name": "Footprint",
-              "value": "Resistor_SMD:R_0402_1005Metric",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            },
-            {
-              "name": "Datasheet",
-              "value": "",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            }
-          ]
-        },
-        {
-          "kind": "wire",
-          "id": "1b67b066-2ad3-50a5-9ef0-b9615a2c730f",
-          "a": {
-            "x": 3650,
-            "y": 3500
-          },
-          "b": {
-            "x": 3750,
-            "y": 3500
-          }
-        },
-        {
-          "kind": "label",
-          "id": "00c3411b-8c9c-5721-9246-63f530550670",
-          "labelType": "global",
-          "text": "USB_DM",
-          "at": {
-            "x": 3750,
-            "y": 3500
-          },
-          "rot": 0,
-          "shape": "bidirectional"
-        },
-        {
-          "kind": "symbol",
-          "id": "b3432803-06e7-5008-a46b-dd7b8d8a4e2a",
-          "libId": "wirx:R",
-          "at": {
-            "x": 3050,
-            "y": 1100
-          },
-          "rot": 90,
-          "mirror": false,
-          "unit": 1,
-          "fields": [
-            {
-              "name": "Reference",
-              "value": "R3",
-              "at": {
-                "x": 0,
-                "y": -90
-              },
-              "visible": true,
-              "justify": "center",
-              "rot": 0
-            },
-            {
-              "name": "Value",
-              "value": "27",
-              "at": {
-                "x": 0,
-                "y": 90
-              },
-              "visible": true,
-              "justify": "center",
-              "rot": 0
-            },
-            {
-              "name": "Footprint",
-              "value": "Resistor_SMD:R_0402_1005Metric",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            },
-            {
-              "name": "Datasheet",
-              "value": "",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            }
-          ]
-        },
-        {
-          "kind": "wire",
-          "id": "7251d7ba-b2e9-5749-abf9-7e18141564d2",
-          "a": {
-            "x": 3200,
-            "y": 1100
-          },
-          "b": {
-            "x": 3300,
-            "y": 1100
-          }
-        },
-        {
-          "kind": "label",
-          "id": "39c588dc-aac3-5be6-af46-45164e46fcb8",
-          "labelType": "global",
-          "text": "USB_DP",
-          "at": {
-            "x": 3300,
-            "y": 1100
-          },
-          "rot": 0,
-          "shape": "bidirectional"
-        },
-        {
-          "kind": "symbol",
-          "id": "fa4bc2e1-e569-5dd4-837a-221b1dc2bd14",
-          "libId": "wirx:R",
-          "at": {
-            "x": 4050,
-            "y": 2100
-          },
-          "rot": 0,
-          "mirror": false,
-          "unit": 1,
-          "fields": [
-            {
-              "name": "Reference",
-              "value": "R2",
-              "at": {
-                "x": 80,
-                "y": -30
-              },
-              "visible": true,
-              "justify": "left",
-              "rot": 0
-            },
-            {
-              "name": "Value",
-              "value": "5k1",
-              "at": {
-                "x": 80,
-                "y": 30
-              },
-              "visible": true,
-              "justify": "left",
-              "rot": 0
-            },
-            {
-              "name": "Footprint",
-              "value": "Resistor_SMD:R_0402_1005Metric",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            },
-            {
-              "name": "Datasheet",
-              "value": "",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            }
-          ]
-        },
-        {
-          "kind": "symbol",
-          "id": "574cd0c6-1000-58ff-b7a7-80af559882c1",
-          "libId": "power:GND",
-          "at": {
-            "x": 4050,
-            "y": 2250
-          },
-          "rot": 0,
-          "mirror": false,
-          "unit": 1,
-          "fields": [
-            {
-              "name": "Reference",
-              "value": "#PWR05",
-              "at": {
-                "x": 0,
-                "y": 250
-              },
-              "visible": false,
-              "justify": "center",
-              "rot": 0
-            },
-            {
-              "name": "Value",
-              "value": "GND",
-              "at": {
-                "x": 0,
-                "y": 160
-              },
-              "visible": true,
-              "justify": "center",
-              "rot": 0
-            },
-            {
-              "name": "Footprint",
-              "value": "",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            },
-            {
-              "name": "Datasheet",
-              "value": "",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            }
-          ]
         },
         {
           "kind": "symbol",
           "id": "8e9e8313-5777-5e39-99bd-bd6ce48b0cf8",
           "libId": "wirx:R",
           "at": {
-            "x": 4400,
+            "x": 3500,
             "y": 2000
           },
           "rot": 0,
@@ -956,7 +530,7 @@
           "id": "8c3b0cb7-7326-5ff4-aeda-03c1fc680859",
           "libId": "power:GND",
           "at": {
-            "x": 4400,
+            "x": 3500,
             "y": 2150
           },
           "rot": 0,
@@ -965,7 +539,7 @@
           "fields": [
             {
               "name": "Reference",
-              "value": "#PWR06",
+              "value": "#PWR03",
               "at": {
                 "x": 0,
                 "y": 250
@@ -1006,499 +580,913 @@
           ]
         },
         {
-          "kind": "wire",
-          "id": "d0462d2b-2776-5a56-9d45-5b826d98cc33",
-          "a": {
-            "x": 4400,
-            "y": 1850
-          },
-          "b": {
-            "x": 4400,
-            "y": 1600
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "291a966a-06f3-57ea-bbc1-d706b5804eab",
-          "a": {
-            "x": 4400,
-            "y": 1600
-          },
-          "b": {
-            "x": 3250,
-            "y": 1600
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "3a7e0832-a8ef-5fcd-b398-8c790b405f36",
-          "a": {
-            "x": 3250,
-            "y": 1600
-          },
-          "b": {
-            "x": 3250,
-            "y": 1850
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "e544b4e2-45c5-5493-9f79-35868b889dd8",
-          "a": {
-            "x": 3250,
-            "y": 1850
-          },
-          "b": {
-            "x": 2900,
-            "y": 1850
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "6ab3ddca-9323-5471-ae2f-922b8cc51ae6",
-          "a": {
-            "x": 4050,
-            "y": 1950
-          },
-          "b": {
-            "x": 4050,
-            "y": 1700
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "c7792aa8-24d8-5647-9df3-1de27e6ef6a6",
-          "a": {
-            "x": 4050,
-            "y": 1700
-          },
-          "b": {
-            "x": 3350,
-            "y": 1700
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "4c8b1cec-a681-5d0f-97ac-1506bd852713",
-          "a": {
-            "x": 3350,
-            "y": 1700
-          },
-          "b": {
-            "x": 3350,
-            "y": 1950
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "ee5a6053-8cc7-521e-b62f-5c45e02fdd71",
-          "a": {
-            "x": 3350,
-            "y": 1950
-          },
-          "b": {
-            "x": 2900,
-            "y": 1950
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "ef4147fa-4f24-5a87-a896-3501d7fd686b",
-          "a": {
-            "x": 2900,
-            "y": 2350
-          },
-          "b": {
-            "x": 2950,
-            "y": 2350
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "66db5b97-9e6d-5e23-a587-4065d86d9f11",
-          "a": {
-            "x": 2950,
-            "y": 2350
-          },
-          "b": {
-            "x": 2950,
-            "y": 2250
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "4c8d9f4c-7f7d-5ccb-8565-9ee51801514b",
-          "a": {
-            "x": 2950,
-            "y": 2250
-          },
-          "b": {
-            "x": 2900,
-            "y": 2250
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "cfa2512f-ec0c-569d-8029-3af61610762f",
-          "a": {
-            "x": 3350,
-            "y": 2250
-          },
-          "b": {
-            "x": 2950,
-            "y": 2250
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "434b82ac-53cb-58df-b3ec-a08cf3797070",
-          "a": {
-            "x": 3350,
-            "y": 2150
-          },
-          "b": {
-            "x": 3300,
-            "y": 2150
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "63c53734-ee3d-539c-a4cb-449e1e87e3bf",
-          "a": {
-            "x": 3300,
-            "y": 2150
-          },
-          "b": {
-            "x": 3300,
-            "y": 2250
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "c24c22a2-40c7-520d-8954-b679f1ee63b8",
-          "a": {
-            "x": 3350,
-            "y": 3500
-          },
-          "b": {
-            "x": 3300,
-            "y": 3500
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "f1f64161-eddc-506e-9cc2-db5fd8cd4f1e",
-          "a": {
-            "x": 3300,
-            "y": 3500
-          },
-          "b": {
-            "x": 3300,
-            "y": 3300
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "3f0b5060-7c27-547b-945b-16b02368b312",
-          "a": {
-            "x": 3300,
-            "y": 3300
-          },
-          "b": {
-            "x": 3350,
-            "y": 3300
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "cee4f5ca-f06a-5689-914e-c00558814c3d",
-          "a": {
-            "x": 3350,
-            "y": 3300
-          },
-          "b": {
-            "x": 3350,
-            "y": 2550
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "05d38717-0f3c-5637-b100-349db1145cce",
-          "a": {
-            "x": 3350,
-            "y": 2550
-          },
-          "b": {
-            "x": 2950,
-            "y": 2550
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "c134cf1d-0eaf-5997-962f-2f7d9aa40858",
-          "a": {
-            "x": 2950,
-            "y": 2550
-          },
-          "b": {
-            "x": 2950,
-            "y": 2350
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "092857a4-d0c1-5f36-bdaf-0817090229be",
-          "a": {
-            "x": 2900,
-            "y": 2150
-          },
-          "b": {
-            "x": 2950,
-            "y": 2150
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "a24aa9ca-a9b5-59fb-bc2b-c53e2cd1207b",
-          "a": {
-            "x": 2950,
-            "y": 2150
-          },
-          "b": {
-            "x": 2950,
-            "y": 2050
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "f6c0738e-2ef6-5be7-901c-b02fbbbc0c3e",
-          "a": {
-            "x": 2950,
-            "y": 2050
-          },
-          "b": {
-            "x": 2900,
-            "y": 2050
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "336dfc7a-04e1-5c47-a029-6cf4f57a97bc",
-          "a": {
-            "x": 3350,
-            "y": 2350
-          },
-          "b": {
-            "x": 3100,
-            "y": 2350
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "dbb99350-19be-5a44-90e8-25cac6854553",
-          "a": {
-            "x": 3100,
-            "y": 2350
-          },
-          "b": {
-            "x": 3100,
-            "y": 2150
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "5e3c08b6-f4f3-58ff-8361-0008c9cefe65",
-          "a": {
-            "x": 3100,
-            "y": 2150
-          },
-          "b": {
-            "x": 2950,
-            "y": 2150
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "3a8828d6-2c91-5e42-8bd3-a164bc660f69",
-          "a": {
-            "x": 3350,
-            "y": 2450
-          },
-          "b": {
-            "x": 3300,
-            "y": 2450
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "6fa6818c-4480-5cef-a998-3702d1d84638",
-          "a": {
-            "x": 3300,
-            "y": 2450
-          },
-          "b": {
-            "x": 3300,
-            "y": 2350
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "b4f2ece1-8e78-5afc-bb89-785319a72d63",
-          "a": {
-            "x": 2900,
-            "y": 1100
-          },
-          "b": {
-            "x": 2850,
-            "y": 1100
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "024487cc-f2f7-51a4-8a17-63a512144be2",
-          "a": {
-            "x": 2850,
-            "y": 1100
-          },
-          "b": {
-            "x": 2850,
-            "y": 1600
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "2270e435-d048-52e9-8c4a-932a50fd4d64",
-          "a": {
-            "x": 2850,
-            "y": 1600
-          },
-          "b": {
-            "x": 3100,
-            "y": 1600
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "b03597b7-d281-5000-8f05-a801afe40c72",
-          "a": {
-            "x": 3100,
-            "y": 1600
-          },
-          "b": {
-            "x": 3100,
-            "y": 2150
-          }
-        },
-        {
-          "kind": "junction",
-          "id": "10c20435-613c-5c46-809b-2c02a8bfa4ea",
+          "kind": "symbol",
+          "id": "fa4bc2e1-e569-5dd4-837a-221b1dc2bd14",
+          "libId": "wirx:R",
           "at": {
-            "x": 2950,
-            "y": 2150
-          }
+            "x": 3150,
+            "y": 2100
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "R2",
+              "at": {
+                "x": 80,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "5k1",
+              "at": {
+                "x": 80,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Resistor_SMD:R_0402_1005Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
         },
         {
-          "kind": "junction",
-          "id": "9b85db54-6fe5-5d10-832e-6d45fca778e7",
+          "kind": "symbol",
+          "id": "574cd0c6-1000-58ff-b7a7-80af559882c1",
+          "libId": "power:GND",
           "at": {
-            "x": 2950,
+            "x": 3150,
             "y": 2250
-          }
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "#PWR04",
+              "at": {
+                "x": 0,
+                "y": 250
+              },
+              "visible": false,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "GND",
+              "at": {
+                "x": 0,
+                "y": 160
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
         },
         {
-          "kind": "junction",
-          "id": "456467f3-4366-5275-8e1a-6ed84aae564e",
+          "kind": "symbol",
+          "id": "456c6cdb-4945-519d-9eba-6a0c00679cb1",
+          "libId": "wirx:USBLC6-2SC6",
           "at": {
-            "x": 2950,
-            "y": 2350
-          }
+            "x": 4100,
+            "y": 2300
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "U1",
+              "at": {
+                "x": -200,
+                "y": -570
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "USBLC6-2SC6",
+              "at": {
+                "x": -200,
+                "y": 570
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Package_TO_SOT_SMD:SOT-23-6",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
         },
         {
-          "kind": "junction",
-          "id": "bf84dfcc-4569-5337-9dbc-1a8d662a3f39",
+          "kind": "symbol",
+          "id": "f692fc1b-3328-5b0f-b60c-d8cc22f65156",
+          "libId": "power:VBUS",
+          "at": {
+            "x": 4100,
+            "y": 1900
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "#PWR05",
+              "at": {
+                "x": 0,
+                "y": 250
+              },
+              "visible": false,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "VBUS",
+              "at": {
+                "x": 0,
+                "y": -150
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "a22abfb0-cbbb-5abc-b165-9b7a3eea0dc1",
+          "libId": "power:GND",
+          "at": {
+            "x": 4100,
+            "y": 2700
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "#PWR06",
+              "at": {
+                "x": 0,
+                "y": 250
+              },
+              "visible": false,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "GND",
+              "at": {
+                "x": 70,
+                "y": 60
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "b3432803-06e7-5008-a46b-dd7b8d8a4e2a",
+          "libId": "wirx:R",
           "at": {
             "x": 3000,
+            "y": 1100
+          },
+          "rot": 90,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "R3",
+              "at": {
+                "x": 0,
+                "y": -90
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "27",
+              "at": {
+                "x": 0,
+                "y": 90
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Resistor_SMD:R_0402_1005Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "wire",
+          "id": "c7d9c6ed-9bc4-5414-a68c-ca2a880f6e42",
+          "a": {
+            "x": 3150,
+            "y": 1100
+          },
+          "b": {
+            "x": 3250,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "label",
+          "id": "689a92f1-5137-5445-b076-9eeced09b21a",
+          "labelType": "global",
+          "text": "USB_DP",
+          "at": {
+            "x": 3250,
+            "y": 1100
+          },
+          "rot": 0,
+          "shape": "bidirectional"
+        },
+        {
+          "kind": "symbol",
+          "id": "5d910fe8-3bf6-55f0-89d6-e992ead3a473",
+          "libId": "wirx:R",
+          "at": {
+            "x": 3950,
+            "y": 3500
+          },
+          "rot": 90,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "R4",
+              "at": {
+                "x": 0,
+                "y": -90
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "27",
+              "at": {
+                "x": 0,
+                "y": 90
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Resistor_SMD:R_0402_1005Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "wire",
+          "id": "e28b2e20-926f-53eb-bdc4-cf4a0285ddb8",
+          "a": {
+            "x": 4100,
+            "y": 3500
+          },
+          "b": {
+            "x": 4200,
+            "y": 3500
+          }
+        },
+        {
+          "kind": "label",
+          "id": "4fec05ba-a58e-5c94-a7d2-646b58b51052",
+          "labelType": "global",
+          "text": "USB_DM",
+          "at": {
+            "x": 4200,
+            "y": 3500
+          },
+          "rot": 0,
+          "shape": "bidirectional"
+        },
+        {
+          "kind": "wire",
+          "id": "e5794e70-9390-5468-8948-fc4b5ff65e93",
+          "a": {
+            "x": 3500,
+            "y": 1850
+          },
+          "b": {
+            "x": 3500,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "dd518a1b-461b-56ff-af05-53deabfeb1b9",
+          "a": {
+            "x": 3500,
+            "y": 1800
+          },
+          "b": {
+            "x": 2900,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "53db4b3e-2534-581b-b65b-471a8c212e29",
+          "a": {
+            "x": 2900,
+            "y": 1800
+          },
+          "b": {
+            "x": 2900,
+            "y": 1850
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "6adfc958-26f2-5981-8b06-5d56cc3b26b6",
+          "a": {
+            "x": 2900,
+            "y": 1850
+          },
+          "b": {
+            "x": 2850,
+            "y": 1850
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "ffe234a5-23e2-541f-be1a-1d22cce4aa05",
+          "a": {
+            "x": 3150,
+            "y": 1950
+          },
+          "b": {
+            "x": 3150,
+            "y": 1900
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "8cdffc7f-cb0e-5912-aee4-ceea4c102317",
+          "a": {
+            "x": 3150,
+            "y": 1900
+          },
+          "b": {
+            "x": 2900,
+            "y": 1900
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "07f21495-905d-5042-a9af-9b8dc8bd7ea1",
+          "a": {
+            "x": 2900,
+            "y": 1900
+          },
+          "b": {
+            "x": 2900,
+            "y": 1950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "2409ec6e-5ecc-5f77-989b-4fc862ee49fa",
+          "a": {
+            "x": 2900,
+            "y": 1950
+          },
+          "b": {
+            "x": 2850,
+            "y": 1950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "0bd3e376-e5fd-56c8-84a8-31ae55a139a8",
+          "a": {
+            "x": 2850,
+            "y": 2350
+          },
+          "b": {
+            "x": 2900,
+            "y": 2350
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "abab16cc-525c-5fee-b5f6-f013473085be",
+          "a": {
+            "x": 2900,
+            "y": 2350
+          },
+          "b": {
+            "x": 2900,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "e97a4e04-3d9a-54bb-b7de-6fec567d7206",
+          "a": {
+            "x": 2900,
+            "y": 2250
+          },
+          "b": {
+            "x": 2850,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "6e9b125c-5a54-58c7-ba7d-f9d44a68ba39",
+          "a": {
+            "x": 3800,
+            "y": 2350
+          },
+          "b": {
+            "x": 3700,
+            "y": 2350
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "e10774bc-c975-5fba-bf22-b981359e4a4e",
+          "a": {
+            "x": 3700,
+            "y": 2350
+          },
+          "b": {
+            "x": 3700,
+            "y": 2600
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "c2cdfd6c-94dc-5d13-89cf-7eb28e577436",
+          "a": {
+            "x": 3700,
+            "y": 2600
+          },
+          "b": {
+            "x": 2900,
+            "y": 2600
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "23e8ae39-814c-565c-b7ba-fd08d8b5c0e9",
+          "a": {
+            "x": 2900,
+            "y": 2600
+          },
+          "b": {
+            "x": 2900,
+            "y": 2350
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "4f273ea8-a994-5187-9fd1-124faa35f937",
+          "a": {
+            "x": 3800,
+            "y": 2450
+          },
+          "b": {
+            "x": 3700,
+            "y": 2450
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "5c71c762-bad2-5e4e-99f9-a96b3af7f6c7",
+          "a": {
+            "x": 3800,
+            "y": 3500
+          },
+          "b": {
+            "x": 3700,
+            "y": 3500
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "c6147e14-fc92-53ce-980a-91928c0ea676",
+          "a": {
+            "x": 3700,
+            "y": 3500
+          },
+          "b": {
+            "x": 3700,
+            "y": 2600
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "2c20c9ce-7fa6-519b-ac3c-2296cb6e6374",
+          "a": {
+            "x": 2850,
+            "y": 2150
+          },
+          "b": {
+            "x": 2900,
+            "y": 2150
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "2cb20b13-3df8-5b24-b087-74c57143f0fc",
+          "a": {
+            "x": 2900,
+            "y": 2150
+          },
+          "b": {
+            "x": 2900,
+            "y": 2050
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "cf8111bf-c75c-5103-9ec1-1d4cd9442e7a",
+          "a": {
+            "x": 2900,
+            "y": 2050
+          },
+          "b": {
+            "x": 2850,
+            "y": 2050
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "f928b60c-4230-5dda-b737-7ff01f589b61",
+          "a": {
+            "x": 3800,
+            "y": 2150
+          },
+          "b": {
+            "x": 3600,
+            "y": 2150
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "10502b39-1327-5339-b025-b95bcac323e0",
+          "a": {
+            "x": 3600,
+            "y": 2150
+          },
+          "b": {
+            "x": 3600,
+            "y": 2500
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "bdaccca5-0b20-51c2-aa91-a47c6cb1c7d2",
+          "a": {
+            "x": 3600,
+            "y": 2500
+          },
+          "b": {
+            "x": 3050,
+            "y": 2500
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "db8ea2c9-879c-542d-9d1b-9103c3c7b119",
+          "a": {
+            "x": 3050,
+            "y": 2500
+          },
+          "b": {
+            "x": 3050,
+            "y": 2150
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "2bd7880a-9dfc-509d-9919-1029824115e7",
+          "a": {
+            "x": 3050,
+            "y": 2150
+          },
+          "b": {
+            "x": 2900,
+            "y": 2150
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "b92a366c-a582-5a65-b2ba-8aa5ccadfa0a",
+          "a": {
+            "x": 3800,
+            "y": 2250
+          },
+          "b": {
+            "x": 3600,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "7157f2bf-f857-589a-b113-7780939b76eb",
+          "a": {
+            "x": 2850,
+            "y": 1100
+          },
+          "b": {
+            "x": 2800,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "77838817-f5aa-5575-95d6-07aafab087b6",
+          "a": {
+            "x": 2800,
+            "y": 1100
+          },
+          "b": {
+            "x": 2800,
+            "y": 1350
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "42cab245-91b7-5cbd-90ba-76d853760f7c",
+          "a": {
+            "x": 2800,
+            "y": 1350
+          },
+          "b": {
+            "x": 3700,
+            "y": 1350
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "251a0684-c92e-5ae9-a17d-307c2cc22236",
+          "a": {
+            "x": 3700,
+            "y": 1350
+          },
+          "b": {
+            "x": 3700,
+            "y": 2150
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "a3b441b0-a1cd-5e8a-bae1-d28c7a2f30e7",
+          "at": {
+            "x": 2900,
+            "y": 2150
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "e41c06dc-7c29-5d02-93d9-f107fb70fbbd",
+          "at": {
+            "x": 2900,
+            "y": 2350
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "132b331f-fb63-590c-bac7-e613637e2dfc",
+          "at": {
+            "x": 2950,
             "y": 1550
           }
         },
         {
           "kind": "junction",
-          "id": "072a3071-ac0e-5918-a084-6bb3312bdd5f",
+          "id": "24a5782b-58f0-507c-aa4c-872e018c233f",
           "at": {
-            "x": 3000,
+            "x": 2950,
             "y": 1650
           }
         },
         {
           "kind": "junction",
-          "id": "8dc7a835-0ad0-5ed7-856d-be9249fa7b62",
+          "id": "190b990b-ba69-5da3-8538-7761bbe75e5a",
           "at": {
-            "x": 3000,
+            "x": 2950,
             "y": 2750
           }
         },
         {
           "kind": "junction",
-          "id": "afba9018-1584-5c56-be51-fcd2f3991b43",
+          "id": "bcbfa339-0889-5bb3-80e1-72d464fa66aa",
           "at": {
-            "x": 3000,
+            "x": 2950,
             "y": 2850
           }
         },
         {
           "kind": "junction",
-          "id": "0de1064c-ad8b-5d1c-bd1c-c4395116401e",
+          "id": "de9fd1c1-f984-5ab3-8eb6-f0ef544df641",
           "at": {
-            "x": 3000,
+            "x": 2950,
             "y": 2950
           }
         },
         {
           "kind": "junction",
-          "id": "4d949a8c-38d4-54ab-afda-852cc07fc526",
+          "id": "29a987e9-8084-56f2-8ff4-0e61252ea2e8",
           "at": {
-            "x": 3000,
+            "x": 2950,
             "y": 3050
           }
         },
         {
           "kind": "junction",
-          "id": "d863027c-d7de-5582-8248-db6b2f1b1de3",
+          "id": "09cf73e1-77c4-59ab-8084-e9728c06b5f4",
           "at": {
-            "x": 3000,
+            "x": 2950,
             "y": 3150
           }
         },
         {
           "kind": "junction",
-          "id": "f67634ba-a3c1-5191-8291-d44549a4d575",
+          "id": "10ec785c-b210-5f1d-95e9-b370281c6f22",
           "at": {
-            "x": 3000,
+            "x": 2950,
             "y": 3250
           }
         },
         {
           "kind": "junction",
-          "id": "2f07cd41-714c-5bfc-b5be-178641f850fb",
+          "id": "a226731d-f5e3-59aa-aae5-0ea0408cf6c2",
           "at": {
-            "x": 3100,
-            "y": 2150
-          }
-        },
-        {
-          "kind": "junction",
-          "id": "62f84fd5-3a80-5daa-86ba-1cb488d1e216",
-          "at": {
-            "x": 3300,
+            "x": 3600,
             "y": 2250
           }
         },
         {
           "kind": "junction",
-          "id": "3e5b8973-37ff-5d22-912d-c2af9373b186",
+          "id": "5f2cf620-9d17-5bf6-8826-54ad46aae625",
           "at": {
-            "x": 3300,
-            "y": 2350
+            "x": 3700,
+            "y": 2150
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "1eb8ddff-37a5-5f11-a110-e00575b5f8ae",
+          "at": {
+            "x": 3700,
+            "y": 2450
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "8a60aad5-e4e0-528c-9134-e81109fae06f",
+          "at": {
+            "x": 3700,
+            "y": 2600
           }
         },
         {
@@ -1506,11 +1494,11 @@
           "id": "8d2fbb9f-f039-5407-afdb-88bfe453b108",
           "name": "usb_input",
           "at": {
-            "x": 2200,
+            "x": 2150,
             "y": 750
           },
           "size": {
-            "w": 2600,
+            "w": 2550,
             "h": 3100
           }
         },
@@ -1519,7 +1507,7 @@
           "id": "a7dd314f-7c30-5409-ba7c-e938fa2bf2ca",
           "libId": "wirx:D_Schottky",
           "at": {
-            "x": 5250,
+            "x": 5300,
             "y": 2300
           },
           "rot": 90,
@@ -1530,22 +1518,22 @@
               "name": "Reference",
               "value": "D1",
               "at": {
-                "x": 90,
+                "x": -90,
                 "y": -15
               },
               "visible": true,
-              "justify": "left",
+              "justify": "right",
               "rot": 0
             },
             {
               "name": "Value",
               "value": "SS34",
               "at": {
-                "x": 90,
+                "x": -90,
                 "y": 45
               },
               "visible": true,
-              "justify": "left",
+              "justify": "right",
               "rot": 0
             },
             {
@@ -1573,7 +1561,7 @@
           "id": "d09187dd-a8ac-51fe-98d3-b3f0960aa461",
           "libId": "power:+5V",
           "at": {
-            "x": 5400,
+            "x": 5450,
             "y": 2550
           },
           "rot": 0,
@@ -1627,7 +1615,7 @@
           "id": "f40a2966-45df-587e-8291-a91e473e003a",
           "libId": "power:PWR_FLAG",
           "at": {
-            "x": 5600,
+            "x": 5650,
             "y": 2550
           },
           "rot": 0,
@@ -1678,37 +1666,37 @@
         },
         {
           "kind": "wire",
-          "id": "35299aed-eb4e-5fc2-81a8-27cc867d112a",
+          "id": "e6f946f8-7f11-5a09-a840-6ae1eade2ca4",
           "a": {
-            "x": 5250,
+            "x": 5300,
             "y": 2450
           },
           "b": {
-            "x": 5250,
+            "x": 5300,
             "y": 2550
           }
         },
         {
           "kind": "wire",
-          "id": "eb6f5ad5-7f00-5ee2-947b-6d2d4e8eddcc",
+          "id": "18beada3-7baf-57ce-8c1b-03bb7699d70e",
           "a": {
-            "x": 5250,
+            "x": 5300,
             "y": 2550
           },
           "b": {
-            "x": 5400,
+            "x": 5450,
             "y": 2550
           }
         },
         {
           "kind": "wire",
-          "id": "c5db93ba-ae0c-5b7c-a14e-6b352caeee90",
+          "id": "a5829102-7ede-53f3-9f34-3c62c03d4f31",
           "a": {
-            "x": 5400,
+            "x": 5450,
             "y": 2550
           },
           "b": {
-            "x": 5600,
+            "x": 5650,
             "y": 2550
           }
         },
@@ -1717,7 +1705,7 @@
           "id": "5345a0a6-c54d-5195-bec2-9908f7e63580",
           "libId": "power:VBUS",
           "at": {
-            "x": 5250,
+            "x": 5300,
             "y": 2150
           },
           "rot": 0,
@@ -1768,9 +1756,9 @@
         },
         {
           "kind": "junction",
-          "id": "824a864f-6e98-5733-80f5-ccaffb3795f1",
+          "id": "6bdd08b9-bb94-551a-8f3a-75a5840528ba",
           "at": {
-            "x": 5400,
+            "x": 5450,
             "y": 2550
           }
         },
@@ -1779,11 +1767,11 @@
           "id": "6c8a5057-7d75-52ff-86ff-52225bf08618",
           "name": "Power",
           "at": {
-            "x": 4950,
+            "x": 4850,
             "y": 750
           },
           "size": {
-            "w": 1000,
+            "w": 1150,
             "h": 3100
           }
         },
@@ -1792,7 +1780,7 @@
           "id": "dd415ab3-a29d-55c4-8d0f-023a2742ab27",
           "libId": "wirx:AP2112K-3.3",
           "at": {
-            "x": 7250,
+            "x": 7300,
             "y": 2250
           },
           "rot": 0,
@@ -1846,7 +1834,7 @@
           "id": "68c939ab-329d-564d-a623-41f7ef51aa10",
           "libId": "power:+5V",
           "at": {
-            "x": 6850,
+            "x": 6900,
             "y": 2100
           },
           "rot": 0,
@@ -1897,49 +1885,49 @@
         },
         {
           "kind": "wire",
-          "id": "4dc246e5-cd1e-55ae-99d1-a3db2fe83e87",
+          "id": "158676ea-069d-5530-8943-967420d057cb",
           "a": {
-            "x": 6950,
+            "x": 7000,
             "y": 2200
           },
           "b": {
-            "x": 6850,
+            "x": 6900,
             "y": 2200
           }
         },
         {
           "kind": "wire",
-          "id": "8314fafc-4844-5155-9cd5-c89c08dde44b",
+          "id": "804320f5-4a39-54ea-be2c-ccc24f45b4fa",
           "a": {
-            "x": 6950,
+            "x": 7000,
             "y": 2300
           },
           "b": {
-            "x": 6850,
-            "y": 2300
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "9e878f25-c6a2-51a7-aa6f-3eb0bc847732",
-          "a": {
-            "x": 6850,
-            "y": 2200
-          },
-          "b": {
-            "x": 6850,
+            "x": 6900,
             "y": 2300
           }
         },
         {
           "kind": "wire",
-          "id": "1d818815-16c4-5c6f-aa8f-5118a00add81",
+          "id": "94e431bb-e023-552c-a717-50653cd64ac4",
           "a": {
-            "x": 6850,
+            "x": 6900,
             "y": 2200
           },
           "b": {
-            "x": 6850,
+            "x": 6900,
+            "y": 2300
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "efd93854-375d-5834-b473-55e8786cbbd0",
+          "a": {
+            "x": 6900,
+            "y": 2200
+          },
+          "b": {
+            "x": 6900,
             "y": 2100
           }
         },
@@ -1948,7 +1936,7 @@
           "id": "1b9e002b-26ea-50ed-9fe3-b0ce9e3099a6",
           "libId": "power:+3V3",
           "at": {
-            "x": 7650,
+            "x": 7700,
             "y": 2200
           },
           "rot": 0,
@@ -1999,13 +1987,13 @@
         },
         {
           "kind": "wire",
-          "id": "8bec0e1c-dbbf-5db9-8120-b4f86fab9794",
+          "id": "3a09a76f-3007-58a6-97c1-35ae4e443b74",
           "a": {
-            "x": 7550,
+            "x": 7600,
             "y": 2200
           },
           "b": {
-            "x": 7650,
+            "x": 7700,
             "y": 2200
           }
         },
@@ -2014,7 +2002,7 @@
           "id": "aa72ac67-8e50-5211-ae29-b7b35ee55439",
           "libId": "power:GND",
           "at": {
-            "x": 7250,
+            "x": 7300,
             "y": 2550
           },
           "rot": 0,
@@ -2068,7 +2056,7 @@
           "id": "49d46f13-5c8b-5d9e-a53a-9e34338a48f4",
           "libId": "wirx:C",
           "at": {
-            "x": 6400,
+            "x": 6450,
             "y": 2200
           },
           "rot": 0,
@@ -2122,7 +2110,7 @@
           "id": "c6670779-ef9b-5a7e-a912-038bf724994a",
           "libId": "power:+5V",
           "at": {
-            "x": 6400,
+            "x": 6450,
             "y": 2050
           },
           "rot": 0,
@@ -2176,7 +2164,7 @@
           "id": "fe36972f-704e-5454-9ccd-4f3ba2d91e73",
           "libId": "power:GND",
           "at": {
-            "x": 6400,
+            "x": 6450,
             "y": 2350
           },
           "rot": 0,
@@ -2230,7 +2218,7 @@
           "id": "abb24743-1d12-5820-89ab-a13026fa1915",
           "libId": "wirx:C",
           "at": {
-            "x": 8100,
+            "x": 8150,
             "y": 2200
           },
           "rot": 0,
@@ -2284,7 +2272,7 @@
           "id": "fc518124-4e71-5ac4-a422-447ef4a330c9",
           "libId": "power:+3V3",
           "at": {
-            "x": 8100,
+            "x": 8150,
             "y": 2050
           },
           "rot": 0,
@@ -2338,7 +2326,7 @@
           "id": "71834752-746e-5eea-b160-a3ad672f7dda",
           "libId": "power:GND",
           "at": {
-            "x": 8100,
+            "x": 8150,
             "y": 2350
           },
           "rot": 0,
@@ -2389,9 +2377,9 @@
         },
         {
           "kind": "junction",
-          "id": "17af36e6-5bc3-5463-8697-f29d78a870ed",
+          "id": "a6bbdaa0-e51e-585d-8933-805adc8e6676",
           "at": {
-            "x": 6850,
+            "x": 6900,
             "y": 2200
           }
         },
@@ -2400,7 +2388,7 @@
           "id": "25c81999-4dcc-58db-ba0f-261691758504",
           "name": "ldo_3v3",
           "at": {
-            "x": 6100,
+            "x": 6150,
             "y": 750
           },
           "size": {
@@ -2413,7 +2401,7 @@
           "id": "1a59bc7c-611a-51bc-9826-c4cb9d15070d",
           "libId": "wirx:R",
           "at": {
-            "x": 9000,
+            "x": 9050,
             "y": 1950
           },
           "rot": 0,
@@ -2467,7 +2455,7 @@
           "id": "d55f2556-9d86-5db6-b001-2d380c4b460b",
           "libId": "power:+3V3",
           "at": {
-            "x": 9000,
+            "x": 9050,
             "y": 1800
           },
           "rot": 0,
@@ -2521,7 +2509,7 @@
           "id": "90cdf59a-1849-5d56-993e-8097737077f6",
           "libId": "wirx:LED",
           "at": {
-            "x": 9000,
+            "x": 9050,
             "y": 2550
           },
           "rot": 90,
@@ -2575,7 +2563,7 @@
           "id": "8e5250e2-138a-53fd-8d88-259acdf0ebbb",
           "libId": "power:GND",
           "at": {
-            "x": 9000,
+            "x": 9050,
             "y": 2700
           },
           "rot": 0,
@@ -2626,13 +2614,13 @@
         },
         {
           "kind": "wire",
-          "id": "e2b9b77a-f3c2-566a-9cee-2d1c238a9b2a",
+          "id": "87ec5213-948d-59a3-841d-2acd1dbeb494",
           "a": {
-            "x": 9000,
+            "x": 9050,
             "y": 2400
           },
           "b": {
-            "x": 9000,
+            "x": 9050,
             "y": 2100
           }
         },
@@ -2641,7 +2629,7 @@
           "id": "29538df0-5f0a-5689-a57d-814bd07c2976",
           "name": "power_led",
           "at": {
-            "x": 8650,
+            "x": 8700,
             "y": 750
           },
           "size": {
@@ -2738,7 +2726,7 @@
           "id": "37264159-d57e-595e-93f6-4b9039695b75",
           "libId": "power:GND",
           "at": {
-            "x": 6950,
+            "x": 6700,
             "y": 1250
           },
           "rot": 0,
@@ -2761,7 +2749,7 @@
               "value": "GND",
               "at": {
                 "x": 0,
-                "y": 230
+                "y": 160
               },
               "visible": true,
               "justify": "center",
@@ -2789,13 +2777,13 @@
         },
         {
           "kind": "wire",
-          "id": "76343d25-e246-53e9-aa97-67709991f60b",
+          "id": "1749059b-4a1e-599a-ae1f-c49c659f6aa7",
           "a": {
             "x": 7200,
             "y": 1250
           },
           "b": {
-            "x": 6950,
+            "x": 6700,
             "y": 1250
           }
         },
@@ -2827,11 +2815,11 @@
           "id": "2203626e-6b84-5b58-8674-9a4e2f198781",
           "name": "MCU",
           "at": {
-            "x": 6600,
+            "x": 6400,
             "y": 750
           },
           "size": {
-            "w": 1050,
+            "w": 1250,
             "h": 1000
           }
         },
@@ -9557,7 +9545,7 @@
           "id": "4898c45e-9bc0-5c1e-9e7e-7f76c1b6d218",
           "libId": "wirx:Conn_02x20",
           "at": {
-            "x": 4750,
+            "x": 4650,
             "y": 2100
           },
           "rot": 0,
@@ -9611,7 +9599,7 @@
           "id": "e86a996b-e30e-5116-957c-8f1e40923126",
           "libId": "power:GND",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 3150
           },
           "rot": 0,
@@ -9662,49 +9650,49 @@
         },
         {
           "kind": "wire",
-          "id": "5caa9015-7b09-553d-b377-6c51576d226b",
+          "id": "9564cd12-1333-5235-af85-25b501c15760",
+          "a": {
+            "x": 4900,
+            "y": 2950
+          },
+          "b": {
+            "x": 5000,
+            "y": 2950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "b406f874-765a-5759-b7c3-1a1521eefe27",
+          "a": {
+            "x": 4900,
+            "y": 3050
+          },
+          "b": {
+            "x": 5000,
+            "y": 3050
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "e5f5802b-ad2a-5f1a-9a6a-9d9c160b5625",
           "a": {
             "x": 5000,
             "y": 2950
           },
           "b": {
-            "x": 5100,
-            "y": 2950
+            "x": 5000,
+            "y": 3050
           }
         },
         {
           "kind": "wire",
-          "id": "957874b8-ad17-5190-a7cc-1598902443e9",
+          "id": "5788b6ab-02fd-525f-a5e3-463e72af2aca",
           "a": {
             "x": 5000,
             "y": 3050
           },
           "b": {
-            "x": 5100,
-            "y": 3050
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "ffec51e4-aec8-5223-8d2b-22f464f71019",
-          "a": {
-            "x": 5100,
-            "y": 2950
-          },
-          "b": {
-            "x": 5100,
-            "y": 3050
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "99fc4ab5-01bf-5daf-a5f1-d38f1ea12a29",
-          "a": {
-            "x": 5100,
-            "y": 3050
-          },
-          "b": {
-            "x": 5100,
+            "x": 5000,
             "y": 3150
           }
         },
@@ -9713,7 +9701,7 @@
           "id": "6c0486c9-aee8-5568-ad1e-4f4d5d8a88f3",
           "libId": "power:GND",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 3150
           },
           "rot": 0,
@@ -9764,71 +9752,71 @@
         },
         {
           "kind": "wire",
-          "id": "3f7569a3-8e56-5775-a131-574c9e498f57",
-          "a": {
-            "x": 4500,
-            "y": 2950
-          },
-          "b": {
-            "x": 4400,
-            "y": 2950
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "4604a6ce-03ef-5853-b3ad-5db0b8d95b47",
-          "a": {
-            "x": 4500,
-            "y": 3050
-          },
-          "b": {
-            "x": 4400,
-            "y": 3050
-          }
-        },
-        {
-          "kind": "wire",
-          "id": "79b1954f-7e32-596f-bc9f-2945060c50c6",
+          "id": "6e4ca159-fdbb-57c4-8b80-469a3d8d502b",
           "a": {
             "x": 4400,
             "y": 2950
           },
           "b": {
-            "x": 4400,
-            "y": 3050
+            "x": 4300,
+            "y": 2950
           }
         },
         {
           "kind": "wire",
-          "id": "edca490b-052f-5bb3-ac60-b24d146306a9",
+          "id": "8a52c9a9-546d-5289-97a9-aa77f19d5a09",
           "a": {
             "x": 4400,
             "y": 3050
           },
           "b": {
-            "x": 4400,
+            "x": 4300,
+            "y": 3050
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "0a77f048-8bf9-5755-a080-91cfde097ce1",
+          "a": {
+            "x": 4300,
+            "y": 2950
+          },
+          "b": {
+            "x": 4300,
+            "y": 3050
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "0ccddeba-2e7e-5e5a-bc29-1546c678d5b0",
+          "a": {
+            "x": 4300,
+            "y": 3050
+          },
+          "b": {
+            "x": 4300,
             "y": 3150
           }
         },
         {
           "kind": "wire",
-          "id": "fbdd7e50-c395-5d4c-80d4-67d490e4b2ba",
+          "id": "e055e827-9726-5530-9113-5dbc5bcb4a7d",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 1150
           },
           "b": {
-            "x": 4400,
+            "x": 4300,
             "y": 1150
           }
         },
         {
           "kind": "label",
-          "id": "4e0fa001-90bc-5df2-a334-776559d9ac5b",
+          "id": "49f38c19-f4cc-5e1f-9ae2-768d88d2b77c",
           "labelType": "global",
           "text": "GPIO0",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 1150
           },
           "rot": 180,
@@ -9836,23 +9824,23 @@
         },
         {
           "kind": "wire",
-          "id": "0418d1ee-c952-5880-91f2-0790af392e3c",
+          "id": "2b2c3c27-279c-500a-af4f-01beb36ec3f5",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 1150
           },
           "b": {
-            "x": 5100,
+            "x": 5000,
             "y": 1150
           }
         },
         {
           "kind": "label",
-          "id": "12bfb03f-2df2-5498-945f-b773b32c42b6",
+          "id": "5b84d6d0-c73a-5d8f-90cf-e61e98a29289",
           "labelType": "global",
           "text": "GPIO1",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 1150
           },
           "rot": 0,
@@ -9860,23 +9848,23 @@
         },
         {
           "kind": "wire",
-          "id": "9be6dbb7-4e1a-5c8f-a464-749afd706731",
+          "id": "d69a8582-a28d-5735-85c5-0d7ddf036deb",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 1250
           },
           "b": {
-            "x": 4400,
+            "x": 4300,
             "y": 1250
           }
         },
         {
           "kind": "label",
-          "id": "3cfb7e29-b583-5448-9c8a-78ef5dd8165d",
+          "id": "8013ca7b-3a78-54fe-8570-b91300edf8db",
           "labelType": "global",
           "text": "GPIO2",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 1250
           },
           "rot": 180,
@@ -9884,23 +9872,23 @@
         },
         {
           "kind": "wire",
-          "id": "24c87aa3-e8d3-5fd3-84e4-65a8caf0ce58",
+          "id": "ba664d9f-6d73-5088-934c-bfffad5e031c",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 1250
           },
           "b": {
-            "x": 5100,
+            "x": 5000,
             "y": 1250
           }
         },
         {
           "kind": "label",
-          "id": "a994a383-95ad-5974-b316-43b9ccac410b",
+          "id": "920b96ac-4457-5339-a32b-32be8725390a",
           "labelType": "global",
           "text": "GPIO3",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 1250
           },
           "rot": 0,
@@ -9908,23 +9896,23 @@
         },
         {
           "kind": "wire",
-          "id": "eaf01b1e-0f91-5b51-bd49-032d218cebc2",
+          "id": "f67e88d0-e498-520a-acb9-3e2471e15419",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 1350
           },
           "b": {
-            "x": 4400,
+            "x": 4300,
             "y": 1350
           }
         },
         {
           "kind": "label",
-          "id": "9105a639-d7f3-5c0c-96cc-48b785251cd1",
+          "id": "36d303da-ca38-596c-9bba-0e242d41171b",
           "labelType": "global",
           "text": "GPIO4",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 1350
           },
           "rot": 180,
@@ -9932,23 +9920,23 @@
         },
         {
           "kind": "wire",
-          "id": "fcb09021-e35a-547f-8c68-184ab9c96b77",
+          "id": "dc112708-76e5-59a8-b94d-9fbae0ab4c55",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 1350
           },
           "b": {
-            "x": 5100,
+            "x": 5000,
             "y": 1350
           }
         },
         {
           "kind": "label",
-          "id": "92ab1ee3-1692-570d-8d22-afdfb01df231",
+          "id": "31215d30-3dcc-5ba6-9e20-f768cbd7a9ee",
           "labelType": "global",
           "text": "GPIO5",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 1350
           },
           "rot": 0,
@@ -9956,23 +9944,23 @@
         },
         {
           "kind": "wire",
-          "id": "38da9e16-62c9-5f70-bfa3-bc32b7a50a08",
+          "id": "118c7c07-a5dd-5d58-aaa0-f8d0ffbe968e",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 1450
           },
           "b": {
-            "x": 4400,
+            "x": 4300,
             "y": 1450
           }
         },
         {
           "kind": "label",
-          "id": "ace02826-53c6-5f38-b11d-540ea27ba6d5",
+          "id": "c3decf82-aa87-5cb2-8061-df31c0ca1d83",
           "labelType": "global",
           "text": "GPIO6",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 1450
           },
           "rot": 180,
@@ -9980,23 +9968,23 @@
         },
         {
           "kind": "wire",
-          "id": "27d1aa14-797d-5993-a8ae-c2f65f224868",
+          "id": "a49897b5-5a53-5b47-867c-c47ac091966c",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 1450
           },
           "b": {
-            "x": 5100,
+            "x": 5000,
             "y": 1450
           }
         },
         {
           "kind": "label",
-          "id": "d5697276-c4ae-55b6-87f0-0206bb7d668f",
+          "id": "c4480176-0abc-58a3-ab3d-4ff0de7ca21e",
           "labelType": "global",
           "text": "GPIO7",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 1450
           },
           "rot": 0,
@@ -10004,23 +9992,23 @@
         },
         {
           "kind": "wire",
-          "id": "d708c4aa-72af-51f4-a8d0-d41d11524bcd",
+          "id": "eefba732-6c08-5212-907a-2ca0f457dc22",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 1550
           },
           "b": {
-            "x": 4400,
+            "x": 4300,
             "y": 1550
           }
         },
         {
           "kind": "label",
-          "id": "f6e01dd6-355a-5622-adb1-ff5b319a6748",
+          "id": "63619780-993f-59f5-8602-9822242706cc",
           "labelType": "global",
           "text": "GPIO8",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 1550
           },
           "rot": 180,
@@ -10028,23 +10016,23 @@
         },
         {
           "kind": "wire",
-          "id": "7312c1c7-2cf3-5f9c-bf5e-445dc5c7739f",
+          "id": "1f9d0677-ffa0-5e7d-9237-9469fd50ea92",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 1550
           },
           "b": {
-            "x": 5100,
+            "x": 5000,
             "y": 1550
           }
         },
         {
           "kind": "label",
-          "id": "06814903-0a38-518b-ad28-5f76dc327604",
+          "id": "11b533b7-50ec-5e30-84fb-89eea3c2099a",
           "labelType": "global",
           "text": "GPIO9",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 1550
           },
           "rot": 0,
@@ -10052,23 +10040,23 @@
         },
         {
           "kind": "wire",
-          "id": "97d2531a-7b4e-5bd0-9a16-1877a8b33db7",
+          "id": "d0c99107-4f92-563b-80f6-64dba03a4c3b",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 1650
           },
           "b": {
-            "x": 4400,
+            "x": 4300,
             "y": 1650
           }
         },
         {
           "kind": "label",
-          "id": "f0893fff-16db-510b-91ec-cdb729547912",
+          "id": "e77ddad9-4440-5c35-8e7f-2e54be26290d",
           "labelType": "global",
           "text": "GPIO10",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 1650
           },
           "rot": 180,
@@ -10076,23 +10064,23 @@
         },
         {
           "kind": "wire",
-          "id": "2571b725-45ab-5575-a47c-7b1d558379d9",
+          "id": "fcf2f0a5-b870-5e8f-a638-fefa021bc2ea",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 1650
           },
           "b": {
-            "x": 5100,
+            "x": 5000,
             "y": 1650
           }
         },
         {
           "kind": "label",
-          "id": "7fc367d4-1fc8-5209-a4a3-8b1ae369f38d",
+          "id": "252450b2-c83c-57f3-9aa3-65fe1320543d",
           "labelType": "global",
           "text": "GPIO11",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 1650
           },
           "rot": 0,
@@ -10100,23 +10088,23 @@
         },
         {
           "kind": "wire",
-          "id": "d71b2f8c-1bb1-5db3-b3da-40315fc4c264",
+          "id": "7eb96020-e32e-50f3-913b-c3faa206d0d3",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 1750
           },
           "b": {
-            "x": 4400,
+            "x": 4300,
             "y": 1750
           }
         },
         {
           "kind": "label",
-          "id": "67e948c3-82f1-5818-a823-b08e71083b74",
+          "id": "bafd3b5a-3105-590a-8e95-a81d8c3651b0",
           "labelType": "global",
           "text": "GPIO12",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 1750
           },
           "rot": 180,
@@ -10124,23 +10112,23 @@
         },
         {
           "kind": "wire",
-          "id": "89094d4d-f5d3-5373-9367-7f09ef56454d",
+          "id": "50ed3fb2-697c-598c-8be8-aa5ebf814a6d",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 1750
           },
           "b": {
-            "x": 5100,
+            "x": 5000,
             "y": 1750
           }
         },
         {
           "kind": "label",
-          "id": "895f013c-43d7-549f-ac8f-21a888461c1d",
+          "id": "7e7688ce-c3f2-509b-b314-12ff735ee1a8",
           "labelType": "global",
           "text": "GPIO13",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 1750
           },
           "rot": 0,
@@ -10148,23 +10136,23 @@
         },
         {
           "kind": "wire",
-          "id": "eb1650d6-e14d-5be3-9943-5c3acb827eaf",
+          "id": "76f395d1-e2c0-53bd-8c98-f447cbcb3d46",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 1850
           },
           "b": {
-            "x": 4400,
+            "x": 4300,
             "y": 1850
           }
         },
         {
           "kind": "label",
-          "id": "a0a365c1-a8e0-5dc3-8c63-2fee4f325ec7",
+          "id": "faf8582f-0238-5aca-aa53-ee590527a0c7",
           "labelType": "global",
           "text": "GPIO14",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 1850
           },
           "rot": 180,
@@ -10172,23 +10160,23 @@
         },
         {
           "kind": "wire",
-          "id": "ba56a6b6-33ed-5d0a-abb5-bbcdba986f2f",
+          "id": "c97ccbca-242d-5fd0-9163-97007d890a8f",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 1850
           },
           "b": {
-            "x": 5100,
+            "x": 5000,
             "y": 1850
           }
         },
         {
           "kind": "label",
-          "id": "20f330a9-1597-546d-a79c-4826724bf475",
+          "id": "b9f8cb3d-e495-5194-a154-098d584ae29c",
           "labelType": "global",
           "text": "GPIO15",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 1850
           },
           "rot": 0,
@@ -10196,23 +10184,23 @@
         },
         {
           "kind": "wire",
-          "id": "2bb14d3e-f3aa-5b14-adb8-3b6087907e39",
+          "id": "9df449c2-4624-5fc0-8626-564124764467",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 1950
           },
           "b": {
-            "x": 4400,
+            "x": 4300,
             "y": 1950
           }
         },
         {
           "kind": "label",
-          "id": "6c54c168-4099-58a9-8406-810b7d1cb78c",
+          "id": "609b6324-32cc-5914-a988-566b0ea8beb4",
           "labelType": "global",
           "text": "GPIO16",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 1950
           },
           "rot": 180,
@@ -10220,23 +10208,23 @@
         },
         {
           "kind": "wire",
-          "id": "083faac4-a490-5260-83af-c4aeb3ac27a8",
+          "id": "4633b2ab-fc00-5a08-8af0-104a84d37a22",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 1950
           },
           "b": {
-            "x": 5100,
+            "x": 5000,
             "y": 1950
           }
         },
         {
           "kind": "label",
-          "id": "d43a89af-b82b-58b7-b375-989ca3e99d3e",
+          "id": "66026679-e587-56b5-b04d-527dc88085c8",
           "labelType": "global",
           "text": "GPIO17",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 1950
           },
           "rot": 0,
@@ -10244,23 +10232,23 @@
         },
         {
           "kind": "wire",
-          "id": "12cbe8df-2d17-5b3c-973b-1e85c2881321",
+          "id": "f21f23a7-705f-51a4-9968-4d4a9b46fc27",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 2050
           },
           "b": {
-            "x": 4400,
+            "x": 4300,
             "y": 2050
           }
         },
         {
           "kind": "label",
-          "id": "07946b4c-febb-5535-a190-f6de86b89f23",
+          "id": "89a47a07-e2d9-583c-adef-e1b8999921b7",
           "labelType": "global",
           "text": "GPIO18",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 2050
           },
           "rot": 180,
@@ -10268,23 +10256,23 @@
         },
         {
           "kind": "wire",
-          "id": "ccbddabe-970a-5d47-a6cb-1f2172f61022",
+          "id": "eeef691b-6b7f-5c91-bb3f-204de52f3f82",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 2050
           },
           "b": {
-            "x": 5100,
+            "x": 5000,
             "y": 2050
           }
         },
         {
           "kind": "label",
-          "id": "edf08d0c-ec49-59b7-bad5-486e73527b66",
+          "id": "e3d7a345-1a85-56c5-8240-af8dc38ceff2",
           "labelType": "global",
           "text": "GPIO19",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 2050
           },
           "rot": 0,
@@ -10292,23 +10280,23 @@
         },
         {
           "kind": "wire",
-          "id": "ef3aeb6b-b2ce-55c8-97c0-879d3327167c",
+          "id": "c7ccecc7-d94c-53ed-b78e-8a58c1d4dd86",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 2150
           },
           "b": {
-            "x": 4400,
+            "x": 4300,
             "y": 2150
           }
         },
         {
           "kind": "label",
-          "id": "fcbe8f54-db36-5fc6-8710-8aa8b36f5ce1",
+          "id": "f63fd1a2-52bd-50cb-b442-bee242fdbacf",
           "labelType": "global",
           "text": "GPIO20",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 2150
           },
           "rot": 180,
@@ -10316,23 +10304,23 @@
         },
         {
           "kind": "wire",
-          "id": "8310092b-820b-5c26-b428-0d8282a1e8e8",
+          "id": "51a36dbd-9171-5d96-bd66-f41c72ab32e4",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 2150
           },
           "b": {
-            "x": 5100,
+            "x": 5000,
             "y": 2150
           }
         },
         {
           "kind": "label",
-          "id": "47a2c075-6ea4-55e5-a4aa-c8bdd3cb92bc",
+          "id": "8f4db5e0-5bc5-5b91-95e7-ffa7a8b95424",
           "labelType": "global",
           "text": "GPIO21",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 2150
           },
           "rot": 0,
@@ -10340,23 +10328,23 @@
         },
         {
           "kind": "wire",
-          "id": "b44c6758-b007-5c8f-9266-27bbc283138e",
+          "id": "55e895f9-ff75-5a0e-8e25-720a4ed3a5fd",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 2250
           },
           "b": {
-            "x": 4400,
+            "x": 4300,
             "y": 2250
           }
         },
         {
           "kind": "label",
-          "id": "b876f769-8cdf-55a1-96ec-c14ac442a6d5",
+          "id": "d34efffd-2012-5fa2-80c4-5d6986602ffb",
           "labelType": "global",
           "text": "GPIO22",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 2250
           },
           "rot": 180,
@@ -10364,23 +10352,23 @@
         },
         {
           "kind": "wire",
-          "id": "5e6996d9-e420-582d-9a29-91e70c90300d",
+          "id": "cff524c3-4763-54d3-819f-2a20f9ebae86",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 2250
           },
           "b": {
-            "x": 5100,
+            "x": 5000,
             "y": 2250
           }
         },
         {
           "kind": "label",
-          "id": "e409ddd8-68e4-5a88-9c62-49d0aed51770",
+          "id": "bc34520d-3f6e-5a1d-b0ce-b8c17bb88353",
           "labelType": "global",
           "text": "GPIO23",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 2250
           },
           "rot": 0,
@@ -10388,23 +10376,23 @@
         },
         {
           "kind": "wire",
-          "id": "22ffb8d2-1342-57ee-8084-cf1d2c507add",
+          "id": "674ab828-59e5-5d12-9c04-435ba4f2c94f",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 2350
           },
           "b": {
-            "x": 4400,
+            "x": 4300,
             "y": 2350
           }
         },
         {
           "kind": "label",
-          "id": "e2bf047a-e859-5b93-bafd-3c7c4fcb692b",
+          "id": "04a04c88-9ab0-5d6a-92ac-430bc4670e58",
           "labelType": "global",
           "text": "GPIO24",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 2350
           },
           "rot": 180,
@@ -10412,23 +10400,23 @@
         },
         {
           "kind": "wire",
-          "id": "f3935dc6-6399-5d41-8e95-e1329ffb5bcc",
+          "id": "c9c137ba-d80c-5b94-a0f6-ce4a1637ffdd",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 2350
           },
           "b": {
-            "x": 5100,
+            "x": 5000,
             "y": 2350
           }
         },
         {
           "kind": "label",
-          "id": "e3ab1886-d4e5-57a8-b717-9e334ebbaf88",
+          "id": "d2b44542-cb4f-5cf0-9c59-5c7b889daaa8",
           "labelType": "global",
           "text": "GPIO25",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 2350
           },
           "rot": 0,
@@ -10436,23 +10424,23 @@
         },
         {
           "kind": "wire",
-          "id": "1a03098c-5cc3-5666-ac4a-6ef3860f7338",
+          "id": "c75e73b6-e14e-528d-8071-cbefc4f9d17f",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 2450
           },
           "b": {
-            "x": 4400,
+            "x": 4300,
             "y": 2450
           }
         },
         {
           "kind": "label",
-          "id": "085217a4-4f32-590a-b8e9-b78553b6f027",
+          "id": "ba0a02b3-408e-5dde-97a7-ce1194ef33c8",
           "labelType": "global",
           "text": "GPIO26",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 2450
           },
           "rot": 180,
@@ -10460,23 +10448,23 @@
         },
         {
           "kind": "wire",
-          "id": "44a6cf67-aaa5-58b6-acb9-d3b62aab7cd1",
+          "id": "075949cd-ec2e-51a5-b86f-b08322d1308b",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 2450
           },
           "b": {
-            "x": 5100,
+            "x": 5000,
             "y": 2450
           }
         },
         {
           "kind": "label",
-          "id": "c5fbe63d-1e44-5307-a983-588125249e82",
+          "id": "a696b3d9-4346-5aef-a3ac-4eca1266cf68",
           "labelType": "global",
           "text": "GPIO27",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 2450
           },
           "rot": 0,
@@ -10484,23 +10472,23 @@
         },
         {
           "kind": "wire",
-          "id": "57ebd531-30da-5923-94c7-9b2ee0e6def4",
+          "id": "ea3d36d4-7884-57cb-a4e3-f43abaa2678b",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 2550
           },
           "b": {
-            "x": 4400,
+            "x": 4300,
             "y": 2550
           }
         },
         {
           "kind": "label",
-          "id": "38d4759f-ea0c-5f3c-a623-eea7a5fc74ea",
+          "id": "b374c36e-9acf-5184-94d5-26a43e306aac",
           "labelType": "global",
           "text": "GPIO28",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 2550
           },
           "rot": 180,
@@ -10508,23 +10496,23 @@
         },
         {
           "kind": "wire",
-          "id": "776eaeec-c6e9-5844-9f4e-6db2e5c9667b",
+          "id": "87715813-1fa8-583e-81e1-2facd726a506",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 2550
           },
           "b": {
-            "x": 5100,
+            "x": 5000,
             "y": 2550
           }
         },
         {
           "kind": "label",
-          "id": "17193ac3-dfa8-5c87-a1ea-bbb74e7ee8fa",
+          "id": "7edf6acb-7815-5c87-adbd-88bcbc007ee2",
           "labelType": "global",
           "text": "GPIO29",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 2550
           },
           "rot": 0,
@@ -10532,23 +10520,23 @@
         },
         {
           "kind": "wire",
-          "id": "f95dd69e-f43b-563d-9b1a-0c279fbd4245",
+          "id": "a0c979bc-5b49-5a94-8294-3b4805e8722f",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 2650
           },
           "b": {
-            "x": 4400,
+            "x": 4300,
             "y": 2650
           }
         },
         {
           "kind": "label",
-          "id": "2ab92925-7e09-5ab8-84d1-a35afea389b4",
+          "id": "ee53a59e-cafb-5720-b425-575a2d5817da",
           "labelType": "global",
           "text": "GPIO30",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 2650
           },
           "rot": 180,
@@ -10556,23 +10544,23 @@
         },
         {
           "kind": "wire",
-          "id": "6043ec71-97a9-5441-bc68-46128e76c9b7",
+          "id": "d645243b-7da4-5fd7-a017-e0c8b1ee84bc",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 2650
           },
           "b": {
-            "x": 5100,
+            "x": 5000,
             "y": 2650
           }
         },
         {
           "kind": "label",
-          "id": "1b0eeeeb-b60d-58cd-87fd-79d4bc827b03",
+          "id": "b70df6ca-de4a-58e4-945a-cc3146e221d6",
           "labelType": "global",
           "text": "GPIO31",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 2650
           },
           "rot": 0,
@@ -10583,7 +10571,7 @@
           "id": "615b4115-2efc-57db-9b97-02a4b5e60c05",
           "libId": "power:+3V3",
           "at": {
-            "x": 4250,
+            "x": 3900,
             "y": 2750
           },
           "rot": 0,
@@ -10634,13 +10622,13 @@
         },
         {
           "kind": "wire",
-          "id": "d009802f-f758-5041-b5c7-245265c2f521",
+          "id": "5f6e5246-6de9-570e-b375-cf694e52e31b",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 2750
           },
           "b": {
-            "x": 4250,
+            "x": 3900,
             "y": 2750
           }
         },
@@ -10649,7 +10637,7 @@
           "id": "4e2d3894-fc7a-558f-95fd-eb38f0f9d48c",
           "libId": "power:+3V3",
           "at": {
-            "x": 5250,
+            "x": 5400,
             "y": 2750
           },
           "rot": 0,
@@ -10700,13 +10688,13 @@
         },
         {
           "kind": "wire",
-          "id": "f95919d1-e980-58c5-b4d3-8d2db00e20a7",
+          "id": "ffe4d58c-f8c6-549e-bcac-eb64ae8c3e25",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 2750
           },
           "b": {
-            "x": 5250,
+            "x": 5400,
             "y": 2750
           }
         },
@@ -10715,7 +10703,7 @@
           "id": "5179a32d-dbb3-5784-af92-315958dedfaf",
           "libId": "power:+5V",
           "at": {
-            "x": 4250,
+            "x": 3700,
             "y": 2850
           },
           "rot": 0,
@@ -10737,11 +10725,11 @@
               "name": "Value",
               "value": "+5V",
               "at": {
-                "x": 70,
-                "y": -60
+                "x": 0,
+                "y": -150
               },
               "visible": true,
-              "justify": "left",
+              "justify": "center",
               "rot": 0
             },
             {
@@ -10766,13 +10754,13 @@
         },
         {
           "kind": "wire",
-          "id": "7841659f-60eb-53a3-89d6-e87242778868",
+          "id": "d9d2ad7d-1c2f-56fa-b200-407e1223cd72",
           "a": {
-            "x": 4500,
+            "x": 4400,
             "y": 2850
           },
           "b": {
-            "x": 4250,
+            "x": 3700,
             "y": 2850
           }
         },
@@ -10781,7 +10769,7 @@
           "id": "5907db3a-6d49-5096-ac55-163498960230",
           "libId": "power:VBUS",
           "at": {
-            "x": 5250,
+            "x": 5600,
             "y": 2850
           },
           "rot": 0,
@@ -10803,11 +10791,11 @@
               "name": "Value",
               "value": "VBUS",
               "at": {
-                "x": 70,
-                "y": -60
+                "x": 0,
+                "y": -150
               },
               "visible": true,
-              "justify": "left",
+              "justify": "center",
               "rot": 0
             },
             {
@@ -10832,13 +10820,13 @@
         },
         {
           "kind": "wire",
-          "id": "b62b8ccd-ca83-555e-8cc7-95c107e82c61",
+          "id": "62385689-35a1-5e7b-aa7a-b6d37d4cd45f",
           "a": {
-            "x": 5000,
+            "x": 4900,
             "y": 2850
           },
           "b": {
-            "x": 5250,
+            "x": 5600,
             "y": 2850
           }
         },
@@ -10847,7 +10835,7 @@
           "id": "54a5bc3e-0e81-5294-b587-cd5d3e3bdb03",
           "libId": "wirx:Conn_01x20",
           "at": {
-            "x": 6400,
+            "x": 6850,
             "y": 2100
           },
           "rot": 0,
@@ -10901,7 +10889,7 @@
           "id": "8f31e020-b510-5aba-9033-e81b4251a0bc",
           "libId": "power:GND",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 3150
           },
           "rot": 0,
@@ -10952,71 +10940,71 @@
         },
         {
           "kind": "wire",
-          "id": "414d8dd0-ee57-5d9d-9f82-97c85dc2128b",
+          "id": "b1e23244-111f-57f3-8e54-2f31ea27c4de",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 2950
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 2950
           }
         },
         {
           "kind": "wire",
-          "id": "529dcad4-f369-5d44-8a38-4cf05a4fb6ab",
+          "id": "6ae5fc8b-5417-504b-815d-41d461b7d3dc",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 3050
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 3050
           }
         },
         {
           "kind": "wire",
-          "id": "8f659b22-b43e-573b-a469-e52264438806",
+          "id": "41abc6f5-3ef1-5ec5-8f82-7703455f7bc8",
           "a": {
-            "x": 6100,
+            "x": 6550,
             "y": 2950
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 3050
           }
         },
         {
           "kind": "wire",
-          "id": "7b7c20f6-ba22-5194-ba6a-b9f108a5bab4",
+          "id": "85931d2e-3671-52d9-a6b0-a2615766a3ca",
           "a": {
-            "x": 6100,
+            "x": 6550,
             "y": 3050
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 3150
           }
         },
         {
           "kind": "wire",
-          "id": "0790f2da-dd34-5447-a3fe-7ccf13ced5c7",
+          "id": "91c221f7-6a43-5a4c-8260-b1795db4cf42",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 1150
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 1150
           }
         },
         {
           "kind": "label",
-          "id": "a1d05893-9ef5-5cc1-b0e0-20d9dc9cf370",
+          "id": "ef29180c-0d61-55ef-903e-24d67bcc1ce0",
           "labelType": "global",
           "text": "GPIO32",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 1150
           },
           "rot": 180,
@@ -11024,23 +11012,23 @@
         },
         {
           "kind": "wire",
-          "id": "10f46140-58a0-5aa6-a6f6-4b766950798f",
+          "id": "e7cd07bb-d7b2-580b-8db4-0d12660006a0",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 1250
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 1250
           }
         },
         {
           "kind": "label",
-          "id": "b89f09ae-5fe8-5c56-828e-e81b7792de9d",
+          "id": "cf2c2a42-7775-5f7a-b0cf-cb9c310237ed",
           "labelType": "global",
           "text": "GPIO33",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 1250
           },
           "rot": 180,
@@ -11048,23 +11036,23 @@
         },
         {
           "kind": "wire",
-          "id": "8c3919ee-2230-5ab8-b9b9-9e9cb17878bd",
+          "id": "2a81e509-cb4f-57ba-be1a-0fdd0e36d2b9",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 1350
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 1350
           }
         },
         {
           "kind": "label",
-          "id": "923ac6e9-95d3-5736-b4cc-0a5b2a501f45",
+          "id": "895f71c7-b6d5-5247-ae88-204025a29444",
           "labelType": "global",
           "text": "GPIO34",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 1350
           },
           "rot": 180,
@@ -11072,23 +11060,23 @@
         },
         {
           "kind": "wire",
-          "id": "9a43ab98-fb2b-5d64-b1ef-e209117665ae",
+          "id": "8cf24c51-beca-5d81-9a04-caf7704ad369",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 1450
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 1450
           }
         },
         {
           "kind": "label",
-          "id": "66698b76-0af1-5ee5-a7ff-e4afc9185568",
+          "id": "1e7b80a8-8111-5d58-beb1-edb83a5a5a9b",
           "labelType": "global",
           "text": "GPIO35",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 1450
           },
           "rot": 180,
@@ -11096,23 +11084,23 @@
         },
         {
           "kind": "wire",
-          "id": "c1432b09-ad6d-5066-8a94-70321d1ff846",
+          "id": "9cd011bf-2a97-5cc0-aa51-591ccaeef8a9",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 1550
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 1550
           }
         },
         {
           "kind": "label",
-          "id": "a2b6121c-3a53-5af5-910e-305949957431",
+          "id": "adaa6f2a-dc1e-5561-bc74-c3b8a98dedfa",
           "labelType": "global",
           "text": "GPIO36",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 1550
           },
           "rot": 180,
@@ -11120,23 +11108,23 @@
         },
         {
           "kind": "wire",
-          "id": "03367868-0f22-57c2-8bc0-5321bcd5b7a6",
+          "id": "8233f13a-7ee6-5434-8f59-69d4b3f58fb0",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 1650
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 1650
           }
         },
         {
           "kind": "label",
-          "id": "6f3e851b-cd96-5333-bd77-96c46ad3712d",
+          "id": "130752bc-7992-5d30-a843-1acafc1d3011",
           "labelType": "global",
           "text": "GPIO37",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 1650
           },
           "rot": 180,
@@ -11144,23 +11132,23 @@
         },
         {
           "kind": "wire",
-          "id": "fa1f4119-d9e2-50b1-8ee9-9c54acbf29bd",
+          "id": "72406abb-58e3-5d69-8911-97dafcd1e8a1",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 1750
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 1750
           }
         },
         {
           "kind": "label",
-          "id": "20f62536-f591-53cf-9b1c-bc4cbcb1653f",
+          "id": "b9f2ab40-b878-533d-9e02-3c3263fc41d2",
           "labelType": "global",
           "text": "GPIO38",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 1750
           },
           "rot": 180,
@@ -11168,23 +11156,23 @@
         },
         {
           "kind": "wire",
-          "id": "2c989097-c1a2-5c82-84f7-50ce907036ed",
+          "id": "49097a26-3208-5972-a609-9df7544863c6",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 1850
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 1850
           }
         },
         {
           "kind": "label",
-          "id": "881e1d1a-3fee-544d-b5f3-22de8935ab7c",
+          "id": "5702b905-8ee3-5d07-b033-cc2e4d57aa40",
           "labelType": "global",
           "text": "GPIO39",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 1850
           },
           "rot": 180,
@@ -11192,23 +11180,23 @@
         },
         {
           "kind": "wire",
-          "id": "2a9712ce-6baa-51f5-9627-09c605bce0fa",
+          "id": "227f4ccc-10a5-5862-8016-b89fafdbeb26",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 1950
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 1950
           }
         },
         {
           "kind": "label",
-          "id": "989b714b-b438-53a7-9500-894252730883",
+          "id": "9f8568b5-ca1e-507b-9fb5-03b95865212b",
           "labelType": "global",
           "text": "GPIO40",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 1950
           },
           "rot": 180,
@@ -11216,23 +11204,23 @@
         },
         {
           "kind": "wire",
-          "id": "c4ac97f9-cb48-5037-8a49-ee154d86928c",
+          "id": "a2bad6c7-db8a-5a02-b25f-b0037a0848f0",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 2050
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 2050
           }
         },
         {
           "kind": "label",
-          "id": "a74158d4-3d09-5535-98a2-8ff400b1a2e8",
+          "id": "9a5f2b8c-049e-5c52-85cb-0989a519df0e",
           "labelType": "global",
           "text": "GPIO41",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 2050
           },
           "rot": 180,
@@ -11240,23 +11228,23 @@
         },
         {
           "kind": "wire",
-          "id": "c4d81fe5-ae46-516e-bb79-96cc333e0bfc",
+          "id": "4799342a-6278-5d85-8a1c-b487dd18673b",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 2150
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 2150
           }
         },
         {
           "kind": "label",
-          "id": "7a8b9018-61a6-5b93-9bca-c96a9ab953c7",
+          "id": "7de1d910-8df0-5f1e-9a7a-91572e4099f7",
           "labelType": "global",
           "text": "GPIO42",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 2150
           },
           "rot": 180,
@@ -11264,23 +11252,23 @@
         },
         {
           "kind": "wire",
-          "id": "8ebed59b-5386-581c-a81c-58e1f21af44b",
+          "id": "e21e59c6-f713-5881-91ce-463badb78e01",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 2250
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 2250
           }
         },
         {
           "kind": "label",
-          "id": "a03b62d9-24d1-50d8-8d5b-cf1ba574dfff",
+          "id": "00226a1c-7cd1-58aa-bb3e-a782e3d3d305",
           "labelType": "global",
           "text": "GPIO43",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 2250
           },
           "rot": 180,
@@ -11288,23 +11276,23 @@
         },
         {
           "kind": "wire",
-          "id": "77d9232b-8907-5152-b920-006c16f51157",
+          "id": "cf04fd2b-ee06-580d-9495-6a0a5f50c2bc",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 2350
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 2350
           }
         },
         {
           "kind": "label",
-          "id": "c3e494d1-0857-5196-8928-9cd2154ec050",
+          "id": "5326da47-f9ae-5802-9c01-171101aca4b8",
           "labelType": "global",
           "text": "GPIO44",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 2350
           },
           "rot": 180,
@@ -11312,23 +11300,23 @@
         },
         {
           "kind": "wire",
-          "id": "66f39af6-3e54-5303-a01d-07d18300b32b",
+          "id": "21f601e1-c068-50b9-9a10-4d014fa3133e",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 2450
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 2450
           }
         },
         {
           "kind": "label",
-          "id": "a74fe135-c36f-5b71-9d77-440162319916",
+          "id": "608434fd-e844-5ad0-9758-15ef3016fbf2",
           "labelType": "global",
           "text": "GPIO45",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 2450
           },
           "rot": 180,
@@ -11336,23 +11324,23 @@
         },
         {
           "kind": "wire",
-          "id": "2e5c2097-ec1a-5c37-bfaa-f23c20a2dc26",
+          "id": "103b0620-1fe8-5f12-b136-b59268328e00",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 2550
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 2550
           }
         },
         {
           "kind": "label",
-          "id": "43a8c9d3-e7e9-5575-96e4-d816d04f601e",
+          "id": "6cb345dd-3b65-5d7d-9b0b-7f7b2f0dcac3",
           "labelType": "global",
           "text": "GPIO46",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 2550
           },
           "rot": 180,
@@ -11360,23 +11348,23 @@
         },
         {
           "kind": "wire",
-          "id": "054e9280-f833-5c22-9869-3fd0d26677b6",
+          "id": "1c249ab3-da8a-51ed-89ae-5ce2c1fb53fd",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 2650
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 2650
           }
         },
         {
           "kind": "label",
-          "id": "b6aa2da8-2350-5b4a-bdb0-11e7a54ad047",
+          "id": "e5e53c6e-b541-5563-90fe-116f287dbffd",
           "labelType": "global",
           "text": "GPIO47",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 2650
           },
           "rot": 180,
@@ -11384,23 +11372,23 @@
         },
         {
           "kind": "wire",
-          "id": "211c4f8e-33bb-59a2-b0cd-1a3b5642d077",
+          "id": "a22bfd57-1fc9-5bfb-b40b-e0af2acd8d5f",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 2750
           },
           "b": {
-            "x": 6100,
+            "x": 6550,
             "y": 2750
           }
         },
         {
           "kind": "label",
-          "id": "3f673092-1b93-5209-ab6b-3f511a125728",
+          "id": "b4d1582b-f254-559e-ab34-e89586530a61",
           "labelType": "global",
           "text": "RUN",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 2750
           },
           "rot": 180,
@@ -11411,7 +11399,7 @@
           "id": "9322aa59-3e6d-5aaa-9dd4-031f525ed1d6",
           "libId": "power:+3V3",
           "at": {
-            "x": 5950,
+            "x": 6150,
             "y": 2850
           },
           "rot": 0,
@@ -11433,11 +11421,11 @@
               "name": "Value",
               "value": "+3V3",
               "at": {
-                "x": -70,
-                "y": -60
+                "x": 0,
+                "y": -150
               },
               "visible": true,
-              "justify": "right",
+              "justify": "center",
               "rot": 0
             },
             {
@@ -11462,37 +11450,37 @@
         },
         {
           "kind": "wire",
-          "id": "c40a97be-305b-5e8e-9adb-9da84bfff35e",
+          "id": "3a83f195-4158-508b-8317-57e2759b8f5d",
           "a": {
-            "x": 6200,
+            "x": 6650,
             "y": 2850
           },
           "b": {
-            "x": 5950,
+            "x": 6150,
             "y": 2850
           }
         },
         {
           "kind": "junction",
-          "id": "aaab5ecf-5157-5789-8a0a-296c06534ddd",
+          "id": "32cd309e-e1e4-5ee7-99c8-682198fb834b",
           "at": {
-            "x": 4400,
+            "x": 4300,
             "y": 3050
           }
         },
         {
           "kind": "junction",
-          "id": "056908af-cfd5-5aaa-9c26-c0842d8bd15e",
+          "id": "2abf3d75-360b-53e3-af59-d30abf69f682",
           "at": {
-            "x": 5100,
+            "x": 5000,
             "y": 3050
           }
         },
         {
           "kind": "junction",
-          "id": "be8c4750-26bd-59ef-b740-6174f568332f",
+          "id": "13b28bca-a1e4-5328-a639-bfa4d1659884",
           "at": {
-            "x": 6100,
+            "x": 6550,
             "y": 3050
           }
         },
@@ -11501,11 +11489,11 @@
           "id": "b88fa7c2-dfae-5cf1-bbd7-6d3240f23d71",
           "name": "headers",
           "at": {
-            "x": 3900,
+            "x": 3400,
             "y": 750
           },
           "size": {
-            "w": 2950,
+            "w": 3900,
             "h": 2800
           }
         },
@@ -11514,7 +11502,7 @@
           "id": "6506ccf5-b358-503a-85bb-ee95319a5e04",
           "libId": "wirx:R",
           "at": {
-            "x": 7350,
+            "x": 7800,
             "y": 2600
           },
           "rot": 0,
@@ -11565,23 +11553,23 @@
         },
         {
           "kind": "wire",
-          "id": "3c5b5cde-b982-5027-b7fa-fe2053b2b7a2",
+          "id": "d8a4c856-aa51-595c-8949-f4723f5302d4",
           "a": {
-            "x": 7350,
+            "x": 7800,
             "y": 2450
           },
           "b": {
-            "x": 7350,
+            "x": 7800,
             "y": 2350
           }
         },
         {
           "kind": "label",
-          "id": "5cbbce3a-fa21-503b-a876-e7726c1294d0",
+          "id": "f5d9fa51-8dea-51de-af73-8ceb34be8491",
           "labelType": "global",
           "text": "GPIO25",
           "at": {
-            "x": 7350,
+            "x": 7800,
             "y": 2350
           },
           "rot": 90,
@@ -11592,7 +11580,7 @@
           "id": "2e1330de-32ad-511d-b9cd-e26ba2000b09",
           "libId": "wirx:LED",
           "at": {
-            "x": 7350,
+            "x": 7800,
             "y": 3200
           },
           "rot": 90,
@@ -11646,7 +11634,7 @@
           "id": "1e04abcb-2202-5b3e-bb48-c2a50497560a",
           "libId": "power:GND",
           "at": {
-            "x": 7350,
+            "x": 7800,
             "y": 3350
           },
           "rot": 0,
@@ -11697,13 +11685,13 @@
         },
         {
           "kind": "wire",
-          "id": "db67946c-3ebd-5f10-91f9-2636365fdafb",
+          "id": "5a47020e-7b23-5266-8d71-7f6425d17556",
           "a": {
-            "x": 7350,
+            "x": 7800,
             "y": 3050
           },
           "b": {
-            "x": 7350,
+            "x": 7800,
             "y": 2750
           }
         },
@@ -11712,7 +11700,7 @@
           "id": "2e1c5235-5bce-5a47-8d98-272f2c63e227",
           "name": "status_led",
           "at": {
-            "x": 7000,
+            "x": 7450,
             "y": 1850
           },
           "size": {
@@ -12033,8 +12021,8 @@
           },
           "dir": 0,
           "length": 100,
-          "number": "1",
-          "name": "IO1",
+          "number": "3",
+          "name": "IO2",
           "type": "passive",
           "shape": "line",
           "unit": 0
@@ -12046,8 +12034,8 @@
           },
           "dir": 0,
           "length": 100,
-          "number": "6",
-          "name": "IO1",
+          "number": "4",
+          "name": "IO2",
           "type": "passive",
           "shape": "line",
           "unit": 0
@@ -12059,8 +12047,8 @@
           },
           "dir": 0,
           "length": 100,
-          "number": "3",
-          "name": "IO2",
+          "number": "1",
+          "name": "IO1",
           "type": "passive",
           "shape": "line",
           "unit": 0
@@ -12072,8 +12060,8 @@
           },
           "dir": 0,
           "length": 100,
-          "number": "4",
-          "name": "IO2",
+          "number": "6",
+          "name": "IO1",
           "type": "passive",
           "shape": "line",
           "unit": 0

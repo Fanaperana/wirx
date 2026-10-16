@@ -100,6 +100,21 @@ fn power_spots(default: Pt, down: bool) -> Vec<(Pt, Justify)> {
 }
 
 pub fn place(d: &Design, items: &mut [Item], extra: &[SymbolDef]) {
+    let original = items.to_vec();
+    place_in_order(d, items, extra, false);
+    if collisions(d, items, extra) == 0 {
+        return;
+    }
+    // A power name with only a few spots can be boxed in by part text placed first: then try
+    // the power names first, and keep whichever leaves less covered.
+    let mut other = original;
+    place_in_order(d, &mut other, extra, true);
+    if collisions(d, &other, extra) < collisions(d, items, extra) {
+        items.clone_from_slice(&other);
+    }
+}
+
+fn place_in_order(d: &Design, items: &mut [Item], extra: &[SymbolDef], power_first: bool) {
     let def_of = |lib_id: &str, inst: Option<usize>| -> Option<SymbolDef> {
         match inst {
             Some(i) => Some(d.symbols[d.instances[i].part].clone()),
@@ -129,10 +144,9 @@ pub fn place(d: &Design, items: &mut [Item], extra: &[SymbolDef]) {
     };
 
     // Parts first (they have the most freedom to keep text close), then power symbol names.
-    let order: Vec<usize> = (0..items.len())
-        .filter(|&i| matches!(items[i], Item::Symbol { inst: Some(_), .. }))
-        .chain((0..items.len()).filter(|&i| matches!(items[i], Item::Symbol { inst: None, .. })))
-        .collect();
+    let parts = (0..items.len()).filter(|&i| matches!(items[i], Item::Symbol { inst: Some(_), .. }));
+    let power = (0..items.len()).filter(|&i| matches!(items[i], Item::Symbol { inst: None, .. }));
+    let order: Vec<usize> = if power_first { power.chain(parts).collect() } else { parts.chain(power).collect() };
     for idx in order {
         let Item::Symbol { lib_id, at, orient, inst, fields, .. } = &mut items[idx] else { continue };
         let Some(def) = def_of(lib_id, *inst) else { continue };

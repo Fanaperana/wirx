@@ -341,7 +341,8 @@ impl Ctx<'_> {
                 // pin room to get out by moving the symbol further away.
                 let toward = dir_vec(kind.natural_dir());
                 let crowded = pins.iter().enumerate().any(|(j, q)| j != k && q.out == out && q.at == t + toward * 100 && i.pin_net[j] != Some(n));
-                let (wires, s) = stub_to(t, out, kind.natural_dir(), if crowded { 250 } else { STUB });
+                let len = self.side_rail_len(inst, &pins, k, if crowded { 250 } else { STUB });
+                let (wires, s) = stub_to(t, out, kind.natural_dir(), len);
                 let flag = self.flag_pin.get(&n) == Some(&(inst, k));
                 let key = format!("pwr:{}:{}", i.path, sym.pins[k].number);
                 let side = if is_horizontal(out) { out } else { 0 };
@@ -381,6 +382,44 @@ impl Ctx<'_> {
         let (fields, field_rects) = self.fields(inst, orient, body, &pins, &decor);
         rects.extend(field_rects.iter().copied());
         Placed { inst, origin: pt(0, 0), orient, pins, body, rects, decor, fields, field_rects }
+    }
+
+    /// Stub length for the rail symbol on side pin `k` (at least `min`): the symbol stands up (or
+    /// down) across the neighbouring rows, so it goes beyond their labels and rail symbols.
+    fn side_rail_len(&self, inst: usize, pins: &[PlacedPin], k: usize, min: i32) -> i32 {
+        let d = self.d;
+        let i = &d.instances[inst];
+        let Some(NetKind::Rail(kind)) = i.pin_net[k].map(|n| d.nets[n].kind) else { return min };
+        let (t, out) = (pins[k].at, pins[k].out);
+        if !is_horizontal(out) {
+            return min;
+        }
+        // What the other pins on this side put in front of them.
+        let toward = dir_vec(kind.natural_dir());
+        let mut blocks: Vec<Rect> = Vec::new();
+        for (j, q) in pins.iter().enumerate() {
+            let Some(m) = i.pin_net[j] else { continue };
+            let ahead = (q.at - t).x * toward.x + (q.at - t).y * toward.y;
+            if j == k || q.out != out || i.nc[j] || Some(m) == i.pin_net[k] || ahead <= 0 || ahead > 400 {
+                continue;
+            }
+            match d.nets[m].kind {
+                NetKind::Rail(other) if other.natural_dir() != opposite(out) => {
+                    let s = q.at + dir_vec(out) * self.side_rail_len(inst, pins, j, STUB);
+                    blocks.push(rail_extent(&d.nets[m].name, other).translate(s));
+                    blocks.push(wire_rect(q.at, s));
+                }
+                NetKind::Rail(_) => {}
+                _ if self.label_pin.get(&m) == Some(&(inst, j)) => blocks.push(label_rect(q.at + dir_vec(out) * STUB, out, &d.nets[m].name)),
+                _ => {}
+            }
+        }
+        let name = &d.nets[i.pin_net[k].unwrap()].name;
+        let mut len = min;
+        while len < 2000 && blocks.iter().any(|b| rail_extent(name, kind).translate(t + dir_vec(out) * len).inflate(30).overlaps(b)) {
+            len += 50;
+        }
+        len
     }
 
     /// A power symbol for rail `n` at `s`, reached through `wires`; optionally a PWR_FLAG on a wire
@@ -662,6 +701,8 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
     let mut placed: HashMap<usize, Placed> = HashMap::new();
     let mut order: Vec<usize> = Vec::new();
     let mut occupied: Vec<Rect> = Vec::new();
+    // Parts hanging off a parent pin: (part, its pin, the parent pin).
+    let mut hangs: Vec<(usize, usize, PlacedPin)> = Vec::new();
 
     let rail_only = |i: usize| {
         let inst = &d.instances[i];
@@ -774,6 +815,9 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
                     };
                     let straight = p.pins[ck].at.y == anchor_pin.y || p.pins[ck].at.x == anchor_pin.x;
                     let tip = p.pins[ck].at;
+                    if is_horizontal(anchor_out) && !is_horizontal(p.pins[ck].out) {
+                        hangs.push((ci, ck, PlacedPin { at: anchor_pin, out: anchor_out }));
+                    }
                     commit(p, &mut placed, &mut order, &mut occupied);
                     if straight {
                         occupied.push(wire_rect(anchor_pin, tip));
@@ -782,6 +826,8 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
             }
         }
     }
+
+    uncross_hangs(&mut placed, &order, &hangs);
 
     // Rail-only parts (decoupling, bulk caps): a `near` hint puts one at its pin; the rest stand in
     // one tidy row under the circuit, supplies on top and grounds on one baseline.
@@ -1022,6 +1068,39 @@ fn tidy(ctx: &Ctx, placed: &mut HashMap<usize, Placed>, order: &[usize]) {
         }
         if !improved {
             break;
+        }
+    }
+}
+
+/// Two parts hanging down (or up) off pins on one side of a part: the part on the pin further
+/// from the hanging direction must stand further out, or its wire crosses the other's. Swap the
+/// two across when they are the wrong way round and the swap fits.
+fn uncross_hangs(placed: &mut HashMap<usize, Placed>, order: &[usize], hangs: &[(usize, usize, PlacedPin)]) {
+    for a in 0..hangs.len() {
+        for b in a + 1..hangs.len() {
+            let ((ia, ka, pa), (ib, kb, pb)) = (hangs[a], hangs[b]);
+            let (qa, qb) = (placed[&ia].pins[ka], placed[&ib].pins[kb]);
+            if pa.out != pb.out || pa.at.x != pb.at.x || qa.out != qb.out || pa.at.y == pb.at.y {
+                continue;
+            }
+            let ahead = dir_vec(pa.out).x;
+            let (along_a, along_b) = ((qa.at.x - pa.at.x) * ahead, (qb.at.x - pb.at.x) * ahead);
+            // Hanging down (pin facing up): the upper parent pin needs the further part.
+            let down = qa.out == 90;
+            let a_first = if down { pa.at.y < pb.at.y } else { pa.at.y > pb.at.y };
+            if a_first == (along_a > along_b) || along_a == along_b {
+                continue;
+            }
+            let dx = qb.at.x - qa.at.x;
+            let (mut na, mut nb) = (placed[&ia].clone(), placed[&ib].clone());
+            na.translate(pt(dx, 0));
+            nb.translate(pt(-dx, 0));
+            let others: Vec<Rect> = order.iter().filter(|&&o| o != ia && o != ib).flat_map(|o| placed[o].rects.iter().copied()).collect();
+            if collides(&na, pt(0, 0), &others) || collides(&nb, pt(0, 0), &others) || collides(&na, pt(0, 0), &nb.rects) {
+                continue;
+            }
+            placed.insert(ia, na);
+            placed.insert(ib, nb);
         }
     }
 }

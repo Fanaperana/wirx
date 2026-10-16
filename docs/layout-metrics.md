@@ -191,3 +191,58 @@ How the MCU sheet got there, one change at a time:
   sheet is drawn around the ATmega block.
 - `optimisations_never_make_a_group_worse` and `layout_fixtures` pass; `rp2350b_board_builds`
   now also requires no layout warnings (no unrouted pins).
+
+## Stage 5: Power and IO sheets of the RP2350B board
+
+The Power sheet lost points to the USB input block (connector → USBLC6 ESD → 27 Ω series
+resistors) and to two text overlaps; the IO sheet to two header supply symbols. Baseline: the
+tree before this stage, with the crossing reroute budget counted in work (200 net reroutes per
+candidate) instead of 20 ms, so the numbers do not depend on machine speed. That alone already
+took `usb_input` from 4 to 2 crossings; every number below was measured with it.
+
+1. **ESD pin order** (`examples/rp2350b.wx`). The USBLC6 symbol listed IO1 (DM) above IO2 (DP),
+   the opposite of the connector's DP-above-DM, so the two lines could not reach it without
+   crossing; the router avoided the crossing by taking DM all the way round the connector. The
+   symbol now lists IO2 first. Pin numbers and the netlist are unchanged (still the same netlist
+   as eleceda's reference board).
+2. **Hanging parts in crossing order** (`uncross_hangs`). Two parts hanging down off pins on
+   one side of a part (the CC1/CC2 pull-downs) are swapped across when the part on the upper
+   pin stands nearer, which makes its wire cross the other's; the part on the upper pin goes
+   further out. Hanging up, mirrored. The swap is kept only when both fit.
+3. **Side-pin rail symbols clear their neighbours** (`side_rail_len`). A supply symbol on a
+   side pin stands up across the rows above it (a ground symbol down across the rows below). Its
+   stub now grows until the symbol clears those rows' labels and rail symbols, instead of a fixed
+   250 mil that put `+3V3` on the header's GPIO30/GPIO31 labels and `+5V` on pin 33's stub.
+4. **Text order fallback** (`text::place`). When placing part text first leaves a power symbol
+   name with no clear spot (`+5V` under D1's value), the power names are placed first as well,
+   and the result with fewer collisions is kept.
+
+Group stats (`wirx stats examples/rp2350b.wx`), before → after; the other groups are unchanged:
+
+| group | cand | crossings / bends / length | hugs | collisions | ms |
+| --- | --- | --- | --- | --- | --- |
+| rp2350b/usb_input | 6/8 → 2/8 | 2 / 22 / 10800 → **0** / 21 / 7850 | 1 → 2 | 0 → 0 | 650 → 460 |
+| rp2350b/Power | | | | 2 → **0** | |
+| rp2350b/headers | | | | 2 → **0** | |
+| rp2350b total | | 2 / 35 / 15550 → **0** / 34 / 12600 | | 4 → **0** | 815 → 640 |
+
+eleceda (`tools/verify-esch.mts`), RP2350B sheets:
+
+| sheet | before | after |
+| --- | --- | --- |
+| **Power** | **94**: 2 crossings in usb_input, 2 text overlaps (D1 Value, `+5V` name) | **100**: nothing flagged |
+| MCU | 100 | 100 |
+| **IO** | **96**: 2 × `+3V3` name covers the drawing | **100**: nothing flagged |
+
+(Power was 92 with 4 crossings with the 20 ms budget on this machine.)
+
+One change at a time on the Power sheet: ESD pin order 94 → 95 (the twist goes, CC1/CC2 still
+cross once), hanging-part swap → 96, text order → 100. The side-rail stubs alone take IO to 100.
+
+- **ldo, blinker, mcu:** readability 100 on every sheet, no errors or warnings; group stats
+  unchanged. The mcu example's Connectors sheet changes: J3's `+5V` symbol stands clear of the
+  A1 label (pin 5's stub 250 → 300 mil), so the block is 50 mil wider.
+- Tried and dropped: drawing the USBLC6 pass-through (IO in on the left, out on the right, as in
+  KiCad's symbol). eleceda does not join same-name pins, so both pins of a channel must be wired
+  together round the body, which drew a loop around the ESD on each line.
+- `optimisations_never_make_a_group_worse`, `layout_fixtures` and `rp2350b_board_builds` pass.
