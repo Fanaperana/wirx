@@ -110,18 +110,20 @@ pub struct Options {
     pub candidates: bool,
     /// Rip up and reroute nets involved in crossings, with congestion history.
     pub reroute: bool,
+    /// Merge collinear wire pieces, straighten jogs and separate parallel tracks.
+    pub cleanup: bool,
 }
 
 impl Default for Options {
     fn default() -> Self {
-        Options { candidates: true, reroute: true }
+        Options { candidates: true, reroute: true, cleanup: true }
     }
 }
 
 impl Options {
     /// Every optimisation off: the plain default layout.
     pub fn none() -> Self {
-        Options { candidates: false, reroute: false }
+        Options { candidates: false, reroute: false, cleanup: false }
     }
 }
 

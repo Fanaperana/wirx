@@ -47,6 +47,14 @@ impl Variant {
     }
 }
 
+impl GroupStats {
+    /// The one quality order every optimisation uses (lower is better): unreachable pins,
+    /// crossings, four-way points, bends, hugging parallel wires, length, then how far parts moved.
+    pub fn rank(&self) -> (usize, usize, usize, usize, usize, i64, i64) {
+        (self.unrouted, self.crossings, self.four_way, self.bends, self.hugs, self.length, self.displacement)
+    }
+}
+
 /// How one group came out, for comparing candidates and for `wirx stats`.
 #[derive(Debug, Clone, Default, serde::Serialize)]
 pub struct GroupStats {
@@ -59,6 +67,12 @@ pub struct GroupStats {
     pub bends: usize,
     /// Routed wire length, mils.
     pub length: i64,
+    /// Wire pieces drawn (merging collinear pieces lowers it).
+    pub wires: usize,
+    /// Pairs of parallel wires of different nets one grid step apart.
+    pub hugs: usize,
+    /// Points where four wires meet (eleceda asks for two T-junctions instead).
+    pub four_way: usize,
     /// Visible text or symbols covering wires, labels, other parts or other text.
     pub collisions: usize,
     /// Pins that had to be connected by label because no wire could reach them.
@@ -550,9 +564,9 @@ fn place_near(proto: &Placed, desired: Pt, occupied: &[Rect]) -> Placed {
 }
 
 /// Lay out a group: route every candidate placement independently and keep the best. A candidate
-/// with more collisions or unreachable pins than the default is rejected; the rest are ranked by
-/// (crossings, bends, wire length, displacement from the default), and only a strictly better one
-/// replaces the default.
+/// with more collisions, unreachable pins or four-way points than the default is rejected; the rest
+/// are ranked by [`GroupStats::rank`] (crossings, bends, wire length, …, displacement from the
+/// default), and only a strictly better one replaces the default.
 pub fn layout_group(d: &Design, g: usize, opts: &super::Options, extra_symbols: &mut Vec<SymbolDef>, flags_done: &mut HashSet<usize>, diags: &mut Vec<Diagnostic>) -> GroupOut {
     let start = std::time::Instant::now();
     let candidates = if opts.candidates { Variant::candidates() } else { vec![Variant::DEFAULT] };
@@ -569,12 +583,12 @@ pub fn layout_group(d: &Design, g: usize, opts: &super::Options, extra_symbols: 
         }
         out.stats.candidate = ci;
         out.stats.displacement = out.positions.iter().map(|(i, p)| base_positions.get(i).map(|b| b.manhattan(*p) as i64).unwrap_or(0)).sum();
-        let rank = |s: &GroupStats| (s.crossings, s.bends, s.length, s.displacement);
+        let rank = |s: &GroupStats| s.rank();
         let better = match &best {
             None => true,
             Some((b, _, _)) => {
                 let base = base.as_ref().unwrap();
-                let valid = out.stats.collisions <= base.collisions && out.stats.unrouted <= base.unrouted;
+                let valid = out.stats.collisions <= base.collisions && out.stats.unrouted <= base.unrouted && out.stats.four_way <= base.four_way;
                 valid && rank(&out.stats) < rank(&b.stats)
             }
         };
@@ -1044,6 +1058,10 @@ struct Metrics {
     crossings: Vec<(Pt, usize, usize)>,
     bends: usize,
     length: i64,
+    /// Pairs of parallel wires of different nets one grid step apart.
+    hugs: usize,
+    /// Points where four wire directions meet (a lost junction dot turns them into crossings).
+    four_way: usize,
 }
 
 impl Routing {
@@ -1074,7 +1092,60 @@ impl Routing {
         }
         let bends = self.paths.iter().map(|(_, p)| p.len().saturating_sub(2)).sum();
         let length = self.paths.iter().flat_map(|(_, p)| p.windows(2).map(|w| w[0].manhattan(w[1]) as i64)).sum();
-        Metrics { crossings, bends, length }
+        let mut hugs = 0;
+        for (i, &(a, b, n)) in segs.iter().enumerate() {
+            for &(c, e, m) in &segs[i + 1..] {
+                if m == n || (n < 1_000_000 && m < 1_000_000) {
+                    continue;
+                }
+                let horizontal = a.y == b.y && c.y == e.y && (a.y - c.y).abs() == GRID;
+                let vertical = a.x == b.x && c.x == e.x && (a.x - c.x).abs() == GRID;
+                let overlap = if horizontal {
+                    a.x.min(b.x).max(c.x.min(e.x)) < a.x.max(b.x).min(c.x.max(e.x))
+                } else if vertical {
+                    a.y.min(b.y).max(c.y.min(e.y)) < a.y.max(b.y).min(c.y.max(e.y))
+                } else {
+                    false
+                };
+                hugs += usize::from(overlap);
+            }
+        }
+        // Four-way points: count the wire directions leaving each point of each net.
+        let mut dirs: HashMap<(i64, Pt), u8> = HashMap::new();
+        let net_key = |n: i64| if n >= 1_000_000 { n } else { n + 1_000_000_000 };
+        let mut points: Vec<Pt> = segs.iter().flat_map(|s| [s.0, s.1]).collect();
+        points.sort();
+        points.dedup();
+        for &(a, b, n) in &segs {
+            if a == b {
+                continue;
+            }
+            for &p in &points {
+                if !crate::geom::on_segment(p, a, b) {
+                    continue;
+                }
+                let bit = |q: Pt| -> u8 {
+                    if q.x > p.x { 1 } else if q.x < p.x { 2 } else if q.y > p.y { 4 } else { 8 }
+                };
+                let mut m = 0;
+                if p != a {
+                    m |= bit(a);
+                }
+                if p != b {
+                    m |= bit(b);
+                }
+                *dirs.entry((net_key(n), p)).or_default() |= m;
+            }
+        }
+        let _ = &dirs;
+        // Decoration wires carry design net ids and paths group ids; a point is four-way when all
+        // four directions are taken, whatever the source of the pieces.
+        let mut by_point: HashMap<Pt, u8> = HashMap::new();
+        for ((_, p), m) in &dirs {
+            *by_point.entry(*p).or_default() |= *m;
+        }
+        let four_way = by_point.values().filter(|m| **m == 15).count();
+        Metrics { crossings, bends, length, hugs, four_way }
     }
 }
 
@@ -1127,8 +1198,9 @@ const HISTORY_STEP: u16 = 60;
 
 impl Metrics {
     /// Lexicographic quality: unreachable pins, crossings, bends, length (lower is better).
-    fn rank(&self, failed: usize) -> (usize, usize, usize, i64) {
-        (failed, self.crossings.len(), self.bends, self.length)
+    /// Same order as [`GroupStats::rank`].
+    fn rank(&self, failed: usize) -> (usize, usize, usize, usize, usize, i64) {
+        (failed, self.crossings.len(), self.four_way, self.bends, self.hugs, self.length)
     }
 }
 
@@ -1216,6 +1288,166 @@ fn reroute_crossings(
     best
 }
 
+/// Cleanup, step 2: reroute each net on its own with all others in place, charging extra for
+/// bends (jog removal) and for running right next to another net's parallel wire (track
+/// separation). A new route is kept only when the whole group gets strictly better on
+/// (unrouted, crossings, bends, hugging pairs, length).
+fn polish(
+    grid: &Grid,
+    nets: &[(usize, Vec<(usize, usize)>)],
+    mut best: Routing,
+    placed: &HashMap<usize, Placed>,
+    label_pin: &HashMap<usize, (usize, usize)>,
+    decor: &[(Pt, Pt, i32)],
+) -> Routing {
+    let rank = |r: &Routing| {
+        let m = r.metrics(decor);
+        m.rank(r.failed.len())
+    };
+    let mut best_rank = rank(&best);
+    for _pass in 0..2 {
+        let mut improved = false;
+        for ni in 0..nets.len() {
+            let mut g = grid.clone();
+            g.extra_bend = 60;
+            g.hug = true;
+            for (m, path) in &best.paths {
+                if *m != ni {
+                    for w in path.windows(2) {
+                        g.mark_wire(w[0], w[1], nets[*m].0 as i32);
+                    }
+                }
+            }
+            let mut trial = Routing {
+                paths: best.paths.iter().filter(|(m, _)| *m != ni).cloned().collect(),
+                failed: best.failed.iter().filter(|f| f.0 != ni).cloned().collect(),
+            };
+            route_net(&mut g, ni, &nets[ni], placed, label_pin, &mut trial);
+            let r = rank(&trial);
+            if r < best_rank {
+                best_rank = r;
+                best = trial;
+                improved = true;
+            }
+        }
+        if !improved {
+            break;
+        }
+    }
+    best
+}
+
+/// Points a merge must never remove: pin tips and the connection points of decorations (stub
+/// ends, label anchors, power symbols, flags).
+fn anchor_points(order: &[usize], placed: &HashMap<usize, Placed>) -> HashSet<Pt> {
+    let mut out = HashSet::new();
+    for i in order {
+        for p in &placed[i].pins {
+            out.insert(p.at);
+        }
+        for dc in &placed[i].decor {
+            out.extend(dc.pois.iter().copied());
+            for &(a, b) in &dc.wires {
+                out.insert(a);
+                out.insert(b);
+            }
+        }
+    }
+    out
+}
+
+/// Cleanup, step 1: join collinear wire pieces of the same net that meet at a plain degree-two
+/// point (no pin, junction, branch or decoration there).
+fn merge_collinear(r: &Routing, nets: &[(usize, Vec<(usize, usize)>)], anchors: &HashSet<Pt>) -> Vec<(Pt, Pt)> {
+    let mut out = Vec::new();
+    let mut by_net: HashMap<usize, Vec<(Pt, Pt)>> = HashMap::new();
+    for (n, path) in &r.paths {
+        for w in path.windows(2) {
+            if w[0] != w[1] {
+                by_net.entry(nets[*n].0).or_default().push((w[0], w[1]));
+            }
+        }
+    }
+    let mut keys: Vec<usize> = by_net.keys().copied().collect();
+    keys.sort();
+    for k in keys {
+        let mut segs = by_net.remove(&k).unwrap();
+        loop {
+            let mut merged = false;
+            'outer: for i in 0..segs.len() {
+                for j in i + 1..segs.len() {
+                    let (a, b) = segs[i];
+                    let (c, e) = segs[j];
+                    let shared = [a, b].into_iter().find(|p| *p == c || *p == e);
+                    let Some(p) = shared else { continue };
+                    let collinear = (a.x == b.x && c.x == e.x && a.x == c.x) || (a.y == b.y && c.y == e.y && a.y == c.y);
+                    if !collinear || anchors.contains(&p) {
+                        continue;
+                    }
+                    // Exactly these two pieces end at p, and nothing passes through it.
+                    let ends = segs.iter().filter(|s| s.0 == p || s.1 == p).count();
+                    let through = segs.iter().any(|s| s.0 != p && s.1 != p && crate::geom::on_segment(p, s.0, s.1));
+                    if ends != 2 || through {
+                        continue;
+                    }
+                    let far1 = if a == p { b } else { a };
+                    let far2 = if c == p { e } else { c };
+                    // Overlapping pieces (going back over themselves) are not merged.
+                    if (far1.x - p.x).signum() * (far2.x - p.x).signum() > 0 || (far1.y - p.y).signum() * (far2.y - p.y).signum() > 0 {
+                        continue;
+                    }
+                    segs[i] = (far1, far2);
+                    segs.remove(j);
+                    merged = true;
+                    break 'outer;
+                }
+            }
+            if !merged {
+                break;
+            }
+        }
+        out.extend(segs);
+    }
+    out
+}
+
+/// Which pins end up connected to which, rebuilt from geometry (wires join at their ends and at
+/// any point lying on them). Component ids are numbered in pin order, so equal vectors mean equal
+/// connectivity.
+fn pin_partition(wires: &[(Pt, Pt)], decor: &[(Pt, Pt, i32)], anchors: &HashSet<Pt>, pins: &[Pt]) -> Vec<usize> {
+    let segs: Vec<(Pt, Pt)> = wires.iter().copied().chain(decor.iter().map(|d| (d.0, d.1))).collect();
+    let mut points: Vec<Pt> = segs.iter().flat_map(|s| [s.0, s.1]).chain(anchors.iter().copied()).chain(pins.iter().copied()).collect();
+    points.sort();
+    points.dedup();
+    let index: HashMap<Pt, usize> = points.iter().enumerate().map(|(i, p)| (*p, i)).collect();
+    let mut parent: Vec<usize> = (0..points.len()).collect();
+    fn find(parent: &mut Vec<usize>, mut a: usize) -> usize {
+        while parent[a] != a {
+            parent[a] = parent[parent[a]];
+            a = parent[a];
+        }
+        a
+    }
+    for &(a, b) in &segs {
+        let (ra, rb) = (find(&mut parent, index[&a]), find(&mut parent, index[&b]));
+        parent[ra] = rb;
+        for (i, p) in points.iter().enumerate() {
+            if crate::geom::on_segment(*p, a, b) {
+                let (ri, rb) = (find(&mut parent, i), find(&mut parent, index[&a]));
+                parent[ri] = rb;
+            }
+        }
+    }
+    let mut ids: HashMap<usize, usize> = HashMap::new();
+    pins.iter()
+        .map(|p| {
+            let r = find(&mut parent, index[p]);
+            let n = ids.len();
+            *ids.entry(r).or_insert(n)
+        })
+        .collect()
+}
+
 fn route_group(ctx: &mut Ctx, placed: &HashMap<usize, Placed>, order: &[usize], occupied: &[Rect]) -> GroupOut {
     let d = ctx.d;
     let bbox = occupied.iter().copied().reduce(Rect::union).unwrap_or(Rect::new(0, 0, 0, 0)).inflate(800);
@@ -1298,8 +1530,21 @@ fn route_group(ctx: &mut Ctx, placed: &HashMap<usize, Placed>, order: &[usize], 
     if ctx.opts.reroute {
         best = reroute_crossings(&grid, &nets, best, &net_order, placed, &ctx.label_pin, &decor_wires);
     }
+    if ctx.opts.cleanup {
+        best = polish(&grid, &nets, best, placed, &ctx.label_pin, &decor_wires);
+    }
     let metrics = best.metrics(&decor_wires);
-    let wires: Vec<(Pt, Pt)> = best.paths.iter().flat_map(|(_, p)| p.windows(2).map(|w| (w[0], w[1])).collect::<Vec<_>>()).collect();
+    let mut wires: Vec<(Pt, Pt)> = best.paths.iter().flat_map(|(_, p)| p.windows(2).map(|w| (w[0], w[1])).collect::<Vec<_>>()).collect();
+    if ctx.opts.cleanup {
+        // Keep the merged wires only if every pin is connected exactly as before.
+        let anchors = anchor_points(order, placed);
+        let merged = merge_collinear(&best, &nets, &anchors);
+        let pins: Vec<Pt> = order.iter().flat_map(|i| placed[i].pins.iter().map(|p| p.at)).collect();
+        let before = pin_partition(&wires, &decor_wires, &anchors, &pins);
+        if pin_partition(&merged, &decor_wires, &anchors, &pins) == before {
+            wires = merged;
+        }
+    }
     let failed: Vec<(usize, (usize, usize))> = best.failed.iter().map(|&(ni, t)| (nets[ni].0, t)).collect();
     let mut extra_labels: Vec<Item> = Vec::new();
     let mut labeled: HashSet<usize> = ctx.label_pin.keys().copied().collect();
@@ -1335,6 +1580,7 @@ fn route_group(ctx: &mut Ctx, placed: &HashMap<usize, Placed>, order: &[usize], 
             items.extend(dc.items.iter().cloned());
         }
     }
+    let wire_count = wires.len();
     for (a, b) in &wires {
         items.push(Item::Wire { a: *a, b: *b });
     }
@@ -1360,6 +1606,9 @@ fn route_group(ctx: &mut Ctx, placed: &HashMap<usize, Placed>, order: &[usize], 
         crossings: metrics.crossings.len(),
         bends: metrics.bends,
         length: metrics.length,
+        wires: wire_count,
+        hugs: metrics.hugs,
+        four_way: metrics.four_way,
         collisions: super::text::collisions(d, &items, ctx.extra_symbols),
         unrouted,
         ..Default::default()

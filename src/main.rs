@@ -50,6 +50,9 @@ enum Cmd {
         /// No crossing-driven rerouting.
         #[arg(long)]
         no_reroute: bool,
+        /// No cleanup (merging, jog removal, track separation).
+        #[arg(long)]
+        no_cleanup: bool,
     },
     /// Export the netlist for a PCB tool or for scripts.
     Netlist {
@@ -220,7 +223,7 @@ fn main() -> ExitCode {
             }
         }
         Cmd::Import { file, out, force } => import(&file, out.as_deref(), force),
-        Cmd::Stats { file, json, no_candidates, no_reroute } => {
+        Cmd::Stats { file, json, no_candidates, no_reroute, no_cleanup } => {
             let c = match wirx::check_file(&file) {
                 Ok(c) => c,
                 Err(e) => return fail(&e),
@@ -229,7 +232,7 @@ fn main() -> ExitCode {
                 report(&c.sources, &c.diags, false);
                 return fail("the design has errors");
             };
-            let opts = wirx::layout::Options { candidates: !no_candidates, reroute: !no_reroute };
+            let opts = wirx::layout::Options { candidates: !no_candidates, reroute: !no_reroute, cleanup: !no_cleanup };
             let start = std::time::Instant::now();
             let sch = match wirx::draw_with(design, &opts) {
                 Ok((s, _)) => s,
@@ -239,16 +242,16 @@ fn main() -> ExitCode {
             if json {
                 println!("{}", serde_json::to_string_pretty(&serde_json::json!({ "groups": sch.stats, "total_ms": total_ms })).unwrap());
             } else {
-                println!("{:<16} {:>4} {:>9} {:>5} {:>7} {:>10} {:>8} {:>8} {:>9}", "group", "cand", "crossings", "bends", "length", "collisions", "unrouted", "moved", "ms");
+                println!("{:<16} {:>4} {:>9} {:>5} {:>7} {:>5} {:>5} {:>4} {:>10} {:>8} {:>8} {:>9}", "group", "cand", "crossings", "bends", "length", "wires", "hugs", "4way", "collisions", "unrouted", "moved", "ms");
                 let mut t = (0, 0, 0i64, 0, 0);
                 for g in &sch.stats {
                     println!(
-                        "{:<16} {:>4} {:>9} {:>5} {:>7} {:>10} {:>8} {:>8} {:>9.1}",
-                        g.group, format!("{}/{}", g.candidate, g.candidates_tried), g.crossings, g.bends, g.length, g.collisions, g.unrouted, g.displacement, g.micros as f64 / 1000.0
+                        "{:<16} {:>4} {:>9} {:>5} {:>7} {:>5} {:>5} {:>4} {:>10} {:>8} {:>8} {:>9.1}",
+                        g.group, format!("{}/{}", g.candidate, g.candidates_tried), g.crossings, g.bends, g.length, g.wires, g.hugs, g.four_way, g.collisions, g.unrouted, g.displacement, g.micros as f64 / 1000.0
                     );
                     t = (t.0 + g.crossings, t.1 + g.bends, t.2 + g.length, t.3 + g.collisions, t.4 + g.unrouted);
                 }
-                println!("{:<16} {:>4} {:>9} {:>5} {:>7} {:>10} {:>8} {:>8} {:>9.1}", "total", "", t.0, t.1, t.2, t.3, t.4, "", total_ms);
+                println!("{:<16} {:>4} {:>9} {:>5} {:>7} {:>5} {:>5} {:>4} {:>10} {:>8} {:>8} {:>9.1}", "total", "", t.0, t.1, t.2, "", "", "", t.3, t.4, "", total_ms);
             }
             ExitCode::SUCCESS
         }

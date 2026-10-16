@@ -15,6 +15,8 @@ pub const FOREIGN: i32 = -2;
 const STEP: u32 = 10;
 const BEND: u32 = 80;
 const CROSS: u32 = 60;
+/// Running right next to another net's parallel wire, when `hug` is on.
+const HUG: u32 = 25;
 
 #[derive(Clone)]
 pub struct Grid {
@@ -29,6 +31,10 @@ pub struct Grid {
     vnet: Vec<i32>,
     /// Pin tips: a wire must arrive moving in this direction.
     access: HashMap<usize, Rot>,
+    /// Extra cost per bend (cleanup uses it to straighten jogs).
+    pub extra_bend: u32,
+    /// Charge for running alongside another net's parallel wire (cleanup: track separation).
+    pub hug: bool,
 }
 
 const DIRS: [Rot; 4] = [0, 90, 180, 270];
@@ -54,6 +60,8 @@ impl Grid {
             hnet: vec![FREE; n],
             vnet: vec![FREE; n],
             access: HashMap::new(),
+            extra_bend: 0,
+            hug: false,
         }
     }
 
@@ -168,7 +176,21 @@ impl Grid {
             if along != FREE {
                 return None;
             }
-            Some(self.soft[c] as u32 + if crossing(c, d) { CROSS } else { 0 })
+            let hug = self.hug && {
+                let horizontal = d == 0 || d == 180;
+                let (x, y) = (c % self.w, c / self.w);
+                let foreign = |dx: i64, dy: i64| -> bool {
+                    let (nx, ny) = (x as i64 + dx, y as i64 + dy);
+                    if nx < 0 || ny < 0 || nx >= self.w as i64 || ny >= self.h as i64 {
+                        return false;
+                    }
+                    let i = ny as usize * self.w + nx as usize;
+                    let v = if horizontal { self.hnet[i] } else { self.vnet[i] };
+                    v != FREE && v != net
+                };
+                if horizontal { foreign(0, -1) || foreign(0, 1) } else { foreign(-1, 0) || foreign(1, 0) }
+            };
+            Some(self.soft[c] as u32 + if crossing(c, d) { CROSS } else { 0 } + if hug { HUG } else { 0 })
         };
         let step = |c: usize, d: Rot| -> Option<usize> { self.idx(self.pt(c) + dir_vec(d) * GRID) };
 
@@ -196,7 +218,7 @@ impl Grid {
                 }
                 let Some(nc) = step(c, nd) else { continue };
                 let Some(extra) = enter(nc, nd) else { continue };
-                let nc_cost = cost + STEP + extra + if nd != d { BEND } else { 0 };
+                let nc_cost = cost + STEP + extra + if nd != d { BEND + self.extra_bend } else { 0 };
                 let ns = nc * 4 + dir_index(nd);
                 if nc_cost < dist[ns] {
                     dist[ns] = nc_cost;

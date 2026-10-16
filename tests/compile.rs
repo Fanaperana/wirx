@@ -224,8 +224,8 @@ fn multi_pin_part_cannot_sit_inline() {
 }
 
 /// Layout optimisations may never replace a better default result with a worse one: for every
-/// group of every example, the optimised layout has no more collisions or unrouted pins, and
-/// ranks no worse on (crossings, bends, wire length).
+/// group of every example, the optimised layout has no more collisions, unrouted pins or four-way
+/// points, and ranks no worse on the shared quality order (`GroupStats::rank`, displacement aside).
 #[test]
 fn optimisations_never_make_a_group_worse() {
     use wirx::layout::Options;
@@ -236,8 +236,9 @@ fn optimisations_never_make_a_group_worse() {
         let (best, _) = wirx::draw_with(&design, &Options::default()).unwrap();
         for (a, b) in plain.stats.iter().zip(&best.stats) {
             assert_eq!(a.group, b.group);
-            assert!(b.collisions <= a.collisions && b.unrouted <= a.unrouted, "{name}/{}: {a:?} -> {b:?}", a.group);
-            assert!((b.crossings, b.bends, b.length) <= (a.crossings, a.bends, a.length), "{name}/{}: {a:?} -> {b:?}", a.group);
+            assert!(b.collisions <= a.collisions && b.unrouted <= a.unrouted && b.four_way <= a.four_way, "{name}/{}: {a:?} -> {b:?}", a.group);
+            let rank = |s: &wirx::layout::GroupStats| { let r = s.rank(); (r.0, r.1, r.2, r.3, r.4, r.5) };
+            assert!(rank(b) <= rank(a), "{name}/{}: {a:?} -> {b:?}", a.group);
         }
     }
 }
@@ -254,6 +255,6 @@ fn layout_fixtures() {
     for (name, group) in [("ldo", "Power"), ("ldo", "ldo"), ("blinker", "astable"), ("mcu", "mcu"), ("mcu", "Power")] {
         let s = stats(name);
         let g = s.iter().find(|g| g.group == group).unwrap();
-        assert_eq!((g.crossings, g.collisions, g.unrouted), (0, 0, 0), "{name}/{group}: {g:?}");
+        assert_eq!((g.crossings, g.collisions, g.unrouted, g.four_way), (0, 0, 0, 0), "{name}/{group}: {g:?}");
     }
 }
