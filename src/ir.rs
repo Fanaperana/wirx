@@ -30,6 +30,9 @@ pub struct PartDef {
     pub pins: Vec<PartPin>,
     pub open_pins_ok: bool,
     pub span: Option<Span>,
+    /// A finished symbol (defined with `symbol: #{ … }` or taken from a library); its pins are
+    /// `pins`, in the same order.
+    pub custom: Option<Box<SymbolDef>>,
 }
 
 #[derive(Debug, Clone)]

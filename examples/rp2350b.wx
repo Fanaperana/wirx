@@ -9,40 +9,41 @@ company("wirx examples");
 
 // ---------------------------------------------------------------- parts
 
-// RP2350B, QFN-80 (pin numbers from the datasheet; 81 is the exposed pad).
+// RP2350B, QFN-80 (pin numbers from the datasheet; 81 is the exposed pad). The symbol is drawn
+// here, the way the official one groups its pins: system pins left, GPIOs right, supplies on top
+// (IOVDD and DVDD stacked: each drawn once), grounds at the bottom. `wirx build` also writes it to
+// rp2350b.elib, so eleceda lists it in its Library panel; `wirx lib export` writes it for KiCad.
 fn RP2350B() {
-    let pins = [
-        // Supplies along the top, grouped by rail so each rail gets one power symbol.
-        [[5, 15, 24, 29, 41, 50, 60, 76], "IOVDD", power_in, top],
-        [68, "USB_OTP_VDD", power_in, top],
-        [69, "QSPI_IOVDD", power_in, top],
-        [59, "ADC_AVDD", power_in, top],
-        [64, "VREG_VIN", power_in, top],
-        [61, "VREG_AVDD", power_in, top],
-        [63, "VREG_LX", power_out, top],
-        [65, "VREG_FB", passive, top],
-        [[10, 32, 51], "DVDD", power_in, top],
-        [[62, 81], "GND", power_in, bottom],
-        // System pins on the left.
-        [30, "XIN", input, left],
-        [31, "XOUT", output, left],
-        [35, "RUN", input, left],
-        [33, "SWCLK", input, left],
-        [34, "SWDIO", bidirectional, left],
-        [67, "USB_DP", bidirectional, left],
-        [66, "USB_DM", bidirectional, left],
-        [75, "QSPI_SS", output, left],
-        [71, "QSPI_SCLK", output, left],
-        [72, "QSPI_SD0", bidirectional, left],
-        [74, "QSPI_SD1", bidirectional, left],
-        [73, "QSPI_SD2", bidirectional, left],
-        [70, "QSPI_SD3", bidirectional, left],
+    let left = [
+        [35, "RUN", input],
+        gap,
+        [66, "USB_DM", bidirectional],
+        [67, "USB_DP", bidirectional],
+        gap,
+        [75, "~{QSPI_SS}", output],
+        [71, "QSPI_SCLK", output],
+        [72, "QSPI_SD0", bidirectional],
+        [74, "QSPI_SD1", bidirectional],
+        [73, "QSPI_SD2", bidirectional],
+        [70, "QSPI_SD3", bidirectional],
+        gap,
+        [30, "XIN", input],
+        [31, "XOUT", output],
+        gap,
+        [33, "SWCLK", input],
+        [34, "SWDIO", bidirectional],
+        gap,
     ];
-    // GPIO0..47: 0-31 on the right, 32-47 (with the ADC inputs) on the left.
-    let numbers = [77, 78, 79, 80, 1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23,
-                   25, 26, 27, 28, 36, 37, 38, 39, 40, 42, 43, 44, 45, 46, 47, 48, 49, 52, 53, 54, 55, 56, 57, 58];
-    for i in 0..48 {
-        pins.push([numbers[i], `GPIO${i}`, bidirectional, if i < 32 { right } else { left }]);
+    // GPIO40-47 double as the ADC inputs; `u.GPIO40` and `u.ADC0` both reach pin 49.
+    let adc_pins = [49, 52, 53, 54, 55, 56, 57, 58];
+    for i in 0..8 {
+        left.push([adc_pins[i], `GPIO${40 + i}/ADC${i}`, bidirectional]);
+    }
+    let gpio_pins = [77, 78, 79, 80, 1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 13, 14, 16, 17, 18, 19,
+                     20, 21, 22, 23, 25, 26, 27, 28, 36, 37, 38, 39, 40, 42, 43, 44, 45, 46, 47, 48];
+    let right = [];
+    for i in 0..40 {
+        right.push([gpio_pins[i], `GPIO${i}`, bidirectional]);
     }
     part(#{
         name: "RP2350B",
@@ -50,7 +51,26 @@ fn RP2350B() {
         description: "Raspberry Pi RP2350B, dual Cortex-M33 / Hazard3, 520 KB SRAM, QFN-80",
         footprint: "Package_DFN_QFN:QFN-80-1EP_10x10mm_P0.4mm_EP3.4x3.4mm",
         datasheet: "https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf",
-        pins: pins,
+        symbol: #{
+            left: left,
+            right: right,
+            top: [
+                [61, "VREG_AVDD", power_in],
+                gap,
+                [68, "USB_OTP_VDD", power_in],
+                [59, "ADC_AVDD", power_in],
+                gap,
+                [69, "QSPI_IOVDD", power_in],
+                [[5, 15, 24, 29, 41, 50, 60, 76], "IOVDD", power_in],
+                gap,
+                [64, "VREG_VIN", power_in],
+                [63, "VREG_LX", power_out],
+                [65, "VREG_FB", passive],
+                gap,
+                [[10, 32, 51], "DVDD", power_in],
+            ],
+            bottom: [[62, "VREG_PGND", power_in], [81, "GND", power_in]],
+        },
     })
 }
 
@@ -155,7 +175,7 @@ fn mcu() {
     let v1v1 = supply("+1V1").driven();   // made by the chip's own regulator, through L1
 
     P3V3 -> [u.IOVDD, u.USB_OTP_VDD, u.QSPI_IOVDD, u.ADC_AVDD, u.VREG_VIN];
-    u.GND -> GND;
+    [u.GND, u.VREG_PGND] -> GND;
 
     // Core regulator: VREG_LX -> 3.3 uH -> 1.1 V core; VREG_AVDD filtered from 3.3 V.
     u.VREG_LX -> L("3.3uH", #{ footprint: "Inductor_SMD:L_Murata_DFE201610P", value: "3.3uH" }) -> v1v1;

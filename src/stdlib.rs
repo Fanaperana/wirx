@@ -138,6 +138,7 @@ impl StdPart {
             pins,
             open_pins_ok: false,
             span: None,
+            custom: None,
         }
     }
 }

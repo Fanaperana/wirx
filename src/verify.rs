@@ -120,6 +120,33 @@ pub fn check(d: &Design, s: &Schematic) -> Vec<String> {
                 }
             }
         }
+        // Every connection is drawn: two symbols' pins may not touch without a wire between them.
+        // (That does connect, but reads as a gap and breaks as soon as one part is moved.)
+        let mut pin_owner: HashMap<Pt, usize> = HashMap::new();
+        for (idx, it) in sheet.items.iter().enumerate() {
+            let Item::Symbol { lib_id, at, orient, fields, .. } = it else { continue };
+            let Some(def) = sym_of(lib_id) else { continue };
+            for pin in &def.pins {
+                let p = place_pin(pin, *orient, *at).at;
+                if let Some(&other) = pin_owner.get(&p)
+                    && other != idx
+                {
+                    // Power symbols and flags are named by their net (their references are not numbered yet).
+                    let label = |fields: &Vec<crate::symbol::Field>| {
+                        let get = |k: &str| fields.iter().find(|f| f.name == k).map(|f| f.value.clone()).unwrap_or_default();
+                        let r = get("Reference");
+                        if r.starts_with('#') { format!("{} symbol", get("Value")) } else { r }
+                    };
+                    let name = |i: usize| match &sheet.items[i] {
+                        Item::Symbol { fields, .. } => label(fields),
+                        _ => String::new(),
+                    };
+                    let me = label(fields);
+                    errors.push(format!("{} and {} touch at ({}, {}) on {} with no wire between them", name(other), me, p.x, p.y, sheet.name));
+                }
+                pin_owner.insert(p, idx);
+            }
+        }
         // Part bodies must not overlap.
         let bodies: Vec<(usize, Rect)> = sheet
             .items

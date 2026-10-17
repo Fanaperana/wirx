@@ -1,0 +1,739 @@
+{
+  "format": "eleceda-library",
+  "version": 1,
+  "name": "wirx",
+  "symbols": [
+    {
+      "id": "wirx:Conn_01x02",
+      "name": "Conn_01x02",
+      "description": "Generic connector, 2 pins",
+      "refPrefix": "J",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "graphics": [
+        {
+          "type": "rect",
+          "start": {
+            "x": -50,
+            "y": -150
+          },
+          "end": {
+            "x": 50,
+            "y": 150
+          },
+          "unit": 0,
+          "width": 10,
+          "fill": "background"
+        },
+        {
+          "type": "rect",
+          "start": {
+            "x": -50,
+            "y": -55
+          },
+          "end": {
+            "x": 0,
+            "y": -45
+          },
+          "unit": 0,
+          "fill": "outline"
+        },
+        {
+          "type": "rect",
+          "start": {
+            "x": -50,
+            "y": 45
+          },
+          "end": {
+            "x": 0,
+            "y": 55
+          },
+          "unit": 0,
+          "fill": "outline"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": -200,
+            "y": -50
+          },
+          "dir": 0,
+          "length": 150,
+          "number": "1",
+          "name": "Pin_1",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -200,
+            "y": 50
+          },
+          "dir": 0,
+          "length": 150,
+          "number": "2",
+          "name": "Pin_2",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "J",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "Conn_01x02",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:NE555",
+      "name": "NE555",
+      "description": "Precision timer",
+      "refPrefix": "U",
+      "unitCount": 1,
+      "pinNameOffset": 20,
+      "graphics": [
+        {
+          "type": "rect",
+          "start": {
+            "x": -200,
+            "y": -300
+          },
+          "end": {
+            "x": 200,
+            "y": 300
+          },
+          "unit": 0,
+          "width": 10,
+          "fill": "background"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": -300,
+            "y": -150
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "2",
+          "name": "TR",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -300,
+            "y": -50
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "6",
+          "name": "THR",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -300,
+            "y": 50
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "5",
+          "name": "CV",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -300,
+            "y": 150
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "4",
+          "name": "R",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": -50
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "3",
+          "name": "Q",
+          "type": "output",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": 50
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "7",
+          "name": "DIS",
+          "type": "open_collector",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": -400
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "8",
+          "name": "VCC",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 400
+          },
+          "dir": 90,
+          "length": 100,
+          "number": "1",
+          "name": "GND",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "U",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "NE555",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:R",
+      "name": "R",
+      "description": "Resistor",
+      "refPrefix": "R",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "rect",
+          "start": {
+            "x": -40,
+            "y": -100
+          },
+          "end": {
+            "x": 40,
+            "y": 100
+          },
+          "unit": 0,
+          "width": 10,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "~",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "~",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "R",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "10k",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Resistor_SMD:R_0603_1608Metric",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:C",
+      "name": "C",
+      "description": "Unpolarized capacitor",
+      "refPrefix": "C",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": -80,
+              "y": -30
+            },
+            {
+              "x": 80,
+              "y": -30
+            }
+          ],
+          "unit": 0,
+          "width": 20,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": -80,
+              "y": 30
+            },
+            {
+              "x": 80,
+              "y": 30
+            }
+          ],
+          "unit": 0,
+          "width": 20,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 120,
+          "number": "1",
+          "name": "~",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 120,
+          "number": "2",
+          "name": "~",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "C",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "100nF",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Capacitor_SMD:C_0603_1608Metric",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:LED",
+      "name": "LED",
+      "description": "Light emitting diode",
+      "refPrefix": "D",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": 50,
+              "y": 50
+            },
+            {
+              "x": 50,
+              "y": -50
+            },
+            {
+              "x": -50,
+              "y": 0
+            },
+            {
+              "x": 50,
+              "y": 50
+            }
+          ],
+          "unit": 0,
+          "width": 10,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 50,
+              "y": 0
+            }
+          ],
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": -50,
+              "y": -50
+            },
+            {
+              "x": -50,
+              "y": 50
+            }
+          ],
+          "unit": 0,
+          "width": 10,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": -30,
+              "y": -70
+            },
+            {
+              "x": 10,
+              "y": -110
+            }
+          ],
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": 10,
+              "y": -110
+            },
+            {
+              "x": -15,
+              "y": -105
+            },
+            {
+              "x": 5,
+              "y": -85
+            },
+            {
+              "x": 10,
+              "y": -110
+            }
+          ],
+          "unit": 0,
+          "fill": "outline"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": 20,
+              "y": -70
+            },
+            {
+              "x": 60,
+              "y": -110
+            }
+          ],
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": 60,
+              "y": -110
+            },
+            {
+              "x": 35,
+              "y": -105
+            },
+            {
+              "x": 55,
+              "y": -85
+            },
+            {
+              "x": 60,
+              "y": -110
+            }
+          ],
+          "unit": 0,
+          "fill": "outline"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": -150,
+            "y": 0
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "1",
+          "name": "K",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 150,
+            "y": 0
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "2",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "D",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "LED",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "LED_SMD:LED_0603_1608Metric",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    }
+  ]
+}

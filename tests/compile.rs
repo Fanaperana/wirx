@@ -273,3 +273,74 @@ fn rp2350b_board_builds() {
     let (b, _) = wirx::build(&design).unwrap();
     assert_eq!(a, b);
 }
+
+/// A symbol laid out in wirx: pins where the author puts them, gaps between groups, stacked pins
+/// drawn once; the part's pins come from the symbol.
+#[test]
+fn symbols_defined_in_wirx() {
+    let c = check(
+        r#"
+        fn Chip() {
+            part(#{ name: "Chip", symbol: #{
+                left: [[1, "IN", input], gap, [2, "EN", input]],
+                right: [[3, "OUT", output]],
+                top: [[[4, 5, 6], "VDD", power_in]],
+                bottom: [[7, "GND", power_in]],
+            } })
+        }
+        let u = Chip();
+        P3V3.driven() -> u.VDD;
+        GND.driven() -> u.GND;
+        u.IN -> R("1k") -> GND;
+        u.EN -> R("10k") -> P3V3;
+        u.OUT -> NC;
+        "#,
+    );
+    assert!(!has_errors(&c.diags), "{:#?}", messages(&c));
+    let d = c.design.unwrap();
+    let sym = &d.symbols[d.instances[0].part];
+    let pin = |n: &str| sym.pins.iter().find(|p| p.number == n).unwrap();
+    // The gap leaves one empty place between IN and EN; VDD's three numbers share one spot.
+    assert_eq!(pin("2").at.y - pin("1").at.y, 200);
+    assert_eq!((pin("4").at, pin("5").at, pin("6").at), (pin("4").at, pin("4").at, pin("4").at));
+    assert_eq!((pin("4").hidden, pin("5").hidden), (None, Some(true)));
+    wirx::build(&d).unwrap();
+}
+
+/// Symbols written by wirx come back through `library:` (and through KiCad files), so a symbol
+/// defined once resolves anywhere.
+#[test]
+fn symbols_round_trip_through_libraries() {
+    let dir = std::env::temp_dir().join(format!("wirx-lib-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let src = r#"fn Chip() { part(#{ name: "Chip", symbol: #{ left: [[1, "A", input], [2, "B", input]], right: [[3, "Y", output]], top: [[[4, 5], "VDD", power_in]], bottom: [[6, "GND", power_in]] } }) }
+        let u = Chip(); P3V3.driven() -> u.VDD; GND.driven() -> u.GND; [u.A, u.B] -> GND; u.Y -> NC;"#;
+    let d = check(src).design.unwrap();
+    let chip = d.symbols.iter().find(|s| s.name == "Chip").unwrap().clone();
+    std::fs::write(dir.join("chips.elib"), wirx::symbol::library::write_elib("wirx", &[chip.clone()])).unwrap();
+    std::fs::write(dir.join("chips.kicad_sym"), wirx::symbol::library::write_kicad_sym(&[chip.clone()])).unwrap();
+    for lib in ["chips.elib", "chips.kicad_sym"] {
+        let text = format!(
+            r#"fn Chip() {{ part(#{{ name: "Chip", library: "{lib}", symbol: "Chip" }}) }}
+            let u = Chip(); P3V3.driven() -> u.VDD; GND.driven() -> u.GND; [u.A, u.B] -> GND; u.Y -> NC;"#
+        );
+        let c = wirx::check_source("t.wx", &text, &dir);
+        assert!(!has_errors(&c.diags), "{lib}: {:#?}", messages(&c));
+        let back = c.design.unwrap();
+        let sym = &back.symbols[back.instances[0].part];
+        let pins = |s: &wirx::symbol::SymbolDef| s.pins.iter().map(|p| (p.number.clone(), p.at, p.dir, p.ptype)).collect::<Vec<_>>();
+        assert_eq!(pins(sym), pins(&chip), "{lib}");
+    }
+    let _ = std::fs::remove_dir_all(&dir);
+}
+
+/// Library pin names keep working in scripts: `GPIO40/ADC0` answers to GPIO40 and ADC0,
+/// `~{CS}` to CS.
+#[test]
+fn library_pin_names_have_short_forms() {
+    let c = check(
+        r#"fn F() { part(#{ name: "F", symbol: #{ left: [[1, "~{CS}", input], [2, "GPIO40/ADC0", bidirectional]], bottom: [[3, "GND", power_in]] } }) }
+        let u = F(); u.CS -> R("10k") -> GND.driven(); u.ADC0 -> net("A"); u.GPIO40 -> R("1k") -> GND; u.GND -> GND;"#,
+    );
+    assert!(!has_errors(&c.diags), "{:#?}", messages(&c));
+}

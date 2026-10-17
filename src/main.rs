@@ -85,6 +85,13 @@ enum LibCmd {
     List,
     /// Show one part's pins and defaults.
     Show { part: String },
+    /// Write a design's symbols as a library for another tool: KiCad (.kicad_sym) or eleceda (.elib).
+    Export {
+        file: PathBuf,
+        /// Output file; the extension picks the format (.kicad_sym or .elib).
+        #[arg(short, long)]
+        out: PathBuf,
+    },
 }
 
 #[derive(Clone, Copy, ValueEnum)]
@@ -148,6 +155,15 @@ fn main() -> ExitCode {
                     all.extend(layout_diags);
                     report(&c.sources, &all, json);
                     let out = out.unwrap_or_else(|| file.with_extension("esch"));
+                    // The design's symbols go beside the schematic as a project library, so eleceda
+                    // lists them (and keeps them) like any other library.
+                    let mut esch = esch;
+                    let lib_path = out.with_extension("elib");
+                    let lib_name = lib_path.file_name().and_then(|n| n.to_str()).unwrap_or("wirx.elib").to_string();
+                    if let Err(e) = std::fs::write(&lib_path, wirx::symbol::library::write_elib("wirx", &part_symbols(design))) {
+                        return fail(&format!("cannot write {}: {e}", lib_path.display()));
+                    }
+                    esch["libraries"] = serde_json::json!([{ "name": "wirx", "path": lib_name }]);
                     if let Err(e) = std::fs::write(&out, serde_json::to_string_pretty(&esch).unwrap() + "\n") {
                         return fail(&format!("cannot write {}: {e}", out.display()));
                     }
@@ -316,6 +332,28 @@ Rails:");
 Symbol shapes: box, {}", wirx::symbol::templates::TEMPLATE_NAMES.join(", "));
             ExitCode::SUCCESS
         }
+        LibCmd::Export { file, out } => {
+            let c = match wirx::check_file(&file) {
+                Ok(c) => c,
+                Err(e) => return fail(&e),
+            };
+            let Some(design) = c.design.as_ref().filter(|_| !wirx::diag::has_errors(&c.diags)) else {
+                report(&c.sources, &c.diags, false);
+                return fail("the design has errors");
+            };
+            let symbols = part_symbols(design);
+            let ext = out.extension().and_then(|e| e.to_str()).unwrap_or("").to_ascii_lowercase();
+            let text = match ext.as_str() {
+                "kicad_sym" => wirx::symbol::library::write_kicad_sym(&symbols),
+                "elib" => wirx::symbol::library::write_elib("wirx", &symbols),
+                _ => return fail("the output must end in .kicad_sym or .elib"),
+            };
+            if let Err(e) = std::fs::write(&out, text) {
+                return fail(&format!("cannot write {}: {e}", out.display()));
+            }
+            eprintln!("wrote {} ({} symbols)", out.display(), symbols.len());
+            ExitCode::SUCCESS
+        }
         LibCmd::Show { part } => {
             let Some(p) = wirx::stdlib::find(&part) else {
                 return fail(&format!("no part `{part}` in the standard library (see `wirx lib list`)"));
@@ -334,6 +372,12 @@ Symbol shapes: box, {}", wirx::symbol::templates::TEMPLATE_NAMES.join(", "));
             ExitCode::SUCCESS
         }
     }
+}
+
+/// The symbols of a design's parts (power symbols are left out: every tool has its own).
+fn part_symbols(design: &wirx::ir::Design) -> Vec<wirx::symbol::SymbolDef> {
+    let mut seen = std::collections::HashSet::new();
+    design.symbols.iter().filter(|s| !s.is_power() && seen.insert(s.id.clone())).cloned().collect()
 }
 
 fn fail(msg: &str) -> ExitCode {

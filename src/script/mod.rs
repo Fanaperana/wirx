@@ -15,14 +15,14 @@ use crate::diag::{Diagnostic, Sources, Span};
 use crate::ir::{Design, PartDef, PartPin};
 use crate::sema::{auto_rail, footprint_alias, generated_part, suggest, Builder, NewInstance};
 use crate::stdlib;
-use crate::symbol::boxgen::Side;
+use crate::symbol::boxgen::{layout_symbol, Side, Slot};
 use crate::symbol::templates::{self, TEMPLATE_NAMES};
-use crate::symbol::{PinType, RailKind};
+use crate::symbol::{library, PinType, RailKind, SymbolDef};
 use rhai::module_resolvers::FileModuleResolver;
 use rhai::{Array, Dynamic, Engine, EvalAltResult, FnPtr, ImmutableString, Map, NativeCallContext, Position, Scope};
 use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
 type RResult<T> = Result<T, Box<EvalAltResult>>;
@@ -53,6 +53,10 @@ pub struct NoConnect;
 
 struct State {
     b: Builder,
+    /// Folder of the main file: library paths are relative to it.
+    base_dir: PathBuf,
+    /// Symbol libraries already read, by path.
+    libraries: HashMap<PathBuf, Vec<SymbolDef>>,
     sources: Sources,
     source_ids: HashMap<String, usize>,
     main_source: String,
@@ -293,6 +297,11 @@ fn pin_lookup(st: &Shared, ctx: &NativeCallContext, p: &Part, key: &str) -> RRes
         idx = part.pins.iter().enumerate().filter(|(_, x)| x.name == key).map(|(k, _)| k).collect();
     }
     if idx.is_empty() {
+        // Library names: `GPIO40/ADC0` answers to GPIO40 and ADC0, `~{QSPI_SS}` to QSPI_SS.
+        let plain = |n: &str| n.trim_start_matches("~{").trim_start_matches('~').trim_end_matches('}').to_string();
+        idx = part.pins.iter().enumerate().filter(|(_, x)| x.name.split('/').any(|seg| plain(seg) == key)).map(|(k, _)| k).collect();
+    }
+    if idx.is_empty() {
         let names: Vec<String> = part.pins.iter().flat_map(|x| [x.number.clone(), x.name.clone()]).collect();
         let list: Vec<String> =
             part.pins.iter().map(|x| if x.name == "~" || x.name == x.number { x.number.clone() } else { format!("{} {}", x.number, x.name) }).collect();
@@ -399,8 +408,9 @@ fn custom_part(st: &Shared, ctx: &NativeCallContext, m: Map) -> RResult<Part> {
         pins: vec![],
         open_pins_ok: m.get("open_pins_ok").and_then(|v| v.as_bool().ok()).unwrap_or(false),
         span: ctx_span(st, ctx),
+        custom: None,
     };
-    const KEYS: &[&str] = &["name", "prefix", "footprint", "value", "description", "datasheet", "mpn", "symbol", "open_pins_ok", "fields", "pins"];
+    const KEYS: &[&str] = &["name", "prefix", "footprint", "value", "description", "datasheet", "mpn", "symbol", "library", "open_pins_ok", "fields", "pins"];
     for k in m.keys() {
         if !KEYS.contains(&k.as_str()) {
             return raise(st, ctx, Diagnostic::error("unknown_property", format!("unknown part property `{k}`")).hint(format!("properties: {}", KEYS.join(", "))));
@@ -408,6 +418,49 @@ fn custom_part(st: &Shared, ctx: &NativeCallContext, m: Map) -> RResult<Part> {
     }
     if let Some(f) = m.get("fields").and_then(|v| v.read_lock::<Map>().map(|m| m.clone())) {
         def.fields = f.iter().map(|(k, v)| (k.to_string(), v.to_string())).collect();
+    }
+    // A symbol from a library file, or one laid out here: the pins come from the symbol.
+    let library_sym = match m.get("library") {
+        Some(lib) => Some(library_symbol(st, ctx, &lib.to_string(), &get("symbol").unwrap_or_else(|| name.clone()))?),
+        None => match m.get("symbol").and_then(|v| v.read_lock::<Map>().map(|m| m.clone())) {
+            Some(layout) => Some(laid_out_symbol(st, ctx, &name, &def.prefix, &layout)?),
+            None => None,
+        },
+    };
+    if let Some(sym) = library_sym {
+        if m.contains_key("pins") {
+            return raise(
+                st,
+                ctx,
+                Diagnostic::error("pins_twice", format!("part `{name}` takes its pins from its symbol; drop `pins`")).hint("list the pins inside `symbol: #{ left: [...], ... }`, or use the library symbol's pins"),
+            );
+        }
+        if sym.unit_count > 1 {
+            return raise(st, ctx, Diagnostic::error("multi_unit_symbol", format!("symbol `{}` has {} units; wirx draws single-unit symbols only for now", sym.name, sym.unit_count)));
+        }
+        let field = |k: &str| sym.fields.iter().find(|f| f.name == k).map(|f| f.value.clone()).filter(|v| !v.is_empty());
+        if def.footprint.is_empty() {
+            def.footprint = field("Footprint").unwrap_or_default();
+        }
+        if def.datasheet.is_empty() {
+            def.datasheet = field("Datasheet").filter(|d| d != "~").unwrap_or_default();
+        }
+        if def.description.is_empty() {
+            def.description = sym.description.clone().unwrap_or_default();
+        }
+        if get("prefix").is_none() && !sym.ref_prefix.is_empty() {
+            def.prefix = sym.ref_prefix.trim_end_matches('?').to_string();
+        }
+        def.symbol = "custom".into();
+        def.pins = sym.pins.iter().map(|p| PartPin { number: p.number.clone(), name: p.name.clone(), ptype: p.ptype, side: None, hidden: p.hidden == Some(true) }).collect();
+        let mut numbers = HashSet::new();
+        for p in &def.pins {
+            if !numbers.insert(p.number.clone()) {
+                return raise(st, ctx, Diagnostic::error("duplicate_pin", format!("pin number `{}` appears twice in symbol `{}`", p.number, sym.name)));
+            }
+        }
+        def.custom = Some(Box::new(sym));
+        return instantiate(st, ctx, def, &[]);
     }
     if def.symbol != "box" && def.symbol != "conn" && templates::template(&def.symbol).is_none() {
         let names: Vec<String> = TEMPLATE_NAMES.iter().map(|s| s.to_string()).collect();
@@ -471,6 +524,76 @@ fn custom_part(st: &Shared, ctx: &NativeCallContext, m: Map) -> RResult<Part> {
         );
     }
     instantiate(st, ctx, def, &[])
+}
+
+/// `library: "libs/rp.elib", symbol: "RP2350B"`: a symbol from an eleceda or KiCad library file.
+fn library_symbol(st: &Shared, ctx: &NativeCallContext, path: &str, name: &str) -> RResult<SymbolDef> {
+    let full = st.borrow().base_dir.join(path);
+    if !st.borrow().libraries.contains_key(&full) {
+        match library::load(&full) {
+            Ok(list) => {
+                st.borrow_mut().libraries.insert(full.clone(), list);
+            }
+            Err(e) => return raise(st, ctx, Diagnostic::error("library_not_found", e).hint("paths are relative to the design file; libraries are .elib, .esch or .kicad_sym")),
+        }
+    }
+    let s = st.borrow();
+    let list = &s.libraries[&full];
+    match library::find(list, name) {
+        Some(sym) => Ok(sym.clone()),
+        None => {
+            let names: Vec<String> = list.iter().map(|x| x.name.clone()).collect();
+            let hint = suggest(name, &names).map(|g| format!("did you mean `{g}`?")).unwrap_or_else(|| format!("{} symbols in this library", names.len()));
+            drop(s);
+            raise(st, ctx, Diagnostic::error("unknown_symbol", format!("`{path}` has no symbol `{name}`")).hint(hint))
+        }
+    }
+}
+
+/// `symbol: #{ left: [...], right: [...], top: [...], bottom: [...] }`: a box symbol with pins
+/// where the author puts them. Each side lists pin rows `[number(s), name, type]` from top to
+/// bottom (left to right on top and bottom), and `gap` for a blank place between groups. A row
+/// with several numbers is drawn once, the other numbers stacked behind it.
+fn laid_out_symbol(st: &Shared, ctx: &NativeCallContext, name: &str, prefix: &str, layout: &Map) -> RResult<SymbolDef> {
+    const KEYS: &[&str] = &["left", "right", "top", "bottom", "width", "height"];
+    for k in layout.keys() {
+        if !KEYS.contains(&k.as_str()) {
+            return raise(st, ctx, Diagnostic::error("unknown_property", format!("unknown symbol layout key `{k}`")).hint(format!("keys: {}", KEYS.join(", "))));
+        }
+    }
+    let mut sides: [Vec<Slot>; 4] = [vec![], vec![], vec![], vec![]];
+    for (i, side) in ["left", "right", "top", "bottom"].iter().enumerate() {
+        let Some(rows) = layout.get(*side) else { continue };
+        let Ok(rows) = rows.clone().into_array() else {
+            return raise(st, ctx, Diagnostic::error("bad_symbol", format!("`{side}` must be a list of pin rows")));
+        };
+        for row in rows {
+            if row.is_string() && row.to_string() == "gap" {
+                sides[i].push(Slot::Gap);
+                continue;
+            }
+            let Ok(r) = row.clone().into_array() else {
+                return raise(st, ctx, Diagnostic::error("bad_pin", format!("symbol rows are `gap` or [number(s), name, type], not {}", type_name(&row))));
+            };
+            if r.len() < 2 {
+                return raise(st, ctx, Diagnostic::error("bad_pin", "a pin row needs a number and a name: [35, \"RUN\", input]"));
+            }
+            let numbers: Vec<String> = match r[0].clone().into_array() {
+                Ok(list) => list.iter().map(|v| v.to_string()).collect(),
+                Err(_) => vec![r[0].to_string()],
+            };
+            let ptype = match r.get(2) {
+                None => PinType::Passive,
+                Some(t) => match PinType::parse(&t.to_string()) {
+                    Some(t) => t,
+                    None => return raise(st, ctx, Diagnostic::error("bad_pin", format!("`{t}` is not a pin type (pin {})", r[1]))),
+                },
+            };
+            sides[i].push(Slot::Pin { numbers, name: r[1].to_string(), ptype });
+        }
+    }
+    let num = |k: &str| layout.get(k).and_then(|v| v.as_int().ok()).unwrap_or(0) as i32;
+    Ok(layout_symbol(&format!("wirx:{name}"), name, prefix, &sides, num("width"), num("height")))
 }
 
 fn rail(st: &Shared, ctx: &NativeCallContext, name: &str, kind: RailKind) -> RResult<Net> {
@@ -691,7 +814,7 @@ fn build_engine(st: &Shared, base_dir: &Path) -> Engine {
     for t in PinType::ALL {
         constants.insert(t.name().into(), t.name().into());
     }
-    for name in ["left", "right", "top", "bottom", "up", "down", "hidden"] {
+    for name in ["left", "right", "top", "bottom", "up", "down", "hidden", "gap"] {
         constants.insert(name.into(), name.into());
     }
     constants.insert("NC".into(), Dynamic::from(NoConnect));
@@ -769,6 +892,8 @@ pub fn run(name: &str, text: &str, base_dir: &Path) -> (Sources, Option<Design>,
     let main = sources.add(name, text);
     let st: Shared = Rc::new(RefCell::new(State {
         b: Builder::new(&stem),
+        base_dir: base_dir.to_path_buf(),
+        libraries: HashMap::new(),
         sources,
         source_ids: HashMap::from([(name.to_string(), main)]),
         main_source: name.to_string(),

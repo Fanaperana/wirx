@@ -46,6 +46,7 @@ wirx render design.wx -o out/            # one SVG per sheet, for a quick look
 wirx netlist design.wx --format kicad    # KiCad .net for PCB layout (or --format json)
 wirx lib list                            # standard parts, rails and symbol shapes
 wirx lib show NE555                      # pins of one part
+wirx lib export design.wx -o d.kicad_sym # the design's symbols for KiCad (or -o d.elib)
 ```
 
 `build` refuses to write a file while there are errors (override with `--force`). Every
@@ -97,6 +98,19 @@ The essentials:
   header) and `Conn2(rows)` (dual-row, odd/even).
 - **Footprint aliases** `0201` to `2512` work for resistors, capacitors, inductors, LEDs, fuses and
   diodes.
+
+## Symbols that travel
+
+- **Lay out a symbol in wirx.** `symbol: #{ left: […], right: […], top: […], bottom: […] }` puts
+  pins where you want them, with `gap`s between groups and stacked pins drawn once.
+- **Reuse a symbol** from an eleceda `.elib`, an `.esch` or a KiCad `.kicad_sym` file with
+  `library: "…", symbol: "Name"`.
+- **Automatic export.** `wirx build` writes the design's symbols to a `.elib` beside the `.esch`
+  and registers it, so eleceda lists them in its Library panel when it opens the design.
+- **KiCad export.** `wirx lib export design.wx -o design.kicad_sym` writes them for KiCad.
+
+Details and examples: [docs/rhai-syntax.md](docs/rhai-syntax.md#symbols).
+`examples/rp2350b.wx` draws the RP2350B this way.
 
 ## What the checks cover
 

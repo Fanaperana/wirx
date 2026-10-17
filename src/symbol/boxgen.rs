@@ -160,3 +160,85 @@ mod tests {
         }
     }
 }
+
+/// One place along a side of a laid-out symbol.
+#[derive(Debug, Clone)]
+pub enum Slot {
+    /// Blank space separating pin groups.
+    Gap,
+    /// A pin; several numbers are stacked (drawn once, the others hidden behind it).
+    Pin { numbers: Vec<String>, name: String, ptype: PinType },
+}
+
+/// A rectangular symbol with pins exactly where the author put them: per side, in order, with
+/// gaps between groups and stacked pins (the way IC symbols are drawn by hand). `min_width` and
+/// `min_height` widen the body.
+///
+/// Pins come out side by side (left, right, top, bottom), each slot's numbers in order: that is
+/// the order of the part's pins.
+pub fn layout_symbol(id: &str, name: &str, prefix: &str, sides: &[Vec<Slot>; 4], min_width: i32, min_height: i32) -> SymbolDef {
+    let pitch = 100;
+    let len = 100;
+    let char_w = 35;
+    let longest = |list: &Vec<Slot>| {
+        list.iter()
+            .map(|s| match s {
+                Slot::Pin { name, .. } => name.chars().count() as i32,
+                Slot::Gap => 0,
+            })
+            .max()
+            .unwrap_or(0)
+    };
+    let count = |list: &Vec<Slot>| list.len() as i32;
+    let snap_up = |v: i32| (v + 99).div_euclid(100) * 100;
+    let v_count = count(&sides[0]).max(count(&sides[1])).max(1);
+    let h_count = count(&sides[2]).max(count(&sides[3]));
+    let name_w = (longest(&sides[0]) + longest(&sides[1])) * char_w + 150;
+    let half_w = snap_up((name_w / 2).max(h_count * pitch / 2 + 50).max(200).max(min_width / 2));
+    let name_h = (longest(&sides[2]) + longest(&sides[3])) * char_w + 100;
+    let half_h = snap_up((((v_count - 1) * pitch) / 2 + 100).max(name_h / 2).max(100).max(min_height / 2));
+    let start = |n: i32| -((((n - 1).max(0) * pitch) / 2) / 50) * 50;
+
+    let mut pins = Vec::new();
+    let place = |list: &Vec<Slot>, at: &dyn Fn(i32) -> Pt, dir: Rot, pins: &mut Vec<Pin>| {
+        for (i, slot) in list.iter().enumerate() {
+            if let Slot::Pin { numbers, name, ptype } = slot {
+                for (k, number) in numbers.iter().enumerate() {
+                    pins.push(Pin {
+                        at: at(i as i32),
+                        dir,
+                        length: len,
+                        number: number.clone(),
+                        name: name.clone(),
+                        ptype: *ptype,
+                        shape: "line".into(),
+                        unit: 0,
+                        hidden: (k > 0).then_some(true),
+                    });
+                }
+            }
+        }
+    };
+    let (l, r, t, b) = (start(count(&sides[0])), start(count(&sides[1])), start(count(&sides[2])), start(count(&sides[3])));
+    place(&sides[0], &|i| pt(-half_w - len, l + i * pitch), 0, &mut pins);
+    place(&sides[1], &|i| pt(half_w + len, r + i * pitch), 180, &mut pins);
+    place(&sides[2], &|i| pt(t + i * pitch, -half_h - len), 270, &mut pins);
+    place(&sides[3], &|i| pt(b + i * pitch, half_h + len), 90, &mut pins);
+
+    SymbolDef {
+        id: id.into(),
+        name: name.into(),
+        description: None,
+        keywords: None,
+        ref_prefix: prefix.into(),
+        unit_count: 1,
+        power: None,
+        hide_pin_names: None,
+        hide_pin_numbers: None,
+        pin_name_offset: Some(20),
+        open_pins_ok: None,
+        graphics: vec![rect(-half_w, -half_h, half_w, half_h, Some(10), Some(Fill::Background))],
+        pins,
+        fields: std_fields(prefix, name),
+    }
+}

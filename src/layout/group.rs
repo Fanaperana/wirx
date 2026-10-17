@@ -194,10 +194,10 @@ fn wire_rect(a: Pt, b: Pt) -> Rect {
 }
 
 /// Wire from a pin tip to where a symbol drawn in direction `natural` can sit without covering it.
+/// Every symbol is joined to its pin by a wire, never set straight onto the pin tip: two connection
+/// points touching without a wire do connect, but read as a gap and are easy to break by moving a part.
 fn stub_to(t: Pt, out: Rot, natural: Rot, len: i32) -> (Vec<(Pt, Pt)>, Pt) {
-    if out == natural {
-        (vec![], t)
-    } else if is_horizontal(out) {
+    if out == natural || is_horizontal(out) {
         let s = t + dir_vec(out) * len;
         (vec![(t, s)], s)
     } else {
@@ -283,7 +283,8 @@ impl Ctx<'_> {
         let mut rects = vec![bounds(pins.iter().map(|p| p.at)).map(|r| r.union(body)).unwrap_or(body)];
         let mut decor = Vec::new();
         // Neighbouring pins on the same rail (several GND pins) share one power symbol.
-        let mut in_run: HashSet<usize> = HashSet::new();
+        // Stacked pins (several numbers drawn as one pin) share the visible pin's decoration.
+        let mut in_run: HashSet<usize> = stacked_pins(&pins);
         if self.class(inst) == Class::Fixed {
             for run in rail_runs(d, inst, &pins) {
                 in_run.extend(run.iter().copied());
@@ -345,7 +346,20 @@ impl Ctx<'_> {
                 let (wires, s) = stub_to(t, out, kind.natural_dir(), len);
                 let flag = self.flag_pin.get(&n) == Some(&(inst, k));
                 let key = format!("pwr:{}:{}", i.path, sym.pins[k].number);
-                let side = if is_horizontal(out) { out } else { 0 };
+                // On a top or bottom pin the flag goes sideways: to the side with more room, so it
+                // never lands on a neighbouring pin's symbol.
+                let side = if is_horizontal(out) {
+                    out
+                } else {
+                    let room = |dir: i32| {
+                        pins.iter()
+                            .filter(|q| q.out == out && q.at != t && (q.at.x - t.x).signum() == dir)
+                            .map(|q| (q.at.x - t.x).abs())
+                            .min()
+                            .unwrap_or(i32::MAX)
+                    };
+                    if room(1) >= room(-1) { 0 } else { 180 }
+                };
                 decor.push(self.rail_decor(n, kind, key, wires, vec![t, s], s, flag.then_some((s, side))));
             } else if self.label_pin.get(&n) == Some(&(inst, k)) {
                 let s = t + dir_vec(out) * STUB;
@@ -518,11 +532,20 @@ impl Ctx<'_> {
 }
 
 /// Runs of adjacent pins (100 mil apart, same side) on the same rail.
+/// Pins drawn at the same point as an earlier pin of the same part (stacked pins).
+fn stacked_pins(pins: &[PlacedPin]) -> HashSet<usize> {
+    (0..pins.len()).filter(|&k| (0..k).any(|j| pins[j].at == pins[k].at)).collect()
+}
+
 fn rail_runs(d: &Design, inst: usize, pins: &[PlacedPin]) -> Vec<Vec<usize>> {
+    let stacked = stacked_pins(pins);
     let i = &d.instances[inst];
     let rail = |k: usize| i.pin_net[k].filter(|&n| d.nets[n].is_rail() && !i.nc[k]);
     let mut by_side: HashMap<(usize, Rot), Vec<usize>> = HashMap::new();
     for k in 0..pins.len() {
+        if stacked.contains(&k) {
+            continue;
+        }
         if let Some(n) = rail(k) {
             if let NetKind::Rail(kind) = d.nets[n].kind
                 && pins[k].out == opposite(kind.natural_dir())
@@ -679,16 +702,32 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
             let part = &d.parts[d.instances[p.0].part];
             class_of(&part.symbol, part.pins.len()) == Class::Fixed
         };
+        // Labels and flags go on visible pins: a stacked (hidden) pin is drawn by its visible twin.
+        let visible: Vec<(usize, usize)> = here.iter().copied().filter(|p| !d.pin(p.0, p.1).hidden).collect();
+        let choose = if visible.is_empty() { &here } else { &visible };
         if !net.is_rail() && here.len() < net.pins.len() {
-            let pick = here.iter().find(|p| fixed(p)).or(here.first()).copied().unwrap();
+            let pick = choose.iter().find(|p| fixed(p)).or(choose.first()).copied().unwrap();
             label_pin.insert(n, pick);
         }
         if net.flagged && !flags_done.contains(&n) {
-            let mut candidates: Vec<&(usize, usize)> = here.iter().filter(|p| label_pin.get(&n) != Some(p) && !d.instances[p.0].nc[p.1]).collect();
+            let mut candidates: Vec<&(usize, usize)> = choose.iter().filter(|p| label_pin.get(&n) != Some(p) && !d.instances[p.0].nc[p.1]).collect();
             // A signal net's flag goes on a small part's pin: on a chip's edge, between pins 100 mil
             // apart, its symbol would block the neighbouring pins.
             if !net.is_rail() {
                 candidates.sort_by_key(|p| fixed(p));
+            } else {
+                // A rail's flag stands beside its power symbol: pick the pin with the most room
+                // beside it along its edge (neighbouring pins' symbols are 100 mil away).
+                let room = |p: &(usize, usize)| -> i32 {
+                    let sym = &d.symbols[d.instances[p.0].part];
+                    let me = &sym.pins[p.1];
+                    let along = |q: &crate::symbol::Pin| if me.dir == 0 || me.dir == 180 { q.at.y } else { q.at.x };
+                    let side = |dir: i32| {
+                        sym.pins.iter().filter(|q| q.dir == me.dir && q.at != me.at && (along(q) - along(me)).signum() == dir).map(|q| (along(q) - along(me)).abs()).min().unwrap_or(10_000)
+                    };
+                    side(1).max(side(-1))
+                };
+                candidates.sort_by_key(|p| std::cmp::Reverse(room(p).min(1000)));
             }
             if let Some(p) = candidates.first() {
                 flag_pin.insert(n, **p);

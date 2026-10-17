@@ -127,6 +127,7 @@ pub fn generated_part(name: &str) -> Option<PartDef> {
             .collect(),
         open_pins_ok: false,
         span: None,
+        custom: None,
     })
 }
 
@@ -134,7 +135,17 @@ pub fn generated_part(name: &str) -> Option<PartDef> {
 pub fn build_symbol(def: &PartDef) -> SymbolDef {
     let id = format!("wirx:{}", def.name);
     let pins: Vec<(String, String, PinType, bool)> = def.pins.iter().map(|p| (p.number.clone(), p.name.clone(), p.ptype, p.hidden)).collect();
-    let mut sym = match def.symbol.as_str() {
+    // A part with its own symbol (defined in wirx or from a library) keeps that drawing.
+    if let Some(custom) = &def.custom {
+        let mut sym = (**custom).clone();
+        sym.id = id;
+        sym.name = def.name.clone();
+        sym.ref_prefix = def.prefix.clone();
+        sym.unit_count = 1;
+        sym.fields = templates::std_fields(&def.prefix, &def.name);
+        return finish_symbol(def, sym);
+    }
+    let sym = match def.symbol.as_str() {
         "conn" | "conn2" => {
             let dual = def.symbol == "conn2";
             let t = if dual { connector_dual(def.pins.len().div_ceil(2)) } else { connector(def.pins.len()) };
@@ -156,6 +167,11 @@ pub fn build_symbol(def: &PartDef) -> SymbolDef {
             ),
         },
     };
+    finish_symbol(def, sym)
+}
+
+/// Description, flags and field values every part symbol carries.
+fn finish_symbol(def: &PartDef, mut sym: SymbolDef) -> SymbolDef {
     sym.description = (!def.description.is_empty()).then(|| def.description.clone());
     sym.open_pins_ok = def.open_pins_ok.then_some(true);
     for f in &mut sym.fields {

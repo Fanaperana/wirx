@@ -105,6 +105,52 @@ let u = ATmega328P();
 - **Sides:** `left`, `right`, `top`, `bottom`. Without a side, a `box` symbol puts inputs left,
   outputs right, supplies on top and grounds at the bottom.
 
+### Symbols
+
+A custom part is drawn as a generated box by default. Two other ways give it a proper symbol.
+
+**Lay the symbol out in wirx** with `symbol: #{ … }`. Each side lists its pins in order: top to
+bottom on the left and right, left to right on the top and bottom. `gap` leaves a blank place
+between groups. A row with several numbers is a stacked pin: drawn once, the other numbers hidden
+behind it (eight IOVDD pins, one line). The part's pins come from the symbol, so there is no
+separate `pins` list:
+
+```rhai
+fn LDO() {
+    part(#{
+        name: "TLV75533",
+        footprint: "Package_TO_SOT_SMD:SOT-23-5",
+        symbol: #{
+            left:   [[1, "IN", power_in], gap, [3, "EN", input]],
+            right:  [[5, "OUT", power_out], gap, [4, "NC", no_connect]],
+            bottom: [[2, "GND", power_in]],
+            // width: 1200, height: 800      optional minimum body size in mils
+        },
+    })
+}
+```
+
+**Use an existing symbol** with `library:` (relative to the design file) and `symbol:` (the
+symbol's name or full id). eleceda libraries (`.elib`), the symbols embedded in an eleceda
+schematic (`.esch`) and KiCad libraries (`.kicad_sym`) all work, and the pins come from the
+symbol:
+
+```rhai
+fn RP2040() {
+    part(#{ name: "RP2040", library: "libs/MCU_RaspberryPi.kicad_sym", symbol: "RP2040" })
+}
+```
+
+Library pin names keep short forms in scripts: a pin named `GPIO40/ADC0` answers to `u.GPIO40`
+and `u.ADC0`, and `~{QSPI_SS}` answers to `u.QSPI_SS`. Multi-unit symbols (op-amp packs) are not
+supported yet.
+
+**Symbols resolve in other tools.** `wirx build design.wx` writes the design's symbols to
+`design.elib` beside `design.esch` and lists it in the schematic's project libraries. eleceda
+desktop loads it when it opens the file, so the symbols appear in its Library panel. For KiCad,
+`wirx lib export design.wx -o design.kicad_sym` writes them as a KiCad library (`-o x.elib` writes
+an eleceda one). Symbols written either way come back unchanged through `library:`.
+
 ## Pins
 
 ```rhai

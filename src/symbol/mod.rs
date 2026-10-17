@@ -2,6 +2,7 @@
 //! serialize straight into `.esch` files.
 
 pub mod boxgen;
+pub mod library;
 pub mod templates;
 
 use crate::geom::{bounds, pt, Orient, Pt, Rect, Rot};

@@ -601,6 +601,7 @@ fn template_def(name: &str, sym: &Sym, shape: &str) -> PartDef {
             .collect(),
         open_pins_ok: false,
         span: None,
+        custom: None,
     }
 }
 
