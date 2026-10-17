@@ -47,7 +47,7 @@ After the first routing, the nets involved in crossings between different nets a
 rerouted with every other net in place. Attempts cycle through three deterministic orders
 (original, reversed, rotated). Cells around a recurring crossing get more expensive each time
 (+60 per recurrence, 3×3 cells around it). This congestion history is local to each placement
-candidate. The budget is 12 iterations, 20 ms, or 4 attempts in a row without improvement. Only a
+candidate. The budget is 12 iterations, 200 net reroutes, or 4 attempts in a row without improvement. (The first version used a 20 ms wall-clock budget, which made the output depend on machine speed; the budget now counts work.) Only a
 strictly better result on (unrouted, crossings, bends, length) replaces the best one.
 
 Rerouting alone (default placement, `--no-candidates`), stage 1 off vs on:

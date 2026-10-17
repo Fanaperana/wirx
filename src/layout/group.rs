@@ -1355,7 +1355,9 @@ fn route_net(g: &mut Grid, ni: usize, net: &(usize, Vec<(usize, usize)>), placed
 
 /// Iteration and time budget for crossing-driven rerouting (per placement candidate).
 const REROUTE_ITERATIONS: usize = 12;
-const REROUTE_BUDGET: std::time::Duration = std::time::Duration::from_millis(20);
+/// Work budget: nets rerouted per placement candidate. It counts work, not time, so the result is
+/// the same on every machine and every run.
+const REROUTE_WORK: usize = 200;
 /// Stop after this many attempts in a row without improvement.
 const REROUTE_PATIENCE: usize = 4;
 /// Extra cost added around a contested crossing each time it recurs.
@@ -1383,14 +1385,14 @@ fn reroute_crossings(
     label_pin: &HashMap<usize, (usize, usize)>,
     decor: &[(Pt, Pt, i32)],
 ) -> Routing {
-    let start = std::time::Instant::now();
+    let mut work = 0;
     let mut best_metrics = best.metrics(decor);
     let mut history: HashMap<usize, u16> = HashMap::new();
     let mut current = best.clone();
     let mut current_metrics = best_metrics.clone();
     let mut stale = 0;
     for iteration in 0..REROUTE_ITERATIONS {
-        if current_metrics.crossings.is_empty() || start.elapsed() > REROUTE_BUDGET || stale >= REROUTE_PATIENCE {
+        if current_metrics.crossings.is_empty() || work >= REROUTE_WORK || stale >= REROUTE_PATIENCE {
             break;
         }
         // Nets (group indices) touching a crossing. Decoration wires carry design net ids; map
@@ -1436,6 +1438,7 @@ fn reroute_crossings(
         }
         for ni in order {
             route_net(&mut g, ni, &nets[ni], placed, label_pin, &mut trial);
+            work += 1;
         }
         let m = trial.metrics(decor);
         if m.rank(trial.failed.len()) < best_metrics.rank(best.failed.len()) {
