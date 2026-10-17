@@ -82,7 +82,19 @@ impl Ctx<'_> {
             return false;
         }
         let pins: Vec<PlacedPin> = self.sym(b).pins.iter().map(|p| place_pin(p, Orient::IDENTITY, pt(0, 0))).collect();
-        !stacked_pins(&pins).contains(&k) && !rail_runs(d, b, &pins).iter().any(|run| run.contains(&k))
+        !stacked_pins(&pins).contains(&k)
+    }
+
+    /// The run of neighbouring pins on one rail (sharing one power symbol) that pin `k` of `b`
+    /// belongs to, if any.
+    pub(super) fn run_of(&self, b: usize, k: usize) -> Option<Vec<usize>> {
+        let pins: Vec<PlacedPin> = self.sym(b).pins.iter().map(|p| place_pin(p, Orient::IDENTITY, pt(0, 0))).collect();
+        rail_runs(self.d, b, &pins).into_iter().find(|run| run.contains(&k))
+    }
+
+    /// The pin a bank is filed under: a run of pins counts as its first pin.
+    fn bank_key(&self, b: usize, k: usize) -> (usize, usize) {
+        (b, self.run_of(b, k).map_or(k, |run| run[0]))
     }
 
     /// Group this group's decoupling capacitors into banks and pick each bank's pin.
@@ -98,8 +110,10 @@ impl Ctx<'_> {
                 }
                 for k in 0..d.instances[b].pin_net.len() {
                     let pin = d.pin(b, k);
-                    if d.instances[b].pin_net[k] == Some(supply) && !pin.hidden && !d.instances[b].nc[k] && matches!(pin.ptype, PinType::PowerIn | PinType::PowerOut) {
-                        v.push((b, k));
+                    // A run of neighbouring pins on the rail is one place to draw a bank.
+                    let key = self.bank_key(b, k);
+                    if d.instances[b].pin_net[k] == Some(supply) && !pin.hidden && !d.instances[b].nc[k] && matches!(pin.ptype, PinType::PowerIn | PinType::PowerOut) && !v.contains(&key) {
+                        v.push(key);
                     }
                 }
             }
@@ -119,6 +133,7 @@ impl Ctx<'_> {
                     _ => (None, false),
                 }
             };
+            let pin = pin.map(|(b, k)| self.bank_key(b, k));
             match banks.iter_mut().find(|x| x.supply == supply && x.ground == ground && x.pin == pin && !x.near_only && !near_only) {
                 Some(x) => x.caps.push(i),
                 None => banks.push(Bank { supply, ground, caps: vec![i], pin, near_only }),
@@ -206,40 +221,74 @@ impl Ctx<'_> {
     }
 
     /// Draw a bank at its pin: the pin's own power symbol gives way to a wire into the bank's supply
-    /// wire. Tries both sides and growing distances, nearest first; false (nothing changed) when no
-    /// position is clear.
-    pub(super) fn attach_bank(&mut self, b: &Bank, placed: &mut HashMap<usize, Placed>, order: &mut Vec<usize>, occupied: &mut Vec<Rect>) -> bool {
+    /// wire. Tries growing distances, nearest first, toward the chip's nearer corner (only that way
+    /// when `outward_only`, then the other way otherwise); false (nothing changed) when no position
+    /// is clear.
+    pub(super) fn attach_bank(&mut self, b: &Bank, outward_only: bool, placed: &mut HashMap<usize, Placed>, order: &mut Vec<usize>, occupied: &mut Vec<Rect>) -> bool {
         let Some((chip, k)) = b.pin else { return false };
         let Some(old) = placed.get(&chip).cloned() else { return false };
-        self.bank_pins.insert((chip, k));
+        // A run of pins keeps its short bus; the bank's wire continues it from one end.
+        let run = self.run_of(chip, k).unwrap_or_else(|| vec![k]);
+        for &q in &run {
+            self.bank_pins.insert((chip, q));
+        }
         let mut ic = self.make_placed(chip, old.orient);
         ic.translate(old.origin);
-        let others: Vec<Rect> = order.iter().filter(|&&i| i != chip).flat_map(|i| placed[i].rects.iter().copied()).chain(ic.rects.iter().copied()).collect();
+        let mut others: Vec<Rect> = order.iter().filter(|&&i| i != chip).flat_map(|i| placed[i].rects.iter().copied()).chain(ic.rects.iter().copied()).collect();
+        // Signal pins already in line will be joined by a straight wire: keep the bank off it.
+        let d = self.d;
+        let tip = |i: usize, q: usize| if i == chip { ic.pins[q].at } else { placed[&i].pins[q].at };
+        for (n, net) in d.nets.iter().enumerate() {
+            if net.is_rail() {
+                continue;
+            }
+            let here: Vec<Pt> = net.pins.iter().filter(|&&(i, q)| (i == chip || placed.contains_key(&i)) && !d.instances[i].nc[q] && d.instances[i].pin_net[q] == Some(n)).map(|&(i, q)| tip(i, q)).collect();
+            for (x, &a) in here.iter().enumerate() {
+                for &z in &here[x + 1..] {
+                    if a != z && (a.x == z.x || a.y == z.y) {
+                        others.push(wire_rect(a, z));
+                    }
+                }
+            }
+        }
+        let others = others;
         let t = ic.pins[k];
+        // Where the bank's wire starts, for a bank going left (or up a side) and one going right
+        // (or down a side): the pin tip, or the end of the run's bus.
+        let ends: Vec<Pt> = if run.len() > 1 { run.iter().map(|&q| ic.pins[q].at + dir_vec(t.out) * STUB).collect() } else { vec![t.at] };
+        let first = *ends.iter().min_by_key(|p| (p.x, p.y)).unwrap();
+        let last = *ends.iter().max_by_key(|p| (p.x, p.y)).unwrap();
+        // On a top or bottom edge the bank goes toward the nearer corner of the chip, so banks of
+        // neighbouring pins fan out without crossing.
+        let toward_left = t.at.x - ic.body.x0 <= ic.body.x1 - t.at.x;
         // (cost, far_left, path from the pin to the bank's near end)
         let mut options: Vec<(i32, bool, Vec<Pt>)> = Vec::new();
         match t.out {
             0 | 180 => {
                 for s in (200..=2000).step_by(100) {
-                    let n = t.at + dir_vec(t.out) * s;
-                    options.push((s, t.out == 180, vec![t.at, n]));
+                    let n = first + dir_vec(t.out) * s;
+                    options.push((s, t.out == 180, vec![first, n]));
                 }
             }
             out => {
                 for far_left in [true, false] {
-                    for s in (200..=1500).step_by(100) {
-                        for u in (STUB..=3000).step_by(GRID as usize) {
-                            let corner = t.at + dir_vec(out) * u;
+                    let start = if far_left { first } else { last };
+                    for s in (200..=4000).step_by(100) {
+                        for u in (STUB..=5000).step_by(GRID as usize) {
+                            let corner = start + dir_vec(out) * u;
                             let n = corner + pt(if far_left { -s } else { s }, 0);
-                            options.push((s + u, far_left, vec![t.at, corner, n]));
+                            options.push((s + u, far_left, vec![start, corner, n]));
                         }
                     }
                 }
             }
         }
-        options.sort_by_key(|o| (o.0, !o.1));
+        if outward_only && !is_horizontal(t.out) {
+            options.retain(|o| o.1 == toward_left);
+        }
+        options.sort_by_key(|o| (o.1 != toward_left, o.0));
         // The pin's PWR_FLAG moves to the bank with its power symbol.
-        let flag = self.flag_pin.get(&b.supply) == Some(&(chip, k));
+        let flag = run.iter().any(|&q| self.flag_pin.get(&b.supply) == Some(&(chip, q)));
         let units = [self.bank_unit(b, true, flag), self.bank_unit(b, false, flag)];
         // A wire piece, less its ends (which touch the pin and the bank).
         let inner = |a: Pt, z: Pt| -> Option<Rect> {
@@ -284,7 +333,9 @@ impl Ctx<'_> {
             }
             return true;
         }
-        self.bank_pins.remove(&(chip, k));
+        for &q in &run {
+            self.bank_pins.remove(&(chip, q));
+        }
         false
     }
 

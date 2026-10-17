@@ -299,10 +299,16 @@ pin is, in order:
 
 Several power pins on the rail and no hint: the capacitors still form a bank, drawn on their own,
 not joined to a guessed pin. Write `near` (or chain from the pin) when it matters which pin a
-capacitor belongs to. Banks are not drawn at a pin whose power symbol it shares with neighbouring
-pins (adjacent pins on one rail), and capacitors on negative rails keep their own symbols. A
-capacitor on a signal (reset, timing, filter, tank) is not a bank: it stays on its signal.
-Polarized capacitors are drawn as wired, + on the side it is connected to.
+capacitor belongs to. Neighbouring pins on one rail (two VCC pins side by side) count as one
+place: their short bus stays and the bank continues it. Capacitors on negative rails keep their own
+symbols. A capacitor on a signal (reset, timing, filter, tank) is not a bank: it stays on its
+signal. Polarized capacitors are drawn as wired, + on the side it is connected to.
+
+Banks on one chip edge fan out: the outermost pins' banks are placed first, toward the nearer
+corner, and the inner ones pass over them. On a crowded edge a bank that finds no clear spot is
+drawn on its own instead; give the pin room in the symbol (`gap`) if it should stay at its pin.
+`wirx import` writes `near(cap, chip.pin)` for each capacitor drawn wired to a chip pin, so banks
+survive a round trip through eleceda.
 
 Banks are a drawing convention. They do not mean the PCB placement or the decoupling has been
 checked.

@@ -148,6 +148,9 @@ struct Model {
     nets: Vec<NetInfo>,
     blocks: Vec<Block>,
     warnings: Vec<String>,
+    /// A decoupling capacitor wired straight to one chip's pin (a bank): cap → (chip, pin number).
+    /// Written as `near(cap, chip.pin)`, so the bank is drawn at that pin again.
+    near: HashMap<usize, (usize, String)>,
 }
 
 #[derive(Default)]
@@ -232,6 +235,8 @@ fn read(esch: &Value) -> Result<Model, String> {
     }
 
     let mut uf = Uf::default();
+    // Connectivity through wires alone (no labels, no power symbols): what is drawn joined.
+    let mut wired = Uf::default();
     let mut comps: Vec<Comp> = Vec::new();
     let mut comp_by_key: HashMap<String, usize> = HashMap::new();
     let mut pin_keys: Vec<BTreeMap<String, Vec<String>>> = Vec::new();
@@ -254,6 +259,7 @@ fn read(esch: &Value) -> Result<Model, String> {
                 "wire" => {
                     let (a, b) = (point(&it["a"]), point(&it["b"]));
                     uf.union(&key(a), &key(b));
+                    wired.union(&key(a), &key(b));
                     pois.extend([a, b]);
                 }
                 "junction" => pois.push(point(&it["at"])),
@@ -370,6 +376,7 @@ fn read(esch: &Value) -> Result<Model, String> {
             for (a, b) in &wires {
                 if on_segment(*p, *a, *b) {
                     uf.union(&key(*p), &key(*a));
+                    wired.union(&key(*p), &key(*a));
                 }
             }
         }
@@ -452,7 +459,35 @@ fn read(esch: &Value) -> Result<Model, String> {
             .min_by_key(|(_, b)| b.rect.w() as i64 * b.rect.h() as i64)
             .map(|(i, _)| i);
     }
-    Ok(Model { title, sheets, syms, comps, nets, blocks, warnings })
+    // Two-pin parts between power nets (decoupling capacitors) wired to the pins of one chip.
+    let power = |n: usize| nets[n].names.iter().any(|x| x.0 == 4);
+    let mut near = HashMap::new();
+    for ci in 0..comps.len() {
+        if comps[ci].pins.len() != 2 || !comps[ci].pins.values().all(|&n| power(n)) {
+            continue;
+        }
+        let roots: Vec<String> = pin_keys[ci].values().map(|ks| wired.find(&ks[0])).collect();
+        let mut at: Vec<(usize, String)> = Vec::new();
+        for cj in 0..comps.len() {
+            if cj == ci || comps[cj].pins.len() <= 2 {
+                continue;
+            }
+            let sym = &syms[&comps[cj].sym];
+            for (number, ks) in &pin_keys[cj] {
+                let hidden = sym.pins.iter().any(|p| &p.number == number && p.hidden);
+                if !hidden && roots.contains(&wired.find(&ks[0])) {
+                    at.push((cj, number.clone()));
+                }
+            }
+        }
+        if let Some(first) = at.first()
+            && at.iter().all(|x| x.0 == first.0)
+        {
+            let pin = at.iter().min_by(|a, b| natural_cmp(&a.1, &b.1)).unwrap().clone();
+            near.insert(ci, pin);
+        }
+    }
+    Ok(Model { title, sheets, syms, comps, nets, blocks, warnings, near })
 }
 
 // -------------------------------------------------------------------------------- part mapping
@@ -1258,6 +1293,14 @@ fn emit(m: &Model, ctx: &Ctx, plan: &Plan) -> Emitted {
         if !nc.is_empty() {
             out += &format!("    nc({});\n", list(&nc));
         }
+        for &c in &loose {
+            if let Some((chip, number)) = m.near.get(&c)
+                && let Some(cv) = var.get(chip)
+                && let Some(pin) = pin_refs(&ctx.parts[&m.comps[*chip].sym], cv, &BTreeSet::from([number.clone()]), false).first()
+            {
+                out += &format!("    near({}, {pin});\n", var[&c]);
+            }
+        }
         let mut flags: Vec<usize> = (0..m.nets.len()).filter(|&n| m.nets[n].flag == Some(si)).collect();
         flags.sort_by(|a, b| natural_cmp(net_name[*a].as_deref().unwrap_or(""), net_name[*b].as_deref().unwrap_or("")));
         for n in flags {
@@ -1318,6 +1361,14 @@ fn body(
         .collect();
     if !nc.is_empty() {
         s += &format!("{indent}nc({});\n", list(&nc));
+    }
+    for (pos, &c) in comps.iter().enumerate() {
+        if let Some((chip, number)) = m.near.get(&c)
+            && let Some(cp) = comps.iter().position(|x| x == chip)
+            && let Some(pin) = pin_refs(&ctx.parts[&m.comps[*chip].sym], &g.locals[cp], &BTreeSet::from([number.clone()]), false).first()
+        {
+            s += &format!("{indent}near({}, {pin});\n", g.locals[pos]);
+        }
     }
     s
 }

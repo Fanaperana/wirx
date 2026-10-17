@@ -147,10 +147,10 @@ fn regulator() {
     u.VIN -> P5V;
     u.VOUT -> P3V3;
     u.GND -> GND;
-    P5V -> C("10uF","0805") -> GND;
+    u.VIN -> C("10uF","0805") -> GND;
     // Tantalum ESR must satisfy the selected AMS1117 manufacturer's stability specification.
-    P3V3 -> C_Pol("22uF","Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A") -> GND;
-    P3V3 -> C("100nF","0603") -> GND;
+    u.VOUT -> C_Pol("22uF","Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A") -> GND;
+    u.VOUT -> C("100nF","0603") -> GND;
     P3V3 -> R("2k2","0603") -> LED("green","0603") -> GND;
 }
 
@@ -158,8 +158,8 @@ fn controller() {
     let u = ESP32();
     u.VCC -> P3V3;
     u.GND -> GND;
-    P3V3 -> C("10uF","0805") -> GND;
-    P3V3 -> C("100nF","0603") -> GND;
+    u.VCC -> C("10uF","0805") -> GND;
+    u.VCC -> C("100nF","0603") -> GND;
     P3V3 -> R("10k","0603") -> u.EN -> C("1uF","0603") -> GND;
     u.EN -> net("ESP_EN");
     u.EN -> SW_Push("RESET") -> GND;
@@ -193,7 +193,7 @@ fn programming_header() {
 fn decoder(axis) {
     let u = HC238();
     u.VCC -> P3V3; u.GND -> GND;
-    P3V3 -> C("100nF","0603") -> GND;
+    u.VCC -> C("100nF","0603") -> GND;
     u.A0 -> net(`${axis}_A0`); u.A1 -> net(`${axis}_A1`); u.A2 -> net(`${axis}_A2`);
     [u.E1_N,u.E2_N] -> GND;
     if axis == "ROW" { u.E3 -> net("SCAN_EN"); } else { u.E3 -> P3V3; }
@@ -203,7 +203,7 @@ fn decoder(axis) {
 fn oscillator() {
     let u = CD4046();
     u.VDD -> P3V3; u.VSS -> GND;
-    P3V3 -> C("100nF","0603") -> GND;
+    u.VDD -> C("100nF","0603") -> GND;
     u.INH -> net("VCO_INH");
     net("VCO_DAC") -> R("1k","0603") -> u.VCO_IN -> C("100nF","0603") -> GND;
     u.VCO_OUT -> net("VCO_CLOCK");
@@ -222,7 +222,7 @@ fn oscillator() {
 fn row_clock_bank(base) {
     let u = HC08();
     u.VCC -> P3V3; u.GND -> GND;
-    P3V3 -> C("100nF","0603") -> GND;
+    u.VCC -> C("100nF","0603") -> GND;
     for i in 0..4 {
         u.pin(`A${i}`) -> net(`ROW_SEL_${base+i}`);
         u.pin(`B${i}`) -> net("VCO_CLOCK");
@@ -233,7 +233,7 @@ fn row_clock_bank(base) {
 fn square_gate_bank(rank,base) {
     let u = HC08();
     u.VCC -> P3V3; u.GND -> GND;
-    P3V3 -> C("100nF","0603") -> GND;
+    u.VCC -> C("100nF","0603") -> GND;
     for i in 0..4 {
         u.pin(`A${i}`) -> net(`ROW_CLOCK_${rank}`);
         u.pin(`B${i}`) -> net(`COL_SEL_${base+i}`);
@@ -277,7 +277,7 @@ fn sensing_cell(rank,file) {
 fn column_mux(file) {
     let u = CD4051();
     u.VDD -> P3V3; [u.VSS,u.VEE] -> GND;
-    P3V3 -> C("100nF","0603") -> GND;
+    u.VDD -> C("100nF","0603") -> GND;
     u.A -> net("ROW_A0"); u.B -> net("ROW_A1"); u.C -> net("ROW_A2");
     u.INH -> net("MUX_INH");
     for rank in 0..8 { u.pin(`Y${rank}`) -> net(`SENSE_${rank}_${file}`); }
@@ -287,7 +287,7 @@ fn column_mux(file) {
 fn buffer_pair(base) {
     let u = LMV358();
     u.VCC -> P3V3; u.GND -> GND;
-    P3V3 -> C("100nF","0603") -> GND;
+    u.VCC -> C("100nF","0603") -> GND;
     u.AP -> net(`COL_RAW_${base}`); u.AO -> u.AN -> net(`COL_BUF_${base}`);
     u.BP -> net(`COL_RAW_${base+1}`); u.BO -> u.BN -> net(`COL_BUF_${base+1}`);
 }
@@ -295,7 +295,7 @@ fn buffer_pair(base) {
 fn adc_selector() {
     let u = CD4051();
     u.VDD -> P3V3; [u.VSS,u.VEE] -> GND;
-    P3V3 -> C("100nF","0603") -> GND;
+    u.VDD -> C("100nF","0603") -> GND;
     u.A -> net("COL_A0"); u.B -> net("COL_A1"); u.C -> net("COL_A2");
     u.INH -> net("MUX_INH");
     for file in 0..8 { u.pin(`Y${file}`) -> net(`COL_BUF_${file}`); }
@@ -308,8 +308,8 @@ fn adc_selector() {
 fn precision_adc() {
     let u = ADS1115();
     u.VDD -> P3V3; u.GND -> GND;
-    P3V3 -> C("100nF","0603") -> GND;
-    P3V3 -> C("1uF","0603") -> GND;
+    u.VDD -> C("100nF","0603") -> GND;
+    u.VDD -> C("1uF","0603") -> GND;
     u.SDA -> net("I2C_SDA"); u.SCL -> net("I2C_SCL");
     P3V3 -> R("4k7","0603") -> u.SDA;
     P3V3 -> R("4k7","0603") -> u.SCL;
@@ -325,7 +325,7 @@ fn precision_adc() {
 fn calibration_reference() {
     let u = REF3312();
     u.IN -> P3V3; u.GND -> GND; u.OUT -> supply("+1V25_CAL");
-    P3V3 -> C("100nF","0603") -> GND;
+    u.IN -> C("100nF","0603") -> GND;
     u.OUT -> C("1uF","0603") -> GND;
     u.OUT -> R("10k","0603",#{Tolerance:"0.1%"}) -> net("CAL_HALF")
         -> R("10k","0603",#{Tolerance:"0.1%"}) -> GND;

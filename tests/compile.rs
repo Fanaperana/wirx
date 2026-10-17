@@ -535,3 +535,18 @@ fn chessboard_decoupling_banks() {
     }
     assert!(pin_at(&s, &d, "C4", "1").y < pin_at(&s, &d, "C4", "2").y, "tantalum + on +3V3, up");
 }
+
+/// No two visible texts (references, values, power names, net labels) overlap on any sheet of
+/// any example, within a block or across blocks.
+#[test]
+fn no_text_overlaps_on_any_sheet() {
+    for name in ["ldo", "blinker", "mcu", "rp2350b", "chessboard", "chessboard-tags"] {
+        let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("examples").join(format!("{name}.wx"));
+        let design = wirx::check_file(&path).unwrap().design.unwrap();
+        let (s, _) = wirx::draw(&design).unwrap();
+        for sheet in &s.sheets {
+            let o = wirx::layout::text_overlaps(sheet);
+            assert!(o.is_empty(), "{name}/{}: {o:?}", sheet.name);
+        }
+    }
+}

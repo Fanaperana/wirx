@@ -14,7 +14,6 @@ fn ATmega328P() {
             [29,         "~RESET", input],
             [7,          "XTAL1",  input],
             [8,          "XTAL2",  output, left],
-            [20,         "AREF",   passive],
             [12,         "PB0",    bidirectional, right],
             [13,         "PB1",    bidirectional, right],
             [14,         "PB2",    bidirectional, right],
@@ -32,7 +31,8 @@ fn ATmega328P() {
             [32,         "PD2",    bidirectional, right],
             [1,          "PD3",    bidirectional, right],
             [[4, 6],     "VCC",    power_in],
-            [18,         "AVCC",   power_in],
+            [20,         "AREF",   passive, top],     // between VCC and AVCC: each supply
+            [18,         "AVCC",   power_in],         // pin gets its own decoupling capacitor
             [[3, 5, 21], "GND",    power_in],
             [19,         "ADC6",   input, left],
             [22,         "ADC7",   input, left],

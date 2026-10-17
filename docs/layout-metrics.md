@@ -291,3 +291,27 @@ Chessboard fixture (`examples/chessboard.wx`), before → after:
 Tests: `decoupling_caps_share_one_bank_at_their_pin`, `separate_rails_make_separate_banks`,
 `explicit_associations_pick_the_pin`, `polarized_caps_follow_their_wiring` and
 `chessboard_decoupling_banks`.
+
+### Stage 6, second pass: every example's decaps at their pins
+
+- **Examples written explicitly.** chessboard.wx and rp2350b.wx chain each decoupling capacitor
+  from the pin it serves (`u.VCC -> C("100nF") -> GND`). mcu.wx puts AREF between VCC and AVCC
+  so each gets its own capacitor. The RP2350B symbol spaces its top-edge supply pins (`gap`) so
+  every bank finds room. Netlists are unchanged (same nets and parts; only the order pins are
+  listed in a net follows the new source order).
+- **Runs of pins.** Neighbouring pins on one rail (the ATmega's two VCC pins) take a bank: their
+  short bus stays and the bank's wire continues it.
+- **Fan-out.** Banks on one edge are attached outermost pin first, toward the nearer corner, in a
+  first pass that tries only that way; the rest then try both. Straight connections between pins
+  already in line count as obstacles, so a bank never cuts across a wire that is routed later.
+- **Text beside upright parts.** Capacitor reference and value text used to go above the top
+  pin and below the bottom one, beyond a bank's wires or a power symbol. Now an upright two-pin
+  part has it beside its body.
+- **Import.** `wirx import` writes `near(cap, chip.pin)` for a capacitor drawn wired to one
+  chip's pin, so the drawing survives a round trip.
+
+eleceda readability, before stage 6 → now: chessboard Scan and VCO 98 → 100, Buffers and ADC
+97 → 100, every other sheet unchanged (chessboard warnings 66 → 65; none elsewhere). Every
+supply pin of the RP2350B, ATmega328P, ESP32, AMS1117, REF3312, ADS1115, CD4046, CD4051, LMV358,
+74HC08, 74HC238 and W25Q128 now has its capacitors drawn at it. No two texts overlap on any sheet.
+

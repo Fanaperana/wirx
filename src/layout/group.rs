@@ -310,6 +310,12 @@ impl Ctx<'_> {
                     let v = to - from;
                     if v.x > 0 { 0 } else if v.x < 0 { 180 } else if v.y < 0 { 90 } else { 270 }
                 };
+                // A decoupling bank draws this rail: the run keeps its bus, the bank's wire continues it.
+                if run.iter().any(|&k| self.bank_pins.contains(&(inst, k))) {
+                    let items = wires.iter().map(|&(a, b)| Item::Wire { a, b }).collect();
+                    decor.push(Decor { net: n as i32, wires, pois, items, ..Default::default() });
+                    continue;
+                }
                 let (s, free_end) = if out == kind.natural_dir() {
                     (ends[ends.len() / 2], (last, direction(first, last)))
                 } else {
@@ -514,8 +520,12 @@ impl Ctx<'_> {
         let over = |r: &Rect| r.x1 >= body.x0 && r.x0 <= body.x1;
         let top = taken.iter().filter(|r| over(r)).map(|r| r.y0).chain([body.y0]).min().unwrap();
         let bottom = taken.iter().filter(|r| over(r)).map(|r| r.y1).chain([body.y1]).max().unwrap();
+        // An upright two-pin part has its text beside the body; one lying down, above and below
+        // it. (Text beyond a power symbol or a bank's wires reads as belonging to them.)
+        let upright = pins.first().is_some_and(|p| !is_horizontal(p.out));
+        let cy = body.center().y;
         let (r_at, r_j, v_at, v_j) = match self.class(inst) {
-            Class::TwoTerminal if body.w() <= body.h() => (pt(body.x1 + 40, -30), Justify::Left, pt(body.x1 + 40, 30), Justify::Left),
+            Class::TwoTerminal if upright => (pt(body.x1 + 40, cy - 30), Justify::Left, pt(body.x1 + 40, cy + 30), Justify::Left),
             Class::TwoTerminal => (pt(body.center().x, top - 50), Justify::Center, pt(body.center().x, bottom + 50), Justify::Center),
             Class::Transistor if orient.mirror => (pt(body.x0 - 30, -50), Justify::Right, pt(body.x0 - 30, 50), Justify::Right),
             Class::Transistor => (pt(body.x1 + 30, -50), Justify::Left, pt(body.x1 + 30, 50), Justify::Left),
@@ -900,7 +910,7 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
             let mut local_order = vec![i];
             let mut local_occ = proto.rects.clone();
             for b in banks.iter().filter(|b| b.pin.is_some_and(|p| p.0 == i)) {
-                if ctx.attach_bank(b, &mut local, &mut local_order, &mut local_occ) {
+                if ctx.attach_bank(b, false, &mut local, &mut local_order, &mut local_occ) {
                     attached.insert(b.caps[0]);
                 }
             }
@@ -932,8 +942,25 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
 
     // Banks at their pins; those with no clear spot fall back to the row.
     let mut row: Vec<Vec<Placed>> = Vec::new();
-    for b in banks.iter().filter(|b| b.pin.is_some() && !attached.contains(&b.caps[0])) {
-        if ctx.attach_bank(b, &mut placed, &mut order, &mut occupied) {
+    // Outermost pins of an edge first: banks of inner pins then pass over them, not through them.
+    let mut pending: Vec<&bank::Bank> = banks.iter().filter(|b| b.pin.is_some() && !attached.contains(&b.caps[0])).collect();
+    pending.sort_by_key(|b| {
+        let (c, k) = b.pin.unwrap();
+        placed.get(&c).map_or(0, |p| {
+            let t = p.pins[k];
+            if is_horizontal(t.out) { (t.at.y - p.body.y0).min(p.body.y1 - t.at.y) } else { (t.at.x - p.body.x0).min(p.body.x1 - t.at.x) }
+        })
+    });
+    // First every bank toward its chip's nearer corner, outer pins first, so they fan out; then
+    // the ones that found no room there may take the other way.
+    let mut retry: Vec<&bank::Bank> = Vec::new();
+    for b in pending {
+        if !ctx.attach_bank(b, true, &mut placed, &mut order, &mut occupied) {
+            retry.push(b);
+        }
+    }
+    for b in retry {
+        if ctx.attach_bank(b, false, &mut placed, &mut order, &mut occupied) {
             continue;
         }
         if b.caps.len() > 1 {

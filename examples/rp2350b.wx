@@ -57,17 +57,28 @@ fn RP2350B() {
             top: [
                 [61, "VREG_AVDD", power_in],
                 gap,
-                [68, "USB_OTP_VDD", power_in],
-                [59, "ADC_AVDD", power_in],
                 gap,
-                [69, "QSPI_IOVDD", power_in],
-                [[5, 15, 24, 29, 41, 50, 60, 76], "IOVDD", power_in],
-                gap,
-                [64, "VREG_VIN", power_in],
                 [63, "VREG_LX", power_out],
                 [65, "VREG_FB", passive],
                 gap,
+                gap,
+                gap,
+                gap,
+                gap,
+                gap,
+                [64, "VREG_VIN", power_in],
+                gap,
+                gap,
+                gap,
                 [[10, 32, 51], "DVDD", power_in],
+                gap,
+                [68, "USB_OTP_VDD", power_in],
+                gap,
+                [59, "ADC_AVDD", power_in],
+                gap,
+                [69, "QSPI_IOVDD", power_in],
+                gap,
+                [[5, 15, 24, 29, 41, 50, 60, 76], "IOVDD", power_in],
             ],
             bottom: [[62, "VREG_PGND", power_in], [81, "GND", power_in]],
         },
@@ -159,9 +170,9 @@ fn usb_input(vbus) {
 fn ldo_3v3(vin, vout) {
     let u = AP2112K_3V3();
     vin -> [u.VIN, u.EN];
-    vin -> C("10uF", "0603") -> GND;
+    u.VIN -> C("10uF", "0603") -> GND;
     u.VOUT -> vout;
-    vout -> C("10uF", "0603") -> GND;
+    u.VOUT -> C("10uF", "0603") -> GND;
     u.GND -> GND;
 }
 
@@ -185,11 +196,14 @@ fn mcu() {
     P3V3 -> R("33", "0402") -> avdd -> C("4.7uF", "0402") -> GND;
     avdd -> u.VREG_AVDD;
 
-    // Decoupling: one 100 nF per supply pin, plus bulk.
-    for i in 0..10 { P3V3 -> C("100nF", "0402") -> GND; }
-    P3V3 -> C("4.7uF", "0402") -> GND;
-    for i in 0..3 { v1v1 -> C("100nF", "0402") -> GND; }
-    v1v1 -> C("4.7uF", "0402") -> GND;
+    // Decoupling, each capacitor wired from the pin it serves: 100 nF per supply pin (IOVDD's
+    // eight pins are drawn as one), plus bulk on IOVDD and DVDD.
+    let p3v3_pins = [u.IOVDD, u.IOVDD, u.IOVDD, u.IOVDD, u.IOVDD, u.IOVDD,
+                     u.USB_OTP_VDD, u.ADC_AVDD, u.QSPI_IOVDD, u.VREG_VIN];
+    for p in p3v3_pins { p -> C("100nF", "0402") -> GND; }
+    u.IOVDD -> C("4.7uF", "0402") -> GND;
+    for i in 0..3 { u.DVDD -> C("100nF", "0402") -> GND; }
+    u.DVDD -> C("4.7uF", "0402") -> GND;
 
     u.USB_DP -> net("USB_DP");
     u.USB_DM -> net("USB_DM");
@@ -224,7 +238,7 @@ fn flash() {
     net("QSPI_SD3") -> f.IO3;
     P3V3 -> f.VCC;
     f.GND -> GND;
-    P3V3 -> C("100nF", "0402") -> GND;
+    f.VCC -> C("100nF", "0402") -> GND;
     P3V3 -> R("10k", "0402") -> net("QSPI_SS");   // keep the flash deselected at reset
 }
 

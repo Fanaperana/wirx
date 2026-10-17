@@ -22,7 +22,9 @@ fn text_rect(at: Pt, value: &str, j: Justify) -> Rect {
 type Spot = [(Pt, Justify); 2];
 
 /// Candidate (reference, value) positions relative to the symbol origin, best first.
-fn part_spots(symbol: &str, orient: Orient, body: Rect, ext: Rect) -> Vec<Spot> {
+/// `upright`: a two-pin part standing with its pins up and down (text beside it reads as its
+/// own; above and below it would sit beyond its wires and power symbols).
+fn part_spots(symbol: &str, orient: Orient, body: Rect, ext: Rect, upright: bool) -> Vec<Spot> {
     use Justify::*;
     let cy = body.center().y;
     let cx = body.center().x;
@@ -60,7 +62,7 @@ fn part_spots(symbol: &str, orient: Orient, body: Rect, ext: Rect) -> Vec<Spot> 
                 v.push(split(cx, Center, k));
             }
         }
-        _ if body.w() <= body.h() => {
+        _ if upright || body.w() <= body.h() && !is_lying(body, ext) => {
             for dy in shifts {
                 v.push(right(dy));
                 v.push(left(dy));
@@ -84,6 +86,11 @@ fn part_spots(symbol: &str, orient: Orient, body: Rect, ext: Rect) -> Vec<Spot> 
         }
     }
     v
+}
+
+/// A part whose pins stick out sideways (wider extent than body, same height).
+fn is_lying(body: Rect, ext: Rect) -> bool {
+    ext.w() > body.w() && ext.h() <= body.h()
 }
 
 fn power_spots(default: Pt, down: bool) -> Vec<(Pt, Justify)> {
@@ -157,7 +164,8 @@ fn place_in_order(d: &Design, items: &mut [Item], extra: &[SymbolDef], power_fir
             let ext = orient.rect(def.extent());
             let (ri, vi) = (fields.iter().position(|f| f.name == "Reference"), fields.iter().position(|f| f.name == "Value"));
             let (Some(ri), Some(vi)) = (ri, vi) else { continue };
-            let spots = part_spots(symbol, *orient, body, ext);
+            let upright = def.pins.len() == 2 && def.pins.iter().all(|p| !crate::geom::is_horizontal(crate::symbol::place_pin(p, *orient, pt(0, 0)).out));
+            let spots = part_spots(symbol, *orient, body, ext, upright);
             let chosen = spots.iter().find(|s| {
                 clear(text_rect(at + s[0].0, &fields[ri].value, s[0].1), idx, &ink) && clear(text_rect(at + s[1].0, &fields[vi].value, s[1].1), idx, &ink)
             });
@@ -182,6 +190,32 @@ fn place_in_order(d: &Design, items: &mut [Item], extra: &[SymbolDef], power_fir
             ink.push((text_rect(at + f.at, &f.value, f.justify.unwrap_or(Justify::Center)), idx));
         }
     }
+}
+
+/// Visible texts on a sheet that overlap each other: part references and values, power names
+/// and net labels, across groups too. Each pair as (text, text).
+pub fn overlaps(items: &[Item]) -> Vec<(String, String)> {
+    let mut texts: Vec<(Rect, String)> = Vec::new();
+    for it in items {
+        match it {
+            Item::Symbol { at, fields, .. } => {
+                for f in fields.iter().filter(|f| f.visible) {
+                    texts.push((text_rect(*at + f.at, &f.value, f.justify.unwrap_or(Justify::Center)), f.value.clone()));
+                }
+            }
+            Item::Label { text, at, rot, .. } => texts.push((super::group::label_rect(*at, *rot, text), text.clone())),
+            _ => {}
+        }
+    }
+    let mut out = Vec::new();
+    for (i, (a, ta)) in texts.iter().enumerate() {
+        for (b, tb) in &texts[i + 1..] {
+            if a.inflate(-5).intersects(&b.inflate(-5)) {
+                out.push((ta.clone(), tb.clone()));
+            }
+        }
+    }
+    out
 }
 
 /// Space the visible text of a symbol item covers.
@@ -243,4 +277,16 @@ pub fn collisions(d: &Design, items: &[Item], extra: &[SymbolDef]) -> usize {
         }
     }
     count
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn overlapping_labels_are_found() {
+        let label = |x: i32, text: &str| Item::Label { net: 0, text: text.into(), at: pt(x, 0), rot: 0, global: false, shape: "bidirectional" };
+        assert_eq!(overlaps(&[label(0, "SCK"), label(100, "MOSI")]).len(), 1);
+        assert!(overlaps(&[label(0, "SCK"), label(1000, "MOSI")]).is_empty());
+    }
 }

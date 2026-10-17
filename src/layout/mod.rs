@@ -129,6 +129,11 @@ impl Options {
     }
 }
 
+/// Overlapping visible texts on a sheet (see [`text::overlaps`]).
+pub fn text_overlaps(sheet: &SheetOut) -> Vec<(String, String)> {
+    text::overlaps(&sheet.items)
+}
+
 pub fn layout(d: &Design) -> (Schematic, Vec<Diagnostic>) {
     layout_with(d, &Options::default())
 }

@@ -169,7 +169,9 @@ Details and examples: [docs/rhai-syntax.md](docs/rhai-syntax.md#symbols).
    only through a label gets a wire to it instead, where a short one fits without crossing or
    touching anything.
 7. **Text.** After routing, reference and value text moves to the nearest spot that covers no wire
-   or part.
+   or part. An upright two-pin part (a capacitor in a bank, a pull-up) has its text beside its
+   body; one lying down, above and below it. No two texts or labels on a sheet overlap
+   (`no_text_overlaps_on_any_sheet` checks every example).
 8. **Self-check.** wirx rebuilds connectivity from the drawing, the way eleceda does, and compares
    it with the design. A mismatch stops the build.
 
