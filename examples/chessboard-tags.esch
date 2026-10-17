@@ -1,0 +1,6403 @@
+{
+  "format": "eleceda-schematic",
+  "version": 2,
+  "name": "chessboard-tags",
+  "sheets": [
+    {
+      "id": "544f8c1c-a4e3-55f4-8912-90dc525feb5a",
+      "name": "Piece templates",
+      "paper": "A4",
+      "items": [
+        {
+          "kind": "symbol",
+          "id": "d2b29e0d-f7f7-541d-8239-4695396078ce",
+          "libId": "wirx:White_Pawn_TAG_COIL",
+          "at": {
+            "x": 950,
+            "y": 2600
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "L1",
+              "at": {
+                "x": 65,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100uH White",
+              "at": {
+                "x": 65,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Color",
+              "value": "White",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Pawn",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "723eef1f-9683-5634-995d-b127afa1434e",
+          "libId": "wirx:C",
+          "at": {
+            "x": 950,
+            "y": 2000
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C1",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "3.0nF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "04a0940f-aa68-519d-ba0d-e9ae6bb85833",
+          "libId": "wirx:C",
+          "at": {
+            "x": 1250,
+            "y": 2000
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C2",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100pF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Function",
+              "value": "Measured tag trim",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ],
+          "dnp": true
+        },
+        {
+          "kind": "symbol",
+          "id": "8a373c40-831e-5065-9288-3dd415535ef8",
+          "libId": "wirx:Black_Pawn_TAG_COIL",
+          "at": {
+            "x": 1750,
+            "y": 1900
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "L2",
+              "at": {
+                "x": 65,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100uH Black",
+              "at": {
+                "x": 65,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Color",
+              "value": "Black",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Pawn",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "4879a617-0909-539d-81a6-f21aed9faee1",
+          "libId": "wirx:C",
+          "at": {
+            "x": 1750,
+            "y": 1300
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C3",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "3.6nF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "3a6857be-54a4-5f19-a9c2-1b361b179a22",
+          "libId": "wirx:C",
+          "at": {
+            "x": 2050,
+            "y": 1300
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C4",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100pF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Function",
+              "value": "Measured tag trim",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ],
+          "dnp": true
+        },
+        {
+          "kind": "wire",
+          "id": "3918e7c0-5844-5453-a4ce-b926493d42ef",
+          "a": {
+            "x": 950,
+            "y": 2150
+          },
+          "b": {
+            "x": 950,
+            "y": 2450
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "52ab8971-3f64-5820-b573-0529fda0153e",
+          "a": {
+            "x": 1250,
+            "y": 2150
+          },
+          "b": {
+            "x": 1250,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "34647c16-3e36-5606-970f-3da8905c44e8",
+          "a": {
+            "x": 1250,
+            "y": 2250
+          },
+          "b": {
+            "x": 950,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "b2199199-c0f5-5248-af65-08d22f0e4395",
+          "a": {
+            "x": 950,
+            "y": 1850
+          },
+          "b": {
+            "x": 950,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "5fe5637d-69fc-55dd-a6b0-f6fd8b32d483",
+          "a": {
+            "x": 950,
+            "y": 1800
+          },
+          "b": {
+            "x": 850,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "672a0a03-920b-5bc5-9c8d-df8a4fc807ee",
+          "a": {
+            "x": 850,
+            "y": 1800
+          },
+          "b": {
+            "x": 850,
+            "y": 2800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "e61df46f-66fa-5791-a5ea-42eab12f224c",
+          "a": {
+            "x": 850,
+            "y": 2800
+          },
+          "b": {
+            "x": 950,
+            "y": 2800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "86229569-e0d9-5951-aaa2-b0a4d887f324",
+          "a": {
+            "x": 950,
+            "y": 2800
+          },
+          "b": {
+            "x": 950,
+            "y": 2750
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "3126c337-b239-57b6-bab1-e84c8e48c362",
+          "a": {
+            "x": 1250,
+            "y": 1850
+          },
+          "b": {
+            "x": 1250,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "c7a61cd4-a829-542f-9096-1966087d210d",
+          "a": {
+            "x": 1250,
+            "y": 1800
+          },
+          "b": {
+            "x": 950,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "618e2f77-6420-5b1d-9e6a-a0153a4f3c3a",
+          "a": {
+            "x": 1750,
+            "y": 1450
+          },
+          "b": {
+            "x": 1750,
+            "y": 1750
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "dcdbf5d1-89c7-5082-b15a-40a49c2380e1",
+          "a": {
+            "x": 2050,
+            "y": 1450
+          },
+          "b": {
+            "x": 2050,
+            "y": 1550
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "8c8cd0c0-fac5-5f3b-970e-5d758bcc9ef5",
+          "a": {
+            "x": 2050,
+            "y": 1550
+          },
+          "b": {
+            "x": 1750,
+            "y": 1550
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "2c0d8ff8-9d5e-524b-8a45-b4bf5881ce82",
+          "a": {
+            "x": 1750,
+            "y": 1150
+          },
+          "b": {
+            "x": 1750,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "79885ee1-87af-5758-bd7f-0e000bc96624",
+          "a": {
+            "x": 1750,
+            "y": 1100
+          },
+          "b": {
+            "x": 1650,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "c439d2c0-f4bf-52fe-aef3-1eb1d877afd1",
+          "a": {
+            "x": 1650,
+            "y": 1100
+          },
+          "b": {
+            "x": 1650,
+            "y": 2100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "f5168d2f-3042-583b-9aec-31eb80880b60",
+          "a": {
+            "x": 1650,
+            "y": 2100
+          },
+          "b": {
+            "x": 1750,
+            "y": 2100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "b130c782-bf58-5406-a058-b6a40cb5289b",
+          "a": {
+            "x": 1750,
+            "y": 2100
+          },
+          "b": {
+            "x": 1750,
+            "y": 2050
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "42d2fb74-5fd5-5bca-8188-c7d3cc4faef5",
+          "a": {
+            "x": 2050,
+            "y": 1150
+          },
+          "b": {
+            "x": 2050,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "831e7d27-c4c3-5b49-93fa-27eeecbacd93",
+          "a": {
+            "x": 2050,
+            "y": 1100
+          },
+          "b": {
+            "x": 1750,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "3184698c-d8cd-5f05-9cf7-64589f6724c9",
+          "at": {
+            "x": 950,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "928368f6-3bb8-5144-a86c-7135f579c38a",
+          "at": {
+            "x": 950,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "fd849f05-b233-52ad-ad40-e3e1efddbe77",
+          "at": {
+            "x": 1750,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "04a45862-51d8-5444-8a53-8cbc35cded88",
+          "at": {
+            "x": 1750,
+            "y": 1550
+          }
+        },
+        {
+          "kind": "block",
+          "id": "65f74b48-575d-5e18-8ebb-618b8a5ee41b",
+          "name": "Pawn",
+          "at": {
+            "x": 500,
+            "y": 750
+          },
+          "size": {
+            "w": 2000,
+            "h": 2250
+          }
+        },
+        {
+          "kind": "symbol",
+          "id": "b7ca6824-e416-5696-b388-4aa81548945a",
+          "libId": "wirx:White_Knight_TAG_COIL",
+          "at": {
+            "x": 3100,
+            "y": 2600
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "L3",
+              "at": {
+                "x": 65,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100uH White",
+              "at": {
+                "x": 65,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Color",
+              "value": "White",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Knight",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "4b573374-4e85-55a9-acef-d42873c7ece0",
+          "libId": "wirx:C",
+          "at": {
+            "x": 3100,
+            "y": 2000
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C5",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "4.3nF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "f4fa91eb-9509-53eb-9b37-5f2c27a5e8f8",
+          "libId": "wirx:C",
+          "at": {
+            "x": 3400,
+            "y": 2000
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C6",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100pF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Function",
+              "value": "Measured tag trim",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ],
+          "dnp": true
+        },
+        {
+          "kind": "symbol",
+          "id": "90555f83-d8d7-55d9-bb3b-ff0334aa0c62",
+          "libId": "wirx:Black_Knight_TAG_COIL",
+          "at": {
+            "x": 3900,
+            "y": 1900
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "L4",
+              "at": {
+                "x": 65,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100uH Black",
+              "at": {
+                "x": 65,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Color",
+              "value": "Black",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Knight",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "485efe2c-8355-5544-a558-72407ff4d8e0",
+          "libId": "wirx:C",
+          "at": {
+            "x": 3900,
+            "y": 1300
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C7",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "5.1nF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "ceb08896-52ef-5191-ae9f-95a2be8dfe3a",
+          "libId": "wirx:C",
+          "at": {
+            "x": 4200,
+            "y": 1300
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C8",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100pF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Function",
+              "value": "Measured tag trim",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ],
+          "dnp": true
+        },
+        {
+          "kind": "wire",
+          "id": "5dedfcd4-532b-55eb-9eaa-ba9335acbf3c",
+          "a": {
+            "x": 3100,
+            "y": 2150
+          },
+          "b": {
+            "x": 3100,
+            "y": 2450
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "9dc92a7f-a7b1-5f01-be78-e49a36933dbc",
+          "a": {
+            "x": 3400,
+            "y": 2150
+          },
+          "b": {
+            "x": 3400,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "1f380a85-c5d0-50c1-ba23-c993a3a13e2a",
+          "a": {
+            "x": 3400,
+            "y": 2250
+          },
+          "b": {
+            "x": 3100,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "309f6ff5-c2bd-5136-9b97-4f0570b5b156",
+          "a": {
+            "x": 3100,
+            "y": 1850
+          },
+          "b": {
+            "x": 3100,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "ac820d64-5d09-5747-8a48-45ae39771061",
+          "a": {
+            "x": 3100,
+            "y": 1800
+          },
+          "b": {
+            "x": 3000,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "431071a3-52fd-5508-8547-7c7e0b1d062a",
+          "a": {
+            "x": 3000,
+            "y": 1800
+          },
+          "b": {
+            "x": 3000,
+            "y": 2800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "3b39271f-35cd-544f-a108-1a9d4b44608e",
+          "a": {
+            "x": 3000,
+            "y": 2800
+          },
+          "b": {
+            "x": 3100,
+            "y": 2800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "359d1b54-2e10-543f-808c-4813f10739fc",
+          "a": {
+            "x": 3100,
+            "y": 2800
+          },
+          "b": {
+            "x": 3100,
+            "y": 2750
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "79c4edcb-9e27-5500-9b5b-28075e72c619",
+          "a": {
+            "x": 3400,
+            "y": 1850
+          },
+          "b": {
+            "x": 3400,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "5418f228-fd06-50fc-b81d-4fc10aef33bb",
+          "a": {
+            "x": 3400,
+            "y": 1800
+          },
+          "b": {
+            "x": 3100,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "662fc159-579e-59d3-85bd-c33eb07806b2",
+          "a": {
+            "x": 3900,
+            "y": 1450
+          },
+          "b": {
+            "x": 3900,
+            "y": 1750
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "98e689bf-6954-52a4-a325-cc186382630d",
+          "a": {
+            "x": 4200,
+            "y": 1450
+          },
+          "b": {
+            "x": 4200,
+            "y": 1550
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "e59d7586-0f07-559a-bfd9-423dcbdd021e",
+          "a": {
+            "x": 4200,
+            "y": 1550
+          },
+          "b": {
+            "x": 3900,
+            "y": 1550
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "e5be201a-6261-53f0-ae00-6436cc86f120",
+          "a": {
+            "x": 3900,
+            "y": 1150
+          },
+          "b": {
+            "x": 3900,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "a6a576c2-d5be-5895-a59b-6e2e82e2c16b",
+          "a": {
+            "x": 3900,
+            "y": 1100
+          },
+          "b": {
+            "x": 3800,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "45c8249f-d6b2-53dd-be98-43e66d8c57b9",
+          "a": {
+            "x": 3800,
+            "y": 1100
+          },
+          "b": {
+            "x": 3800,
+            "y": 2100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "865236a7-e42e-58e2-abd7-7d4882f03ce2",
+          "a": {
+            "x": 3800,
+            "y": 2100
+          },
+          "b": {
+            "x": 3900,
+            "y": 2100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "8d6512c5-e145-5aa4-a83a-26538bb44d5b",
+          "a": {
+            "x": 3900,
+            "y": 2100
+          },
+          "b": {
+            "x": 3900,
+            "y": 2050
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "f5970025-56eb-5415-a816-92a60ad96f0d",
+          "a": {
+            "x": 4200,
+            "y": 1150
+          },
+          "b": {
+            "x": 4200,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "d68606f9-2add-5a16-a0dd-e7c342ad3968",
+          "a": {
+            "x": 4200,
+            "y": 1100
+          },
+          "b": {
+            "x": 3900,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "34a0400d-907c-50e5-88d5-49a5b6bae2c9",
+          "at": {
+            "x": 3100,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "b988fdf6-4f99-5303-aabb-bb3e0c0751b0",
+          "at": {
+            "x": 3100,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "992ecc1e-7967-52b9-b140-7660e85fb488",
+          "at": {
+            "x": 3900,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "ccbe8053-d41b-5f95-ac68-0bafa6f658d7",
+          "at": {
+            "x": 3900,
+            "y": 1550
+          }
+        },
+        {
+          "kind": "block",
+          "id": "fd761feb-0bff-5e8f-85e1-2a1eb6870f91",
+          "name": "Knight",
+          "at": {
+            "x": 2650,
+            "y": 750
+          },
+          "size": {
+            "w": 2000,
+            "h": 2250
+          }
+        },
+        {
+          "kind": "symbol",
+          "id": "1b9f1f74-2149-52b1-97d7-9c7e95d4abeb",
+          "libId": "wirx:White_Bishop_TAG_COIL",
+          "at": {
+            "x": 5250,
+            "y": 2600
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "L5",
+              "at": {
+                "x": 65,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100uH White",
+              "at": {
+                "x": 65,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Color",
+              "value": "White",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Bishop",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "bec68a10-c70b-5e76-82b0-62e2647f7677",
+          "libId": "wirx:C",
+          "at": {
+            "x": 5250,
+            "y": 2000
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C9",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "6.2nF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "00e82465-bb3c-576e-9ce1-8d4f8784131f",
+          "libId": "wirx:C",
+          "at": {
+            "x": 5550,
+            "y": 2000
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C10",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100pF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Function",
+              "value": "Measured tag trim",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ],
+          "dnp": true
+        },
+        {
+          "kind": "symbol",
+          "id": "55a16292-0ea8-5ff7-9a8a-72d66f2e7aab",
+          "libId": "wirx:Black_Bishop_TAG_COIL",
+          "at": {
+            "x": 6050,
+            "y": 1900
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "L6",
+              "at": {
+                "x": 65,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100uH Black",
+              "at": {
+                "x": 65,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Color",
+              "value": "Black",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Bishop",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "d141a03e-48fa-5996-a966-0612b83bbfd0",
+          "libId": "wirx:C",
+          "at": {
+            "x": 6050,
+            "y": 1300
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C11",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "7.5nF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "3323f0bf-4b38-5f61-b7a6-3332682ee96f",
+          "libId": "wirx:C",
+          "at": {
+            "x": 6350,
+            "y": 1300
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C12",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100pF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Function",
+              "value": "Measured tag trim",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ],
+          "dnp": true
+        },
+        {
+          "kind": "wire",
+          "id": "69e547a8-1691-5f16-994f-2b302eb30b20",
+          "a": {
+            "x": 5250,
+            "y": 2150
+          },
+          "b": {
+            "x": 5250,
+            "y": 2450
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "248a99c3-1bdb-50b4-b68f-412902e655b1",
+          "a": {
+            "x": 5550,
+            "y": 2150
+          },
+          "b": {
+            "x": 5550,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "3e7d0215-0da7-53e6-a1d5-20f476ab86b8",
+          "a": {
+            "x": 5550,
+            "y": 2250
+          },
+          "b": {
+            "x": 5250,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "91f3466a-feb8-5123-8b68-e1bb5509e6de",
+          "a": {
+            "x": 5250,
+            "y": 1850
+          },
+          "b": {
+            "x": 5250,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "89022370-3b89-5b2a-b51c-efec79b041b2",
+          "a": {
+            "x": 5250,
+            "y": 1800
+          },
+          "b": {
+            "x": 5150,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "527dae36-32c4-52cf-bed7-db152760e97c",
+          "a": {
+            "x": 5150,
+            "y": 1800
+          },
+          "b": {
+            "x": 5150,
+            "y": 2800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "0528f0ea-d80c-53b9-9439-876c4ed61bb5",
+          "a": {
+            "x": 5150,
+            "y": 2800
+          },
+          "b": {
+            "x": 5250,
+            "y": 2800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "358bce28-1ac3-53ea-ae60-824d68a02371",
+          "a": {
+            "x": 5250,
+            "y": 2800
+          },
+          "b": {
+            "x": 5250,
+            "y": 2750
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "d58304e0-085c-5a49-8ffa-41a63fdfb6d4",
+          "a": {
+            "x": 5550,
+            "y": 1850
+          },
+          "b": {
+            "x": 5550,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "fc71631e-b78b-529d-8cd1-f62af697e0f6",
+          "a": {
+            "x": 5550,
+            "y": 1800
+          },
+          "b": {
+            "x": 5250,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "622f4526-d297-5cde-bc1b-649a53fa6671",
+          "a": {
+            "x": 6050,
+            "y": 1450
+          },
+          "b": {
+            "x": 6050,
+            "y": 1750
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "4b154fa2-bf19-5433-b05e-9ae0c4c80800",
+          "a": {
+            "x": 6350,
+            "y": 1450
+          },
+          "b": {
+            "x": 6350,
+            "y": 1550
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "135ba2bd-a888-5753-b830-3b68039ec85f",
+          "a": {
+            "x": 6350,
+            "y": 1550
+          },
+          "b": {
+            "x": 6050,
+            "y": 1550
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "7bdb71d9-4ef5-5d3f-8747-99875216cec4",
+          "a": {
+            "x": 6050,
+            "y": 1150
+          },
+          "b": {
+            "x": 6050,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "d4d9b26f-7f9c-511d-8dfa-1e8932a0229b",
+          "a": {
+            "x": 6050,
+            "y": 1100
+          },
+          "b": {
+            "x": 5950,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "243ad86a-4a37-5de0-9497-1d23c8616122",
+          "a": {
+            "x": 5950,
+            "y": 1100
+          },
+          "b": {
+            "x": 5950,
+            "y": 2100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "f1d3df00-1ab9-5733-b9a3-6dc62e1a540a",
+          "a": {
+            "x": 5950,
+            "y": 2100
+          },
+          "b": {
+            "x": 6050,
+            "y": 2100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "c7ffa465-0df7-5633-9742-bd2a0d5b84f9",
+          "a": {
+            "x": 6050,
+            "y": 2100
+          },
+          "b": {
+            "x": 6050,
+            "y": 2050
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "58c4274a-f7d9-5574-a860-0735005ee004",
+          "a": {
+            "x": 6350,
+            "y": 1150
+          },
+          "b": {
+            "x": 6350,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "a61d60ab-fb3c-5169-b8c4-cbf65d25e38c",
+          "a": {
+            "x": 6350,
+            "y": 1100
+          },
+          "b": {
+            "x": 6050,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "68cc2d90-d1f0-5c1e-ba6b-aae89b229ea2",
+          "at": {
+            "x": 5250,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "9a86709a-c499-5dba-9445-1af9339878a8",
+          "at": {
+            "x": 5250,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "676a6a44-f334-59a2-90b5-e04ac9b2792c",
+          "at": {
+            "x": 6050,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "8f46b31a-ba85-5a08-9f68-f9b0dd489386",
+          "at": {
+            "x": 6050,
+            "y": 1550
+          }
+        },
+        {
+          "kind": "block",
+          "id": "b316aac7-5188-516e-9d6b-47133352b3f5",
+          "name": "Bishop",
+          "at": {
+            "x": 4800,
+            "y": 750
+          },
+          "size": {
+            "w": 2000,
+            "h": 2250
+          }
+        },
+        {
+          "kind": "symbol",
+          "id": "4443548f-47fd-564a-afca-eabf88a711b0",
+          "libId": "wirx:White_Rook_TAG_COIL",
+          "at": {
+            "x": 7400,
+            "y": 2600
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "L7",
+              "at": {
+                "x": 65,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100uH White",
+              "at": {
+                "x": 65,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Color",
+              "value": "White",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Rook",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "f57cc57d-37c8-5148-b9f3-2ffdf6d5c846",
+          "libId": "wirx:C",
+          "at": {
+            "x": 7400,
+            "y": 2000
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C13",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "9.1nF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "5a542433-051c-5ad6-be65-cdfffcbecffb",
+          "libId": "wirx:C",
+          "at": {
+            "x": 7700,
+            "y": 2000
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C14",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100pF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Function",
+              "value": "Measured tag trim",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ],
+          "dnp": true
+        },
+        {
+          "kind": "symbol",
+          "id": "dbb34be1-c028-5a55-9851-31e3e705f997",
+          "libId": "wirx:Black_Rook_TAG_COIL",
+          "at": {
+            "x": 8200,
+            "y": 1900
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "L8",
+              "at": {
+                "x": 65,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100uH Black",
+              "at": {
+                "x": 65,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Color",
+              "value": "Black",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Rook",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "48d711e4-5235-5535-922f-c8affb90507f",
+          "libId": "wirx:C",
+          "at": {
+            "x": 8200,
+            "y": 1300
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C15",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "11nF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "dd2b2037-7184-56bb-8cab-f122e68e7374",
+          "libId": "wirx:C",
+          "at": {
+            "x": 8500,
+            "y": 1300
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C16",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100pF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Function",
+              "value": "Measured tag trim",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ],
+          "dnp": true
+        },
+        {
+          "kind": "wire",
+          "id": "5517c97f-250c-565e-8c46-4150b94ee416",
+          "a": {
+            "x": 7400,
+            "y": 2150
+          },
+          "b": {
+            "x": 7400,
+            "y": 2450
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "033a9e65-4e04-58da-93e2-ffad85fe3f6f",
+          "a": {
+            "x": 7700,
+            "y": 2150
+          },
+          "b": {
+            "x": 7700,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "ee33561c-6e8c-5a6f-b57c-b4dc36cd928f",
+          "a": {
+            "x": 7700,
+            "y": 2250
+          },
+          "b": {
+            "x": 7400,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "c87914f8-5dcf-5fd8-a740-1b11da6b07f1",
+          "a": {
+            "x": 7400,
+            "y": 1850
+          },
+          "b": {
+            "x": 7400,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "51d175ed-c623-5338-a96d-1a11c8bcc38f",
+          "a": {
+            "x": 7400,
+            "y": 1800
+          },
+          "b": {
+            "x": 7300,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "110b306e-2fde-517c-8905-b16448f23de8",
+          "a": {
+            "x": 7300,
+            "y": 1800
+          },
+          "b": {
+            "x": 7300,
+            "y": 2800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "10521b28-5823-5a29-a1b3-a5ea0cd8abf1",
+          "a": {
+            "x": 7300,
+            "y": 2800
+          },
+          "b": {
+            "x": 7400,
+            "y": 2800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "da6696ce-185f-54d6-befd-05d4f39397e7",
+          "a": {
+            "x": 7400,
+            "y": 2800
+          },
+          "b": {
+            "x": 7400,
+            "y": 2750
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "428d998b-6851-5e30-9549-fca9a2002b76",
+          "a": {
+            "x": 7700,
+            "y": 1850
+          },
+          "b": {
+            "x": 7700,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "b4086fec-9ffe-5b51-aa43-a493b2d4c127",
+          "a": {
+            "x": 7700,
+            "y": 1800
+          },
+          "b": {
+            "x": 7400,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "c7c5b51c-bb6f-5d3e-81af-e295eb394dc0",
+          "a": {
+            "x": 8200,
+            "y": 1450
+          },
+          "b": {
+            "x": 8200,
+            "y": 1750
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "d239f44d-24ca-572c-a3e6-ed00c46d90c5",
+          "a": {
+            "x": 8500,
+            "y": 1450
+          },
+          "b": {
+            "x": 8500,
+            "y": 1550
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "1b5bf531-86a3-54ff-af77-58e0b0c3f6c1",
+          "a": {
+            "x": 8500,
+            "y": 1550
+          },
+          "b": {
+            "x": 8200,
+            "y": 1550
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "00452d8f-5fa0-5a7f-8a31-ec63a9952d44",
+          "a": {
+            "x": 8200,
+            "y": 1150
+          },
+          "b": {
+            "x": 8200,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "2bd62765-6988-51ec-86ff-1aefaf481bf7",
+          "a": {
+            "x": 8200,
+            "y": 1100
+          },
+          "b": {
+            "x": 8100,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "e8f130ab-712e-558f-a3f8-7f7dab54d154",
+          "a": {
+            "x": 8100,
+            "y": 1100
+          },
+          "b": {
+            "x": 8100,
+            "y": 2100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "2c4d1960-a63d-59a8-8e6b-5379b1425cd5",
+          "a": {
+            "x": 8100,
+            "y": 2100
+          },
+          "b": {
+            "x": 8200,
+            "y": 2100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "2c342aa2-6df5-5cea-86f0-48e59798447a",
+          "a": {
+            "x": 8200,
+            "y": 2100
+          },
+          "b": {
+            "x": 8200,
+            "y": 2050
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "777a074a-4d01-5e56-a52a-69d9a6583b9b",
+          "a": {
+            "x": 8500,
+            "y": 1150
+          },
+          "b": {
+            "x": 8500,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "58c189aa-0cf6-522d-b6d3-21854cd57344",
+          "a": {
+            "x": 8500,
+            "y": 1100
+          },
+          "b": {
+            "x": 8200,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "30511f56-8708-5585-8b78-fca67a764902",
+          "at": {
+            "x": 7400,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "33111b3a-a6fc-5755-b5f4-86e70239449b",
+          "at": {
+            "x": 7400,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "6ad9f54a-1c0b-5b07-aec0-c514d92172eb",
+          "at": {
+            "x": 8200,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "6771d041-0a92-5fd9-9cf8-fbd2f0dbc13c",
+          "at": {
+            "x": 8200,
+            "y": 1550
+          }
+        },
+        {
+          "kind": "block",
+          "id": "84d56db7-b431-5c21-9350-3c6bdd628722",
+          "name": "Rook",
+          "at": {
+            "x": 6950,
+            "y": 750
+          },
+          "size": {
+            "w": 2000,
+            "h": 2250
+          }
+        },
+        {
+          "kind": "symbol",
+          "id": "4e8b6736-b6b6-55f7-bc21-53aac944ce2e",
+          "libId": "wirx:White_King_TAG_COIL",
+          "at": {
+            "x": 9550,
+            "y": 2600
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "L9",
+              "at": {
+                "x": 65,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100uH White",
+              "at": {
+                "x": 65,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Color",
+              "value": "White",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "King",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "3ebc8d59-7071-5a58-841d-4e7eec54aaf6",
+          "libId": "wirx:C",
+          "at": {
+            "x": 9550,
+            "y": 2000
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C17",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "20nF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "0bb72374-717f-53cc-808c-590335e93e23",
+          "libId": "wirx:C",
+          "at": {
+            "x": 9850,
+            "y": 2000
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C18",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100pF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Function",
+              "value": "Measured tag trim",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ],
+          "dnp": true
+        },
+        {
+          "kind": "symbol",
+          "id": "75488d27-4bbe-5e78-bca1-dd660e61e863",
+          "libId": "wirx:Black_King_TAG_COIL",
+          "at": {
+            "x": 10350,
+            "y": 1900
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "L10",
+              "at": {
+                "x": 65,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100uH Black",
+              "at": {
+                "x": 65,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Color",
+              "value": "Black",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "King",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "fc7df0c1-446f-501a-b713-64f889f6ca2a",
+          "libId": "wirx:C",
+          "at": {
+            "x": 10350,
+            "y": 1300
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C19",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "24nF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "4733343b-1c30-51c7-8809-650cf5af9fab",
+          "libId": "wirx:C",
+          "at": {
+            "x": 10650,
+            "y": 1300
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C20",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100pF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Function",
+              "value": "Measured tag trim",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ],
+          "dnp": true
+        },
+        {
+          "kind": "wire",
+          "id": "410579d6-ac59-5937-9f10-ca0147f8ed5f",
+          "a": {
+            "x": 9550,
+            "y": 2150
+          },
+          "b": {
+            "x": 9550,
+            "y": 2450
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "188ca19b-f58a-5c02-827f-8841c9170bda",
+          "a": {
+            "x": 9850,
+            "y": 2150
+          },
+          "b": {
+            "x": 9850,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "68b43907-2598-57d2-9317-bf77ce437dce",
+          "a": {
+            "x": 9850,
+            "y": 2250
+          },
+          "b": {
+            "x": 9550,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "b8e43f4d-d964-5141-94f9-4793ca9124f6",
+          "a": {
+            "x": 9550,
+            "y": 1850
+          },
+          "b": {
+            "x": 9550,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "264d6471-d712-50ef-8406-4590e51c76ea",
+          "a": {
+            "x": 9550,
+            "y": 1800
+          },
+          "b": {
+            "x": 9450,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "0a10ed18-09f8-5fc3-bd9a-4de78625c0d7",
+          "a": {
+            "x": 9450,
+            "y": 1800
+          },
+          "b": {
+            "x": 9450,
+            "y": 2800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "ddbc1c5e-6f39-5c9b-89d5-3e61248ac522",
+          "a": {
+            "x": 9450,
+            "y": 2800
+          },
+          "b": {
+            "x": 9550,
+            "y": 2800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "03f65513-f830-5240-9e6f-4a1ed78b024d",
+          "a": {
+            "x": 9550,
+            "y": 2800
+          },
+          "b": {
+            "x": 9550,
+            "y": 2750
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "2a3416ec-976c-576a-81a7-0d3bd80f85b0",
+          "a": {
+            "x": 9850,
+            "y": 1850
+          },
+          "b": {
+            "x": 9850,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "4c4dc1df-a052-5a7e-888a-c5dd2035a559",
+          "a": {
+            "x": 9850,
+            "y": 1800
+          },
+          "b": {
+            "x": 9550,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "d732dad3-7d7b-51b2-988d-09a93fff8d53",
+          "a": {
+            "x": 10350,
+            "y": 1450
+          },
+          "b": {
+            "x": 10350,
+            "y": 1750
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "ddba4069-e58a-5486-9b0e-a18e20556ff6",
+          "a": {
+            "x": 10650,
+            "y": 1450
+          },
+          "b": {
+            "x": 10650,
+            "y": 1550
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "f2bc93d5-8ec1-5b34-a8eb-bf527983806d",
+          "a": {
+            "x": 10650,
+            "y": 1550
+          },
+          "b": {
+            "x": 10350,
+            "y": 1550
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "513a83eb-1fe1-5fcd-84dc-15cab39251ff",
+          "a": {
+            "x": 10350,
+            "y": 1150
+          },
+          "b": {
+            "x": 10350,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "70813b63-dea9-595f-9e08-2c0fa0d958da",
+          "a": {
+            "x": 10350,
+            "y": 1100
+          },
+          "b": {
+            "x": 10250,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "7a458eb5-02ea-576b-8170-01771fd076f1",
+          "a": {
+            "x": 10250,
+            "y": 1100
+          },
+          "b": {
+            "x": 10250,
+            "y": 2100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "ceee0c3d-6eef-56db-8a37-33cf07bf1bbe",
+          "a": {
+            "x": 10250,
+            "y": 2100
+          },
+          "b": {
+            "x": 10350,
+            "y": 2100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "aa02aeb2-e1c5-59a8-bf89-74a3b65e47f3",
+          "a": {
+            "x": 10350,
+            "y": 2100
+          },
+          "b": {
+            "x": 10350,
+            "y": 2050
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "a9e8fbb9-818c-514a-8cb1-39b499f3b1a4",
+          "a": {
+            "x": 10650,
+            "y": 1150
+          },
+          "b": {
+            "x": 10650,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "7b183f5b-3c1a-58de-a72c-fcf6a8606e23",
+          "a": {
+            "x": 10650,
+            "y": 1100
+          },
+          "b": {
+            "x": 10350,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "2943d9d8-ebdb-5967-b512-da2102cd7134",
+          "at": {
+            "x": 9550,
+            "y": 1800
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "5337152a-41f0-5712-b188-d423ebaf35aa",
+          "at": {
+            "x": 9550,
+            "y": 2250
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "7b4c7716-73df-5ebc-ad83-f1469ce22686",
+          "at": {
+            "x": 10350,
+            "y": 1100
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "218c73f7-9f42-5c05-a99e-4fc27e6c7771",
+          "at": {
+            "x": 10350,
+            "y": 1550
+          }
+        },
+        {
+          "kind": "block",
+          "id": "4f3ff226-27bb-56d8-b1cc-052c48d43518",
+          "name": "King",
+          "at": {
+            "x": 9100,
+            "y": 750
+          },
+          "size": {
+            "w": 2050,
+            "h": 2250
+          }
+        },
+        {
+          "kind": "symbol",
+          "id": "2cf9883b-6510-5fb1-a862-fcc0d17f39bd",
+          "libId": "wirx:White_Queen_TAG_COIL",
+          "at": {
+            "x": 5250,
+            "y": 5100
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "L11",
+              "at": {
+                "x": 65,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100uH White",
+              "at": {
+                "x": 65,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Color",
+              "value": "White",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Queen",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "ac94f773-8352-51ed-a54b-94bc639185d3",
+          "libId": "wirx:C",
+          "at": {
+            "x": 5250,
+            "y": 4500
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C21",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "13nF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "05510525-1571-565f-9bcb-c12cf856f355",
+          "libId": "wirx:C",
+          "at": {
+            "x": 5550,
+            "y": 4500
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C22",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100pF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Function",
+              "value": "Measured tag trim",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ],
+          "dnp": true
+        },
+        {
+          "kind": "symbol",
+          "id": "09b9b5cb-d4eb-5161-97b6-f0c4e362d685",
+          "libId": "wirx:Black_Queen_TAG_COIL",
+          "at": {
+            "x": 6050,
+            "y": 4400
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "L12",
+              "at": {
+                "x": 65,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100uH Black",
+              "at": {
+                "x": 65,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Color",
+              "value": "Black",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Queen",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "b7cb2702-2840-575b-bef5-3c43881ffadc",
+          "libId": "wirx:C",
+          "at": {
+            "x": 6050,
+            "y": 3800
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C23",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "16nF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "8ea2a84b-2824-5b43-b586-2822a90751d4",
+          "libId": "wirx:C",
+          "at": {
+            "x": 6350,
+            "y": 3800
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C24",
+              "at": {
+                "x": 0,
+                "y": -320
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100pF",
+              "at": {
+                "x": 0,
+                "y": -260
+              },
+              "visible": true,
+              "justify": "center",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Function",
+              "value": "Measured tag trim",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ],
+          "dnp": true
+        },
+        {
+          "kind": "wire",
+          "id": "394d7104-2d55-5f48-b1e3-84d984d7a1ec",
+          "a": {
+            "x": 5250,
+            "y": 4650
+          },
+          "b": {
+            "x": 5250,
+            "y": 4950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "75519ec2-6910-537b-8923-c1fa399882bf",
+          "a": {
+            "x": 5550,
+            "y": 4650
+          },
+          "b": {
+            "x": 5550,
+            "y": 4750
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "d7e0d701-d2a2-5f96-807b-4c73a5b66f61",
+          "a": {
+            "x": 5550,
+            "y": 4750
+          },
+          "b": {
+            "x": 5250,
+            "y": 4750
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "bb482ef7-7182-5160-8a12-d5f1defb4e70",
+          "a": {
+            "x": 5250,
+            "y": 4350
+          },
+          "b": {
+            "x": 5250,
+            "y": 4300
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "60f629ac-4a42-55bb-9961-f4df01f577c8",
+          "a": {
+            "x": 5250,
+            "y": 4300
+          },
+          "b": {
+            "x": 5150,
+            "y": 4300
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "ab3b7dce-afc5-53ca-9c00-3f6c2f9abbc2",
+          "a": {
+            "x": 5150,
+            "y": 4300
+          },
+          "b": {
+            "x": 5150,
+            "y": 5300
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "f919a0f1-7392-5554-bfd0-dcded1468fa6",
+          "a": {
+            "x": 5150,
+            "y": 5300
+          },
+          "b": {
+            "x": 5250,
+            "y": 5300
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "af6d63a3-ded3-5741-80c2-3f966f647a56",
+          "a": {
+            "x": 5250,
+            "y": 5300
+          },
+          "b": {
+            "x": 5250,
+            "y": 5250
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "74782220-63a0-5fb9-92ca-6e4522cc8c13",
+          "a": {
+            "x": 5550,
+            "y": 4350
+          },
+          "b": {
+            "x": 5550,
+            "y": 4300
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "6e533698-8aae-58ae-835b-6ad6265e8d5a",
+          "a": {
+            "x": 5550,
+            "y": 4300
+          },
+          "b": {
+            "x": 5250,
+            "y": 4300
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "c9acc2e5-9c76-5f87-92e6-85f60732c903",
+          "a": {
+            "x": 6050,
+            "y": 3950
+          },
+          "b": {
+            "x": 6050,
+            "y": 4250
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "0816443a-a1ac-53f4-8772-56f98bcf901f",
+          "a": {
+            "x": 6350,
+            "y": 3950
+          },
+          "b": {
+            "x": 6350,
+            "y": 4050
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "dbce6cb9-b9da-5112-bfa4-64862b2258d7",
+          "a": {
+            "x": 6350,
+            "y": 4050
+          },
+          "b": {
+            "x": 6050,
+            "y": 4050
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "e5526d89-bba9-5024-8dfb-fc4221335b06",
+          "a": {
+            "x": 6050,
+            "y": 3650
+          },
+          "b": {
+            "x": 6050,
+            "y": 3600
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "b0e9403e-56f6-52ab-b6a5-89e242266b2f",
+          "a": {
+            "x": 6050,
+            "y": 3600
+          },
+          "b": {
+            "x": 5950,
+            "y": 3600
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "edee9349-8c55-56ad-8c1f-0d09ac99ca51",
+          "a": {
+            "x": 5950,
+            "y": 3600
+          },
+          "b": {
+            "x": 5950,
+            "y": 4600
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "cfe62233-e00e-5b2b-8b08-931a84451022",
+          "a": {
+            "x": 5950,
+            "y": 4600
+          },
+          "b": {
+            "x": 6050,
+            "y": 4600
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "fbf774d9-35f5-57f5-80bb-57af43690287",
+          "a": {
+            "x": 6050,
+            "y": 4600
+          },
+          "b": {
+            "x": 6050,
+            "y": 4550
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "efe78ef8-ebe3-59f5-b058-d969c25f4e35",
+          "a": {
+            "x": 6350,
+            "y": 3650
+          },
+          "b": {
+            "x": 6350,
+            "y": 3600
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "13992ee1-6e7e-5bee-aa8a-dfec655e9a2e",
+          "a": {
+            "x": 6350,
+            "y": 3600
+          },
+          "b": {
+            "x": 6050,
+            "y": 3600
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "472981d4-b560-5f31-a34e-d8bba6379660",
+          "at": {
+            "x": 5250,
+            "y": 4300
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "35943e5f-e525-51f4-8526-f5c53fe9bffe",
+          "at": {
+            "x": 5250,
+            "y": 4750
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "72f3f58a-e957-5836-953c-d9933fe6b3c6",
+          "at": {
+            "x": 6050,
+            "y": 3600
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "332d41b2-4bd5-5382-9f3b-9c4dfaad5ab0",
+          "at": {
+            "x": 6050,
+            "y": 4050
+          }
+        },
+        {
+          "kind": "block",
+          "id": "fed4c898-80f9-5b6c-b562-0da75e87f976",
+          "name": "Queen",
+          "at": {
+            "x": 500,
+            "y": 3250
+          },
+          "size": {
+            "w": 10650,
+            "h": 2250
+          }
+        }
+      ]
+    }
+  ],
+  "symbols": {
+    "wirx:White_Pawn_TAG_COIL": {
+      "id": "wirx:White_Pawn_TAG_COIL",
+      "name": "White_Pawn_TAG_COIL",
+      "description": "White Pawn external air-core tag inductor; header footprint provides terminations. Coil geometry and inductance require measurement",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "100uH White",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    "wirx:C": {
+      "id": "wirx:C",
+      "name": "C",
+      "description": "Unpolarized capacitor",
+      "refPrefix": "C",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": -80,
+              "y": -30
+            },
+            {
+              "x": 80,
+              "y": -30
+            }
+          ],
+          "unit": 0,
+          "width": 20,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": -80,
+              "y": 30
+            },
+            {
+              "x": 80,
+              "y": 30
+            }
+          ],
+          "unit": 0,
+          "width": 20,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 120,
+          "number": "1",
+          "name": "~",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 120,
+          "number": "2",
+          "name": "~",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "C",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "100nF",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Capacitor_SMD:C_0603_1608Metric",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    "wirx:Black_Pawn_TAG_COIL": {
+      "id": "wirx:Black_Pawn_TAG_COIL",
+      "name": "Black_Pawn_TAG_COIL",
+      "description": "Black Pawn external air-core tag inductor; header footprint provides terminations. Coil geometry and inductance require measurement",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "100uH Black",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    "wirx:White_Knight_TAG_COIL": {
+      "id": "wirx:White_Knight_TAG_COIL",
+      "name": "White_Knight_TAG_COIL",
+      "description": "White Knight external air-core tag inductor; header footprint provides terminations. Coil geometry and inductance require measurement",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "100uH White",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    "wirx:Black_Knight_TAG_COIL": {
+      "id": "wirx:Black_Knight_TAG_COIL",
+      "name": "Black_Knight_TAG_COIL",
+      "description": "Black Knight external air-core tag inductor; header footprint provides terminations. Coil geometry and inductance require measurement",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "100uH Black",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    "wirx:White_Bishop_TAG_COIL": {
+      "id": "wirx:White_Bishop_TAG_COIL",
+      "name": "White_Bishop_TAG_COIL",
+      "description": "White Bishop external air-core tag inductor; header footprint provides terminations. Coil geometry and inductance require measurement",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "100uH White",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    "wirx:Black_Bishop_TAG_COIL": {
+      "id": "wirx:Black_Bishop_TAG_COIL",
+      "name": "Black_Bishop_TAG_COIL",
+      "description": "Black Bishop external air-core tag inductor; header footprint provides terminations. Coil geometry and inductance require measurement",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "100uH Black",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    "wirx:White_Rook_TAG_COIL": {
+      "id": "wirx:White_Rook_TAG_COIL",
+      "name": "White_Rook_TAG_COIL",
+      "description": "White Rook external air-core tag inductor; header footprint provides terminations. Coil geometry and inductance require measurement",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "100uH White",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    "wirx:Black_Rook_TAG_COIL": {
+      "id": "wirx:Black_Rook_TAG_COIL",
+      "name": "Black_Rook_TAG_COIL",
+      "description": "Black Rook external air-core tag inductor; header footprint provides terminations. Coil geometry and inductance require measurement",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "100uH Black",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    "wirx:White_King_TAG_COIL": {
+      "id": "wirx:White_King_TAG_COIL",
+      "name": "White_King_TAG_COIL",
+      "description": "White King external air-core tag inductor; header footprint provides terminations. Coil geometry and inductance require measurement",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "100uH White",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    "wirx:Black_King_TAG_COIL": {
+      "id": "wirx:Black_King_TAG_COIL",
+      "name": "Black_King_TAG_COIL",
+      "description": "Black King external air-core tag inductor; header footprint provides terminations. Coil geometry and inductance require measurement",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "100uH Black",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    "wirx:White_Queen_TAG_COIL": {
+      "id": "wirx:White_Queen_TAG_COIL",
+      "name": "White_Queen_TAG_COIL",
+      "description": "White Queen external air-core tag inductor; header footprint provides terminations. Coil geometry and inductance require measurement",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "100uH White",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    "wirx:Black_Queen_TAG_COIL": {
+      "id": "wirx:Black_Queen_TAG_COIL",
+      "name": "Black_Queen_TAG_COIL",
+      "description": "Black Queen external air-core tag inductor; header footprint provides terminations. Coil geometry and inductance require measurement",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "100uH Black",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    }
+  },
+  "titleBlock": {
+    "title": "Chess piece tag templates",
+    "revision": "C",
+    "company": "Chessboard prototype",
+    "date": "2026-10-16"
+  },
+  "libraries": [
+    {
+      "name": "wirx",
+      "path": "chessboard-tags.elib"
+    }
+  ]
+}

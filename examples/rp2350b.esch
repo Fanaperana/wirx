@@ -9205,6 +9205,15 @@
                 "y": 0
               },
               "visible": false
+            },
+            {
+              "name": "MPN",
+              "value": "ABM8-272-T3",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
             }
           ]
         },
@@ -9346,7 +9355,7 @@
             },
             {
               "name": "Value",
-              "value": "33pF",
+              "value": "15pF",
               "at": {
                 "x": 0,
                 "y": -320
@@ -9532,7 +9541,7 @@
             },
             {
               "name": "Value",
-              "value": "33pF",
+              "value": "15pF",
               "at": {
                 "x": 0,
                 "y": 440

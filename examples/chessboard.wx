@@ -1,0 +1,375 @@
+// ESP32 inductive chessboard -- calibration-capable experimental prototype, revision B.
+// Read chessboard-notes.md before assembly: coil values and identification are unvalidated.
+// Logic, multiplexers and amplifiers use 3.3 V. Only the sink-driver pull-ups use 5 V.
+// Two active-HIGH 74HC238 decoders select exactly one of 64 excitation channels.
+// The eight column muxes select rank; a ninth selects file for the ADS1115 precision ADC.
+// GPIO36 is a diagnostic backup. See chessboard-calibration.md for measured acceptance gates.
+title("Inductive chessboard - experimental prototype");
+revision("B");
+date("2026-10-16");
+company("Chessboard prototype");
+
+fn ESP32() {
+    part(#{ name: "ESP32-WROOM-32D", prefix: "U", mpn: "ESP32-WROOM-32D",
+        footprint: "RF_Module:ESP32-WROOM-32D",
+        datasheet: "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32d_esp32-wroom-32u_datasheet_en.pdf",
+        symbol: #{
+            left: [[3,"EN",input], gap, [25,"GPIO0",bidirectional], [35,"TXD0",bidirectional],
+                [34,"RXD0",bidirectional], gap, [4,"GPIO36",input], [6,"GPIO34",input],
+                [5,"GPIO39",input], [7,"GPIO35",input], gap,
+                [14,"GPIO12",bidirectional], [16,"GPIO13",bidirectional], [24,"GPIO2",bidirectional],
+                [26,"GPIO4",bidirectional], [29,"GPIO5",bidirectional], [23,"GPIO15",bidirectional],
+                gap, [17,"SD2",bidirectional], [18,"SD3",bidirectional], [19,"CMD",bidirectional],
+                [20,"CLK",bidirectional], [21,"SD0",bidirectional], [22,"SD1",bidirectional]],
+            right: [[8,"GPIO32",bidirectional], [9,"GPIO33",bidirectional], [13,"GPIO14",bidirectional],
+                gap, [27,"GPIO16",bidirectional], [28,"GPIO17",bidirectional], [30,"GPIO18",bidirectional],
+                gap, [11,"GPIO26",bidirectional], [10,"GPIO25",bidirectional], [12,"GPIO27",bidirectional],
+                [37,"GPIO23",bidirectional], gap, [31,"GPIO19",bidirectional], [33,"GPIO21",bidirectional],
+                [36,"GPIO22",bidirectional], [32,"NC",no_connect]],
+            top: [[2,"VCC",power_in]], bottom: [[[1,15,38],"GND",power_in]],
+        },
+    })
+}
+
+fn HC238() {
+    part(#{ name: "74HC238PW", prefix: "U", mpn: "74HC238PW,118",
+        footprint: "Package_SO:TSSOP-16_4.4x5mm_P0.65mm",
+        datasheet: "https://assets.nexperia.com/documents/data-sheet/74HC_HCT238.pdf",
+        symbol: #{ left: [[1,"A0",input],[2,"A1",input],[3,"A2",input],gap,[6,"E3",input]],
+            right: [[15,"Y0",output],[14,"Y1",output],[13,"Y2",output],[12,"Y3",output],
+                [11,"Y4",output],[10,"Y5",output],[9,"Y6",output],[7,"Y7",output]],
+            top: [[16,"VCC",power_in]], bottom: [[4,"E1_N",input],[5,"E2_N",input],[8,"GND",power_in]] },
+    })
+}
+
+fn HC08() {
+    part(#{ name: "SN74HC08PW", prefix: "U", mpn: "SN74HC08PWR",
+        footprint: "Package_SO:TSSOP-14_4.4x5mm_P0.65mm",
+        datasheet: "https://www.ti.com/lit/ds/symlink/sn74hc08.pdf",
+        symbol: #{ left: [[1,"A0",input],[2,"B0",input],gap,[4,"A1",input],[5,"B1",input],gap,
+                [9,"A2",input],[10,"B2",input],gap,[12,"A3",input],[13,"B3",input]],
+            right: [[3,"Y0",output],gap,gap,[6,"Y1",output],gap,gap,[8,"Y2",output],gap,gap,[11,"Y3",output]],
+            top: [[14,"VCC",power_in]], bottom: [[7,"GND",power_in]] },
+    })
+}
+
+fn ULN2803() {
+    let p = [];
+    for i in 0..8 { p.push([i+1,`IN${i}`,input,left]); p.push([18-i,`OUT${i}`,open_collector,right]); }
+    p.push([9,"GND",power_in,bottom]);
+    // COM is the flyback-diode common cathode, NOT a supply input.
+    p.push([10,"COM",passive,top]);
+    part(#{ name: "ULN2803A", prefix: "U", mpn: "ULN2803A",
+        footprint: "Package_SO:SOIC-18W_7.5x11.6mm_P1.27mm", pins: p,
+        datasheet: "https://www.st.com/resource/en/datasheet/uln2803a.pdf" })
+}
+
+fn CD4051() {
+    part(#{ name: "CD4051B", prefix: "U", mpn: "CD4051BPWR",
+        footprint: "Package_SO:TSSOP-16_4.4x5mm_P0.65mm",
+        datasheet: "https://www.ti.com/lit/ds/symlink/cd4051b.pdf",
+        symbol: #{ left: [[13,"Y0",passive],[14,"Y1",passive],[15,"Y2",passive],[12,"Y3",passive],
+                [1,"Y4",passive],[5,"Y5",passive],[2,"Y6",passive],[4,"Y7",passive]],
+            right: [[3,"COM",passive],gap,[11,"A",input],[10,"B",input],[9,"C",input],gap,[6,"INH",input]],
+            top: [[16,"VDD",power_in]], bottom: [[8,"VSS",power_in],[7,"VEE",power_in]] },
+    })
+}
+
+fn CD4046() {
+    part(#{ name: "CD4046B", prefix: "U", mpn: "CD4046BPWR",
+        footprint: "Package_SO:TSSOP-16_4.4x5mm_P0.65mm",
+        datasheet: "https://www.ti.com/lit/ds/symlink/cd4046b.pdf",
+        pins: [[1,"PHASE_PULSES",output,right],[2,"PC1_OUT",output,right],[3,"COMP_IN",input,left],
+            [4,"VCO_OUT",output,right],[5,"INH",input,left],[6,"C1A",passive,left],[7,"C1B",passive,left],
+            [8,"VSS",power_in,bottom],[9,"VCO_IN",input,left],[10,"DEMOD_OUT",output,right],
+            [11,"R1",passive,left],[12,"R2",passive,left],[13,"PC2_OUT",output,right],
+            [14,"SIG_IN",input,left],[15,"ZENER",passive,right],[16,"VDD",power_in,top]],
+    })
+}
+
+fn LMV358() {
+    part(#{ name: "LMV358", prefix: "U", mpn: "LMV358IDGKR",
+        footprint: "Package_SO:VSSOP-8_3x3mm_P0.65mm",
+        datasheet: "https://www.ti.com/lit/ds/symlink/lmv358.pdf",
+        symbol: #{ left: [[3,"AP",input],[2,"AN",input],gap,[5,"BP",input],[6,"BN",input]],
+            right: [[1,"AO",output],gap,gap,[7,"BO",output]],
+            top: [[8,"VCC",power_in]], bottom: [[4,"GND",power_in]] },
+    })
+}
+
+fn ADS1115() {
+    part(#{ name:"ADS1115", prefix:"U", mpn:"ADS1115IDGSR",
+        footprint:"Package_SO:VSSOP-10_3x3mm_P0.5mm",
+        datasheet:"https://www.ti.com/lit/ds/symlink/ads1115.pdf",
+        symbol: #{ left:[[4,"AIN0",input],[5,"AIN1",input],[6,"AIN2",input],[7,"AIN3",input]],
+            right:[[9,"SDA",bidirectional],[10,"SCL",input],gap,[1,"ADDR",input],[2,"ALERT",open_collector]],
+            top:[[8,"VDD",power_in]], bottom:[[3,"GND",power_in]] } })
+}
+
+fn REF3312() {
+    part(#{ name:"REF3312", prefix:"U", mpn:"REF3312AIDBZR",
+        footprint:"Package_TO_SOT_SMD:SOT-23",
+        datasheet:"https://www.ti.com/lit/gpn/REF3312",
+        pins:[[1,"IN",power_in,left],[2,"OUT",power_out,right],[3,"GND",power_in,bottom]] })
+}
+
+fn BAT54S() {
+    // Series pair: pin 1 = first anode; 3 = midpoint; 2 = second cathode.
+    part(#{ name: "BAT54S", prefix: "D", mpn: "BAT54S,215",
+        footprint: "Package_TO_SOT_SMD:SOT-23",
+        datasheet: "https://assets.nexperia.com/documents/data-sheet/BAT54S.pdf",
+        pins: [[1,"A",passive,bottom],[3,"MID",passive,left],[2,"K",passive,right]] })
+}
+
+fn trim_100k() {
+    part(#{ name: "VCO_TRIM", prefix: "RV", value: "100k",
+        footprint: "Potentiometer_SMD:Potentiometer_Bourns_3224W_Vertical",
+        pins: [[1,"A",passive,left],[2,"W",passive,right],[3,"B",passive,bottom]] })
+}
+
+fn sensor_coil() {
+    part(#{ name: "EXTERNAL_SENSOR_COIL", prefix: "L", value: "100uH", symbol: "inductor",
+        description: "External air-core sensor inductor; header footprint provides its two terminations. Measure inductance; PCB spiral geometry is not yet defined",
+        footprint: "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+        pins: [[1,"TANK",passive,left],[2,"RETURN",passive,bottom]] })
+}
+
+fn power_input() {
+    let j = Conn(2,"TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal",#{value:"REGULATED 5V 2A"});
+    j[1] -> Fuse("1.5A","1206") -> P5V.driven();
+    j[2] -> GND.driven();
+    P5V -> C("100uF","Capacitor_SMD:C_1210_3225Metric") -> GND;
+    P5V -> C("100nF","0603") -> GND;
+}
+
+fn regulator() {
+    let u = AMS1117_3V3();
+    u.VIN -> P5V;
+    u.VOUT -> P3V3;
+    u.GND -> GND;
+    P5V -> C("10uF","0805") -> GND;
+    // Tantalum ESR must satisfy the selected AMS1117 manufacturer's stability specification.
+    P3V3 -> C_Pol("22uF","Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A") -> GND;
+    P3V3 -> C("100nF","0603") -> GND;
+    P3V3 -> R("2k2","0603") -> LED("green","0603") -> GND;
+}
+
+fn controller() {
+    let u = ESP32();
+    u.VCC -> P3V3;
+    u.GND -> GND;
+    P3V3 -> C("10uF","0805") -> GND;
+    P3V3 -> C("100nF","0603") -> GND;
+    P3V3 -> R("10k","0603") -> u.EN -> C("1uF","0603") -> GND;
+    u.EN -> net("ESP_EN");
+    u.EN -> SW_Push("RESET") -> GND;
+    P3V3 -> R("10k","0603") -> u.GPIO0;
+    u.GPIO0 -> net("BOOT_N");
+    u.GPIO0 -> SW_Push("BOOT") -> GND;
+    u.TXD0 -> net("UART_TX"); u.RXD0 -> net("UART_RX");
+    u.GPIO32 -> net("ROW_A0"); u.GPIO33 -> net("ROW_A1"); u.GPIO14 -> net("ROW_A2");
+    u.GPIO16 -> net("COL_A0"); u.GPIO17 -> net("COL_A1"); u.GPIO18 -> net("COL_A2");
+    u.GPIO26 -> net("SCAN_EN");
+    u.GPIO25 -> net("VCO_DAC");
+    u.GPIO27 -> net("VCO_INH");
+    u.GPIO23 -> net("MUX_INH");
+    u.GPIO36 -> net("ADC_SENSE");
+    u.GPIO21 -> net("I2C_SDA"); u.GPIO22 -> net("I2C_SCL");
+    u.GPIO34 -> R("1k","0603") -> net("VCO_CLOCK");
+    nc([u.GPIO39,u.GPIO35,u.GPIO12,u.GPIO13,u.GPIO2,u.GPIO4,u.GPIO5,u.GPIO15,
+        u.SD2,u.SD3,u.CMD,u.CLK,u.SD0,u.SD1,u.GPIO19]);
+    // Boot defaults: no row excitation, VCO inhibited and all analog muxes disconnected.
+    net("SCAN_EN") -> R("10k","0603") -> GND;
+    P3V3 -> R("10k","0603") -> net("VCO_INH");
+    P3V3 -> R("10k","0603") -> net("MUX_INH");
+}
+
+fn programming_header() {
+    let j = Conn(6,"Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Vertical",#{value:"3V3 UART ONLY"});
+    j[1] -> P3V3; j[2] -> net("UART_TX"); j[3] -> net("UART_RX");
+    j[4] -> net("ESP_EN"); j[5] -> net("BOOT_N"); j[6] -> GND;
+}
+
+fn decoder(axis) {
+    let u = HC238();
+    u.VCC -> P3V3; u.GND -> GND;
+    P3V3 -> C("100nF","0603") -> GND;
+    u.A0 -> net(`${axis}_A0`); u.A1 -> net(`${axis}_A1`); u.A2 -> net(`${axis}_A2`);
+    [u.E1_N,u.E2_N] -> GND;
+    if axis == "ROW" { u.E3 -> net("SCAN_EN"); } else { u.E3 -> P3V3; }
+    for i in 0..8 { u.pin(`Y${i}`) -> net(`${axis}_SEL_${i}`); }
+}
+
+fn oscillator() {
+    let u = CD4046();
+    u.VDD -> P3V3; u.VSS -> GND;
+    P3V3 -> C("100nF","0603") -> GND;
+    u.INH -> net("VCO_INH");
+    net("VCO_DAC") -> R("1k","0603") -> u.VCO_IN -> C("100nF","0603") -> GND;
+    u.VCO_OUT -> net("VCO_CLOCK");
+    u.C1A -> C("100pF","0603") -> u.C1B;
+    let rv = trim_100k();
+    u.R1 -> R("10k","0603") -> rv.A;
+    [rv.W,rv.B] -> GND;
+    u.R2 -> R("100k","0603") -> GND;
+    [u.COMP_IN,u.SIG_IN] -> GND;
+    nc([u.PHASE_PULSES,u.PC1_OUT,u.PC2_OUT,u.DEMOD_OUT,u.ZENER]);
+    // Timing parts are starting values. Measure the actual sweep versus GPIO25 DAC code.
+    let j = Conn(3,"Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical",#{value:"VCO / DAC / GND"});
+    j[1] -> net("VCO_CLOCK"); j[2] -> u.VCO_IN; j[3] -> GND;
+}
+
+fn row_clock_bank(base) {
+    let u = HC08();
+    u.VCC -> P3V3; u.GND -> GND;
+    P3V3 -> C("100nF","0603") -> GND;
+    for i in 0..4 {
+        u.pin(`A${i}`) -> net(`ROW_SEL_${base+i}`);
+        u.pin(`B${i}`) -> net("VCO_CLOCK");
+        u.pin(`Y${i}`) -> net(`ROW_CLOCK_${base+i}`);
+    }
+}
+
+fn square_gate_bank(rank,base) {
+    let u = HC08();
+    u.VCC -> P3V3; u.GND -> GND;
+    P3V3 -> C("100nF","0603") -> GND;
+    for i in 0..4 {
+        u.pin(`A${i}`) -> net(`ROW_CLOCK_${rank}`);
+        u.pin(`B${i}`) -> net(`COL_SEL_${base+i}`);
+        u.pin(`Y${i}`) -> net(`GATE_${rank}_${base+i}`);
+    }
+}
+
+fn sink_driver(rank) {
+    let u = ULN2803();
+    u.GND -> GND; u.COM -> P5V;
+    P5V -> C("100nF","0603") -> GND;
+    P5V -> C("10uF","0805") -> GND;
+    for i in 0..8 {
+        u.pin(`IN${i}`) -> net(`GATE_${rank}_${i}`);
+        u.pin(`OUT${i}`) -> net(`DRIVE_${rank}_${i}`);
+    }
+}
+
+fn sensing_cell(rank,file) {
+    let drive = net(`DRIVE_${rank}_${file}`);
+    let tank = net(`TANK_${rank}_${file}`);
+    let env = net(`ENV_${rank}_${file}`);
+    let sense = net(`SENSE_${rank}_${file}`);
+    // AC coupling prevents DC in the coil. Pull-up dissipation is <= 0.25 W at 5 V.
+    P5V -> R("100","Resistor_SMD:R_1210_3225Metric") -> drive;
+    drive -> C("100nF","0603") -> R("1k","0603") -> tank;
+    let coil = sensor_coil();
+    tank -> coil.TANK; coil.RETURN -> GND;
+    tank -> C("6.8nF","0603") -> GND;
+    // Ground-restored peak detector. BAT54S pin 1->3->2 is a SERIES diode pair.
+    let d = BAT54S();
+    tank -> C("1nF","0603") -> R("10k","0603") -> d.MID;
+    d.A -> GND; d.K -> env;
+    env -> R("10k","0603") -> GND;
+    env -> C("10nF","0603") -> GND;
+    // Upper clamp plus divider keeps normal mux input below ~1.8 V.
+    env -> D_Schottky("BAT54H","Diode_SMD:D_SOD-123F",#{mpn:"BAT54H,115"}) -> P5V;
+    env -> R("100k","0603") -> sense -> R("47k","0603") -> GND;
+}
+
+fn column_mux(file) {
+    let u = CD4051();
+    u.VDD -> P3V3; [u.VSS,u.VEE] -> GND;
+    P3V3 -> C("100nF","0603") -> GND;
+    u.A -> net("ROW_A0"); u.B -> net("ROW_A1"); u.C -> net("ROW_A2");
+    u.INH -> net("MUX_INH");
+    for rank in 0..8 { u.pin(`Y${rank}`) -> net(`SENSE_${rank}_${file}`); }
+    u.COM -> net(`COL_RAW_${file}`);
+}
+
+fn buffer_pair(base) {
+    let u = LMV358();
+    u.VCC -> P3V3; u.GND -> GND;
+    P3V3 -> C("100nF","0603") -> GND;
+    u.AP -> net(`COL_RAW_${base}`); u.AO -> u.AN -> net(`COL_BUF_${base}`);
+    u.BP -> net(`COL_RAW_${base+1}`); u.BO -> u.BN -> net(`COL_BUF_${base+1}`);
+}
+
+fn adc_selector() {
+    let u = CD4051();
+    u.VDD -> P3V3; [u.VSS,u.VEE] -> GND;
+    P3V3 -> C("100nF","0603") -> GND;
+    u.A -> net("COL_A0"); u.B -> net("COL_A1"); u.C -> net("COL_A2");
+    u.INH -> net("MUX_INH");
+    for file in 0..8 { u.pin(`Y${file}`) -> net(`COL_BUF_${file}`); }
+    u.COM -> R("1k","0603") -> net("ADC_SENSE") -> C("10nF","0603") -> GND;
+    net("ADC_SENSE") -> R("100k","0603") -> GND;
+    let j = Conn(2,"Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",#{value:"ADC / GND"});
+    j[1] -> net("ADC_SENSE"); j[2] -> GND;
+}
+
+fn precision_adc() {
+    let u = ADS1115();
+    u.VDD -> P3V3; u.GND -> GND;
+    P3V3 -> C("100nF","0603") -> GND;
+    P3V3 -> C("1uF","0603") -> GND;
+    u.SDA -> net("I2C_SDA"); u.SCL -> net("I2C_SCL");
+    P3V3 -> R("4k7","0603") -> u.SDA;
+    P3V3 -> R("4k7","0603") -> u.SCL;
+    u.ADDR -> GND; // I2C address 0x48. Use +/-2.048 V PGA range and 860 SPS.
+    nc([u.ALERT]);
+    u.AIN0 -> net("ADC_SENSE");
+    u.AIN1 -> supply("+1V25_CAL");
+    u.AIN2 -> net("CAL_HALF");
+    u.AIN3 -> GND;
+    // GPIO36 remains a diagnostic backup; ADS1115 is the primary amplitude measurement.
+}
+
+fn calibration_reference() {
+    let u = REF3312();
+    u.IN -> P3V3; u.GND -> GND; u.OUT -> supply("+1V25_CAL");
+    P3V3 -> C("100nF","0603") -> GND;
+    u.OUT -> C("1uF","0603") -> GND;
+    u.OUT -> R("10k","0603",#{Tolerance:"0.1%"}) -> net("CAL_HALF")
+        -> R("10k","0603",#{Tolerance:"0.1%"}) -> GND;
+    net("CAL_HALF") -> C("100nF","0603") -> GND;
+    // With SCAN_EN low and MUX_INH high, a bench jumper can apply either reference to ADC_SENSE.
+    let j = Conn(4,"Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical",#{value:"SENSE / 1V25 / 0V625 / GND"});
+    j[1] -> net("ADC_SENSE"); j[2] -> u.OUT; j[3] -> net("CAL_HALF"); j[4] -> GND;
+}
+
+sheet("Power and ESP32", || {
+    group("5V input", || { power_input(); });
+    group("3V3 regulator", || { regulator(); });
+    group("ESP32 controller", || { controller(); });
+    group("UART programming", || { programming_header(); });
+});
+sheet("Scan and VCO", || {
+    group("Rank decoder", || { decoder("ROW"); });
+    group("File decoder", || { decoder("COL"); });
+    group("Swept oscillator", || { oscillator(); });
+    group("Rank clocks 1-4", || { row_clock_bank(0); });
+    group("Rank clocks 5-8", || { row_clock_bank(4); });
+});
+for rank in 0..8 {
+    sheet(`Rank ${rank+1} sensors`, || {
+        group("File gates A-D", || { square_gate_bank(rank,0); });
+        group("File gates E-H", || { square_gate_bank(rank,4); });
+        group("Eight sink drivers", || { sink_driver(rank); });
+        let files = ["A","B","C","D","E","F","G","H"];
+        for file in 0..8 {
+            group(`Square ${files[file]}${rank+1}`, || { sensing_cell(rank,file); });
+        }
+    });
+}
+sheet("Column mux A-D", || {
+    for file in 0..4 { group(`File ${file+1} rank selector`, || { column_mux(file); }); }
+});
+sheet("Column mux E-H", || {
+    for file in 4..8 { group(`File ${file+1} rank selector`, || { column_mux(file); }); }
+});
+sheet("Buffers and ADC", || {
+    for base in [0,2,4,6] { group(`Column buffers ${base+1}-${base+2}`, || { buffer_pair(base); }); }
+    group("File selector and ADC filter", || { adc_selector(); });
+});
+sheet("Precision and calibration", || {
+    group("16-bit amplitude ADC", || { precision_adc(); });
+    group("Reference and calibration header", || { calibration_reference(); });
+});

@@ -127,12 +127,13 @@ fn W25Q128JV() {
     })
 }
 
-// 12 MHz crystal, 3225 package; pins 2 and 4 are the case.
+// Recommended ABM8-272-T3: 12 MHz, 10 pF load, 3225 package; pins 2 and 4 are the case.
 fn Crystal_3225() {
     part(#{
         name: "Crystal_12MHz_3225",
         prefix: "Y",
         value: "12MHz",
+        mpn: "ABM8-272-T3",
         footprint: "Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm",
         pins: [[1, "X1", passive, left], [3, "X2", passive, right], [[2, 4], "GND", passive, bottom]],
     })
@@ -207,8 +208,9 @@ fn mcu() {
 
 fn crystal() {
     let y = Crystal_3225();
-    net("XIN") -> y.X1 -> C("33pF", "0402") -> GND;
-    net("XOUT") -> R("1k", "0402") -> y.X2 -> C("33pF", "0402") -> GND;
+    // Raspberry Pi's recommended load: 15 pF / 2 + about 3 pF stray = 10.5 pF.
+    net("XIN") -> y.X1 -> C("15pF", "0402") -> GND;
+    net("XOUT") -> R("1k", "0402") -> y.X2 -> C("15pF", "0402") -> GND;
     y.GND -> GND;
 }
 

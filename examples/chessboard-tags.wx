@@ -1,0 +1,37 @@
+// Separate passive piece-tag circuits, NOT electrically connected to chessboard.wx.
+// 100 uH air-core coils are provisional measured targets, not shielded SMD inductors.
+// Twelve distinct capacitor codes identify type AND color by nominal resonance.
+// Coupling and signature separation must be demonstrated on the bench.
+title("Chess piece tag templates");
+revision("C");
+date("2026-10-16");
+company("Chessboard prototype");
+
+fn piece_tag(kind,color,cap) {
+    let a = net(); let b = net();
+    let coil = part(#{name:`${color}_${kind}_TAG_COIL`,prefix:"L",value:`100uH ${color}`,symbol:"inductor",
+        description:`${color} ${kind} external air-core tag inductor; header footprint provides terminations. Coil geometry and inductance require measurement`,
+        fields: #{ Piece: kind, Color: color },
+        footprint:"Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+        pins:[[1,"A",passive,left],[2,"B",passive,right]]});
+    a -> coil.A; b -> coil.B;
+    // C0G/NP0, 1% preferred. Coil plus capacitor make an isolated closed resonant loop.
+    a -> C(cap,"0603",#{Tolerance:"1%",Dielectric:"C0G/NP0"}) -> b;
+    // Optional parallel trim footprint; leave unpopulated until each real tag is measured.
+    a -> C("100pF","0603",#{dnp:true,Tolerance:"1%",Dielectric:"C0G/NP0",Function:"Measured tag trim"}) -> b;
+}
+
+// One white and one black example per type; duplicate these for a complete set.
+// 100uH coils with 3.0-24nF span approximately 103-291kHz, inside the intended sweep.
+// Match measured coils to +/-2%, use 1% C0G/NP0 capacitors, and calibrate actual coupled responses.
+sheet("Piece templates", || {
+    let kinds = ["Pawn","Knight","Bishop","Rook","King","Queen"];
+    let white_caps = ["3.0nF","4.3nF","6.2nF","9.1nF","20nF","13nF"];
+    let black_caps = ["3.6nF","5.1nF","7.5nF","11nF","24nF","16nF"];
+    for i in 0..6 {
+        group(kinds[i], || {
+            piece_tag(kinds[i],"White",white_caps[i]);
+            piece_tag(kinds[i],"Black",black_caps[i]);
+        });
+    }
+});
