@@ -32,6 +32,20 @@ sheet("Power", || {
 });
 ```
 
+## Documentation
+
+- [README](README.md) (this page): what wirx is, the commands, the checks, how layout works, and
+  getting to eleceda and KiCad.
+- [docs/rhai-syntax.md](docs/rhai-syntax.md): the language reference. It covers values, parts,
+  symbols, pins, `->` connections, nets and rails, groups and sheets, loops, layout hints,
+  imports, errors and the title block, each with examples.
+- [examples/](examples): complete designs, from small to large: `ldo.wx`, `blinker.wx`, `mcu.wx`
+  and `rp2350b.wx` (a full RP2350B board with a custom symbol).
+- [docs/layout-metrics.md](docs/layout-metrics.md): how each layout stage was measured, with
+  before/after numbers.
+- `wirx lib list` and `wirx lib show <part>`: the standard parts, rails and pins, from the
+  command line.
+
 ## Usage
 
 ```bash
@@ -187,6 +201,32 @@ of custom parts (their constructor takes no options yet). Re-importing a file th
 the same netlist, and importing again after a rebuild gives the same source (`tests/import.rs`
 checks this for the examples).
 
+## Getting to KiCad
+
+Pick the route by whether you need the schematic or are going straight to PCB.
+
+**A. A full KiCad project, through eleceda** (until wirx writes `.kicad_sch` itself):
+
+1. Build the design: `wirx build design.wx` writes `design.esch` and `design.elib`.
+2. In eleceda, open it with **File → Open** and pick `design.esch`.
+3. Open the command palette (**Ctrl+K**) and run **Export KiCad schematic**.
+
+eleceda writes one `.kicad_sch` per sheet, a `.kicad_pro`, and the symbol libraries with a project
+`sym-lib-table`, so KiCad opens it with no setup. Open the `.kicad_pro` in KiCad.
+
+**B. Straight to PCB, wirx only:**
+
+```bash
+wirx netlist design.wx --format kicad -o design.net    # parts, footprints and nets
+wirx lib export design.wx -o design.kicad_sym          # the design's symbols, for KiCad schematics
+```
+
+In KiCad's PCB Editor, choose **File → Import → Netlist** and load `design.net`. Every part arrives
+with its footprint and nets, ready to place and route.
+
+Footprints must exist in your KiCad libraries: use KiCad names such as
+`"Resistor_SMD:R_0603_1608Metric"` (the `"0603"`-style aliases expand to these).
+
 ## Verifying output with eleceda
 
 `tools/verify-esch.mts` runs eleceda's own loader, validator and readability score on a generated
@@ -207,4 +247,4 @@ readability.
 - Buses
 - LSP and formatter
 - Footprint pad checks
-- KiCad `.kicad_sch` output
+- Native KiCad `.kicad_sch` output (for now, export through eleceda: see [Getting to KiCad](#getting-to-kicad))

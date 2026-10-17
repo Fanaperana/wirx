@@ -1,12 +1,15 @@
-# wirx on Rhai: syntax proposal
+# wirx language reference
 
-Status: adopted and implemented. Decisions: operator chains with
-`->`; pins as `u.VIN` / `u[1]` / `u.pin(…)`; built-in rails plus constructors; values as strings,
-with numbers also accepted; parts defined with map literals; files keep the `.wx` extension.
+A `.wx` file is a Rhai script. This page covers everything a design uses: values, parts and
+symbols, pins, connections, nets and rails, groups and sheets, loops, layout hints, imports and
+errors. For the commands and the overall workflow, see the [README](../README.md). For complete
+designs, see [examples/](../examples).
 
-A `.wx` file is a [Rhai](https://rhai.rs) script. Running it builds the design: parts, nets,
-groups and sheets. Everything after that is unchanged: checks, layout, `.esch`, netlist and SVG.
-All Rhai behaviour assumed here was checked in a spike (Rhai 1.x, `debugging` feature).
+Running a [Rhai](https://rhai.rs) script builds the design: parts, nets, groups and sheets. wirx
+then checks it, lays it out and writes the `.esch`, netlist or SVG. The design decisions behind the
+syntax: `->` connection chains; pins as `u.VIN`, `u[1]` or `u.pin(…)`; built-in rails plus
+constructors; values as strings (numbers also accepted); parts defined with map literals; files
+keep the `.wx` extension.
 
 ## At a glance
 
