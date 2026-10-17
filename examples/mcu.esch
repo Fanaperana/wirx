@@ -2218,8 +2218,8 @@
           "id": "e0ce5e50-8890-5c69-8c5e-83e053fdae52",
           "libId": "wirx:C",
           "at": {
-            "x": 6300,
-            "y": 4550
+            "x": 6450,
+            "y": 4450
           },
           "rot": 0,
           "mirror": false,
@@ -2230,7 +2230,7 @@
               "value": "C2",
               "at": {
                 "x": 0,
-                "y": -380
+                "y": -320
               },
               "visible": true,
               "justify": "center",
@@ -2241,7 +2241,7 @@
               "value": "100nF",
               "at": {
                 "x": 0,
-                "y": 380
+                "y": 320
               },
               "visible": true,
               "justify": "center",
@@ -2269,11 +2269,11 @@
         },
         {
           "kind": "symbol",
-          "id": "d5dbd489-c075-5fea-8e41-ec7b5a0f2914",
+          "id": "bcad7777-3bb3-5c2e-a2c2-8b188e1af265",
           "libId": "power:+5V",
           "at": {
-            "x": 6300,
-            "y": 4300
+            "x": 6150,
+            "y": 4200
           },
           "rot": 0,
           "mirror": false,
@@ -2294,11 +2294,11 @@
               "name": "Value",
               "value": "+5V",
               "at": {
-                "x": 70,
-                "y": -60
+                "x": 0,
+                "y": -150
               },
               "visible": true,
-              "justify": "left",
+              "justify": "center",
               "rot": 0
             },
             {
@@ -2323,23 +2323,47 @@
         },
         {
           "kind": "wire",
-          "id": "b2a537d6-31f2-5aaf-beaf-4a59e5376404",
+          "id": "02c82915-c8cd-5651-914a-1817b6cc91df",
           "a": {
-            "x": 6300,
-            "y": 4400
+            "x": 6450,
+            "y": 4300
           },
           "b": {
-            "x": 6300,
+            "x": 6450,
+            "y": 4200
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "ab4ee2a6-8317-5c96-ac63-63cc106aeeea",
+          "a": {
+            "x": 6750,
             "y": 4300
+          },
+          "b": {
+            "x": 6750,
+            "y": 4200
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "c2b0f18d-f9d9-59f4-b7e8-392a0c10e186",
+          "a": {
+            "x": 6150,
+            "y": 4200
+          },
+          "b": {
+            "x": 6750,
+            "y": 4200
           }
         },
         {
           "kind": "symbol",
-          "id": "1156614e-0e95-567b-aeb7-bc8b32fba59d",
+          "id": "29705fbb-0321-5de0-88c6-607ca459d8c8",
           "libId": "power:GND",
           "at": {
-            "x": 6300,
-            "y": 4800
+            "x": 6150,
+            "y": 4700
           },
           "rot": 0,
           "mirror": false,
@@ -2360,11 +2384,11 @@
               "name": "Value",
               "value": "GND",
               "at": {
-                "x": 70,
-                "y": 60
+                "x": 0,
+                "y": 160
               },
               "visible": true,
-              "justify": "left",
+              "justify": "center",
               "rot": 0
             },
             {
@@ -2389,14 +2413,38 @@
         },
         {
           "kind": "wire",
-          "id": "4c20e327-ad0d-5c87-958d-6056337f06fc",
+          "id": "d1b1fd2c-5202-5257-ac1a-749bb3af0365",
           "a": {
-            "x": 6300,
+            "x": 6450,
+            "y": 4600
+          },
+          "b": {
+            "x": 6450,
+            "y": 4700
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "fa6fa748-7742-5c60-ae61-6fc9d4542ace",
+          "a": {
+            "x": 6750,
+            "y": 4600
+          },
+          "b": {
+            "x": 6750,
+            "y": 4700
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "502023b7-1135-5b09-8d03-fb7899ec2744",
+          "a": {
+            "x": 6150,
             "y": 4700
           },
           "b": {
-            "x": 6300,
-            "y": 4800
+            "x": 6750,
+            "y": 4700
           }
         },
         {
@@ -2404,8 +2452,8 @@
           "id": "aac1c60a-8e3d-5160-a20c-cfe26a508599",
           "libId": "wirx:C",
           "at": {
-            "x": 6700,
-            "y": 4550
+            "x": 6750,
+            "y": 4450
           },
           "rot": 0,
           "mirror": false,
@@ -2416,7 +2464,7 @@
               "value": "C3",
               "at": {
                 "x": 0,
-                "y": -380
+                "y": -320
               },
               "visible": true,
               "justify": "center",
@@ -2427,7 +2475,7 @@
               "value": "100nF",
               "at": {
                 "x": 0,
-                "y": 380
+                "y": 320
               },
               "visible": true,
               "justify": "center",
@@ -2452,138 +2500,6 @@
               "visible": false
             }
           ]
-        },
-        {
-          "kind": "symbol",
-          "id": "ebc952b2-ac23-529a-aabe-08aedaa47352",
-          "libId": "power:+5V",
-          "at": {
-            "x": 6700,
-            "y": 4300
-          },
-          "rot": 0,
-          "mirror": false,
-          "unit": 1,
-          "fields": [
-            {
-              "name": "Reference",
-              "value": "#PWR16",
-              "at": {
-                "x": 0,
-                "y": 250
-              },
-              "visible": false,
-              "justify": "center",
-              "rot": 0
-            },
-            {
-              "name": "Value",
-              "value": "+5V",
-              "at": {
-                "x": 70,
-                "y": -60
-              },
-              "visible": true,
-              "justify": "left",
-              "rot": 0
-            },
-            {
-              "name": "Footprint",
-              "value": "",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            },
-            {
-              "name": "Datasheet",
-              "value": "",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            }
-          ]
-        },
-        {
-          "kind": "wire",
-          "id": "fd157e1a-f708-5fac-8d2b-67fb5885f46a",
-          "a": {
-            "x": 6700,
-            "y": 4400
-          },
-          "b": {
-            "x": 6700,
-            "y": 4300
-          }
-        },
-        {
-          "kind": "symbol",
-          "id": "4d98150e-5ea2-5d26-afea-19a9edb16f7d",
-          "libId": "power:GND",
-          "at": {
-            "x": 6700,
-            "y": 4800
-          },
-          "rot": 0,
-          "mirror": false,
-          "unit": 1,
-          "fields": [
-            {
-              "name": "Reference",
-              "value": "#PWR17",
-              "at": {
-                "x": 0,
-                "y": 250
-              },
-              "visible": false,
-              "justify": "center",
-              "rot": 0
-            },
-            {
-              "name": "Value",
-              "value": "GND",
-              "at": {
-                "x": 70,
-                "y": 60
-              },
-              "visible": true,
-              "justify": "left",
-              "rot": 0
-            },
-            {
-              "name": "Footprint",
-              "value": "",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            },
-            {
-              "name": "Datasheet",
-              "value": "",
-              "at": {
-                "x": 0,
-                "y": 0
-              },
-              "visible": false
-            }
-          ]
-        },
-        {
-          "kind": "wire",
-          "id": "1ff1a666-c770-55c5-8392-d9f4573105b5",
-          "a": {
-            "x": 6700,
-            "y": 4700
-          },
-          "b": {
-            "x": 6700,
-            "y": 4800
-          }
         },
         {
           "kind": "wire",
@@ -2751,7 +2667,7 @@
           },
           "size": {
             "w": 2700,
-            "h": 4550
+            "h": 4350
           }
         },
         {
@@ -2822,7 +2738,7 @@
           "fields": [
             {
               "name": "Reference",
-              "value": "#PWR18",
+              "value": "#PWR16",
               "at": {
                 "x": 0,
                 "y": 250
@@ -2966,7 +2882,7 @@
           "fields": [
             {
               "name": "Reference",
-              "value": "#PWR19",
+              "value": "#PWR17",
               "at": {
                 "x": 0,
                 "y": 250
@@ -3086,7 +3002,7 @@
           "fields": [
             {
               "name": "Reference",
-              "value": "#PWR20",
+              "value": "#PWR18",
               "at": {
                 "x": 0,
                 "y": 250
@@ -3357,7 +3273,7 @@
           "fields": [
             {
               "name": "Reference",
-              "value": "#PWR21",
+              "value": "#PWR19",
               "at": {
                 "x": 0,
                 "y": 250
@@ -3500,6 +3416,22 @@
           "at": {
             "x": 5600,
             "y": 2650
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "7dca865c-30ee-518b-a44f-6239dd2b57d2",
+          "at": {
+            "x": 6450,
+            "y": 4200
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "5c82be9b-1bc5-501c-a9c2-211ba45e0fe7",
+          "at": {
+            "x": 6450,
+            "y": 4700
           }
         },
         {
@@ -3689,7 +3621,7 @@
           "fields": [
             {
               "name": "Reference",
-              "value": "#PWR22",
+              "value": "#PWR20",
               "at": {
                 "x": 0,
                 "y": 250
@@ -3755,7 +3687,7 @@
           "fields": [
             {
               "name": "Reference",
-              "value": "#PWR23",
+              "value": "#PWR21",
               "at": {
                 "x": 0,
                 "y": 250
@@ -3899,7 +3831,7 @@
           "fields": [
             {
               "name": "Reference",
-              "value": "#PWR24",
+              "value": "#PWR22",
               "at": {
                 "x": 0,
                 "y": 250
@@ -4037,7 +3969,7 @@
           "fields": [
             {
               "name": "Reference",
-              "value": "#PWR25",
+              "value": "#PWR23",
               "at": {
                 "x": 0,
                 "y": 250

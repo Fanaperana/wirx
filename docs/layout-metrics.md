@@ -246,3 +246,48 @@ cross once), hanging-part swap → 96, text order → 100. The side-rail stubs a
   KiCad's symbol). eleceda does not join same-name pins, so both pins of a channel must be wired
   together round the body, which drew a loop around the ESD on each line.
 - `optimisations_never_make_a_group_worse`, `layout_fixtures` and `rp2350b_board_builds` pass.
+
+## Stage 6: decoupling banks
+
+Until now, every decoupling capacitor was a rail-only part with its own supply and ground symbol,
+standing in a row under its circuit. Connectivity was right, but nothing on the page showed which
+pin a capacitor served. Now (`layout/group/bank.rs`) the capacitors between one supply and ground
+form a bank: one supply wire over them, one ground return under them, one symbol for each rail at
+the far end. The bank is drawn at the pin it serves (a `near` hint, then a chain from the pin,
+then the group's only power pin on that rail), and the pin's own power symbol gives way to the
+wire into the bank. Banks with no such pin are drawn on their own, split into banks no wider than
+their circuit. A chip that sits between rails (a regulator in the row under its circuit) brings
+its banks along as one unit, so they fit beside its pins.
+
+Chessboard fixture (`examples/chessboard.wx`), before → after:
+
+| group | before | after |
+| --- | --- | --- |
+| ESP32 controller | C6 10uF, C7 100nF under the circuit, 2 × `+3V3`, 2 × GND | bank at U2.VCC: `VCC ─ C7 ─ C6 ─ +3V3`, one GND return |
+| 3V3 regulator | C3, C4, C5 in a row, 6 symbols | C3 (+5V) at VIN; C5 100nF, C4 22uF (+ up) at VOUT; 4 symbols |
+| 5V input | C1, C2 each with +5V and GND | one +5V bank, one GND return (no chip pin on +5V: drawn on its own) |
+| Eight sink drivers | 2 caps, 4 symbols | one +5V bank on its own (ULN COM is a passive pin, not a supply input) |
+| decoders, gates, mux, buffers, ADC | one 100nF beside the chip, own symbols | the 100nF at the chip's VCC/VDD pin |
+| Reference and calibration | C320, C321 in a row | C320 at IN (+3V3), C321 at OUT (+1V25_CAL) |
+| ESP_EN (C8), CAL_HALF (C322), VCO, sensing cells | on their signals | unchanged |
+
+- **Netlists:** identical for all six designs (`wirx netlist --format json`, byte for byte).
+- **eleceda** (`tools/verify-esch.mts`): loads without repairs, connectivity matches wirx on every
+  design. Readability is unchanged on every sheet: chessboard 97/98/76×8/100/100/97/100,
+  rp2350b, ldo, blinker, mcu and tags 100. Warnings are unchanged: 66 on the chessboard, all
+  from before (65 four-way points in the sensing cells, 1 open-drain ALERT), none elsewhere.
+- **wirx stats** (signal routing only; bank wires are decorations): unchanged on every group
+  except five. The four column buffers (LMV358) go from 4850 to 5650 mil of wire and from 0 to
+  2 hugging pairs: the bank's wire at VCC blocks the feedback route over the chip, so both
+  feedback loops run underneath. The swept oscillator goes from 12400 to 12800 mil. There are no
+  new crossings, collisions or four-way points anywhere.
+- **RP2350B MCU sheet:** the 15 capacitors become a +1V1 bank of 4 and two +3V3 banks (5 and 6),
+  standing on their own because the chip has several supply pins on each rail. A single 11-cap
+  bank was wider than the chip and pushed the buttons block too far for its wires (readability
+  93); splitting at the circuit's width keeps the sheet at 100.
+- **mcu:** VCC and AVCC are neighbouring pins sharing one `+5V` symbol, so C2 and C3 form one bank
+  on their own. **blinker:** `near(cd, u.VCC)` gives a one-capacitor bank at VCC.
+
+Tests: `decoupling_caps_share_one_bank_at_their_pin`, `separate_rails_make_separate_banks`,
+`explicit_associations_pick_the_pin`, `polarized_caps_follow_their_wiring` and
+`chessboard_decoupling_banks`.

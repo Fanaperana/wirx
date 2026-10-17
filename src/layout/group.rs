@@ -10,6 +10,8 @@ use crate::symbol::{place_pin, Field, Justify, PlacedPin, RailKind, SymbolDef};
 use std::collections::{HashMap, HashSet};
 use std::sync::OnceLock;
 
+mod bank;
+
 /// Free space kept between neighbouring parts (mils).
 const CLEAR: i32 = 100;
 /// Length of the wire between a pin and the part placed in front of it.
@@ -177,6 +179,8 @@ struct Ctx<'a> {
     flag_pin: HashMap<usize, (usize, usize)>,
     extra_symbols: &'a mut Vec<SymbolDef>,
     diags: &'a mut Vec<Diagnostic>,
+    /// Pins whose rail is drawn by a decoupling bank instead of their own power symbol.
+    bank_pins: HashSet<(usize, usize)>,
 }
 
 pub fn label_rect(at: Pt, rot: Rot, text: &str) -> Rect {
@@ -335,6 +339,9 @@ impl Ctx<'_> {
             let Some(n) = net else { continue };
             let netd = &d.nets[n];
             if in_run.contains(&k) {
+                continue;
+            }
+            if netd.is_rail() && self.bank_pins.contains(&(inst, k)) {
                 continue;
             }
             if let NetKind::Rail(kind) = netd.kind {
@@ -736,7 +743,7 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
         }
     }
 
-    let mut ctx = Ctx { v, opts: *opts, d, g, in_group, label_pin, flag_pin, extra_symbols, diags };
+    let mut ctx = Ctx { v, opts: *opts, d, g, in_group, label_pin, flag_pin, extra_symbols, diags, bank_pins: HashSet::new() };
     let mut placed: HashMap<usize, Placed> = HashMap::new();
     let mut order: Vec<usize> = Vec::new();
     let mut occupied: Vec<Rect> = Vec::new();
@@ -868,112 +875,198 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
 
     uncross_hangs(&mut placed, &order, &hangs);
 
-    // Rail-only parts (decoupling, bulk caps): a `near` hint puts one at its pin; the rest stand in
-    // one tidy row under the circuit, supplies on top and grounds on one baseline.
-    let mut row: Vec<Placed> = Vec::new();
+    // Decoupling capacitors go in banks (see `bank`): drawn at their pin once the chips are placed,
+    // or, with no pin to serve, as one unit in the row below. A lone capacitor with no pin to draw
+    // it at stays an ordinary rail-only part.
+    let banks = ctx.plan_banks(&near);
+    let banked: HashSet<usize> = banks.iter().filter(|b| b.pin.is_some() || b.caps.len() > 1).flat_map(|b| b.caps.iter().copied()).collect();
+
+    // Rail-only parts (bulk caps, regulators between rails): a `near` hint puts one at its pin;
+    // the rest stand in one tidy row under the circuit, supplies on top and grounds on one baseline.
+    let mut row: Vec<Vec<Placed>> = Vec::new();
+    let mut attached: HashSet<usize> = HashSet::new();
     for &i in &group.instances {
-        if placed.contains_key(&i) {
+        if placed.contains_key(&i) || banked.contains(&i) {
             continue;
         }
         let orient = ctx.rail_orient(i).unwrap_or(Orient::IDENTITY);
         let proto = ctx.make_placed(i, orient);
         if let Some(t) = near.get(&i).and_then(|&(b, k)| placed.get(&b).map(|p| p.pins[k])) {
-            let ext = proto.rects.iter().copied().reduce(Rect::union).unwrap();
-            let desired = t.at + dir_vec(t.out) * 300 - pt(ext.center().x, 0);
-            let p = place_near(&proto, pt(snap50(desired.x), snap50(desired.y)), &occupied);
+            let p = place_at_pin(&proto, t, &occupied);
             commit(p, &mut placed, &mut order, &mut occupied);
+        } else if banks.iter().any(|b| b.pin.is_some_and(|p| p.0 == i)) {
+            // A chip between rails (a regulator) brings the banks at its pins along into the row.
+            let mut local = HashMap::from([(i, proto.clone())]);
+            let mut local_order = vec![i];
+            let mut local_occ = proto.rects.clone();
+            for b in banks.iter().filter(|b| b.pin.is_some_and(|p| p.0 == i)) {
+                if ctx.attach_bank(b, &mut local, &mut local_order, &mut local_occ) {
+                    attached.insert(b.caps[0]);
+                }
+            }
+            row.push(local_order.iter().map(|k| local.remove(k).unwrap()).collect());
         } else {
-            row.push(proto);
+            row.push(vec![proto]);
+        }
+    }
+    // A long bank with no pin is split into shorter ones no wider than the circuit, so it does not
+    // widen the group (and push its neighbours away from its pins).
+    let limit = occupied.iter().copied().reduce(Rect::union).map_or(i32::MAX, |r| r.w());
+    for b in banks.iter().filter(|b| b.pin.is_none() && b.caps.len() > 1) {
+        let mut parts = 1;
+        loop {
+            let size = b.caps.len().div_ceil(parts);
+            let units: Vec<Vec<Placed>> =
+                b.caps.chunks(size).map(|caps| ctx.bank_unit(&bank::Bank { caps: caps.to_vec(), ..*b }, true, false).0).collect();
+            let widest = units.iter().map(|u| u.iter().flat_map(|p| p.rects.iter().copied()).reduce(Rect::union).unwrap().w()).max().unwrap();
+            if widest <= limit || size <= 2 {
+                row.extend(units);
+                break;
+            }
+            parts += 1;
         }
     }
     tidy(&ctx, &mut placed, &order);
     let mut occupied: Vec<Rect> = order.iter().flat_map(|i| placed[i].rects.iter().copied()).collect();
-    // A group made only of rail-connected parts (an LDO between two rails): its biggest part
-    // anchors it, the rest go beside the pins they serve.
-    if order.is_empty() && !row.is_empty() {
-        let big = (0..row.len()).max_by_key(|&k| (row[k].pins.len(), std::cmp::Reverse(row[k].inst))).unwrap();
-        let p = row.remove(big);
-        commit(p, &mut placed, &mut order, &mut occupied);
-    }
-    if !row.is_empty() {
-        // The pin each part serves: a pin on the same supply rail, preferring the biggest part.
-        let served = |p: &Placed, placed: &HashMap<usize, Placed>| -> Option<PlacedPin> {
-            let inst = &d.instances[p.inst];
-            let supply: Vec<usize> = inst.pin_net.iter().flatten().copied().filter(|&n| matches!(d.nets[n].kind, NetKind::Rail(RailKind::Supply))).collect();
-            order.iter().find_map(|o| {
-                let q = &placed[o];
-                (0..q.pins.len()).find(|&k| d.instances[*o].pin_net[k].is_some_and(|n| supply.contains(&n))).map(|k| q.pins[k])
-            })
-        };
-        let anchor_rects: Rect = order.first().map(|i| placed[i].rects.iter().copied().reduce(Rect::union).unwrap()).unwrap();
-        // A cap serving a top or bottom pin goes to a side of the anchor that has no pins, when
-        // there is one; otherwise under it.
-        let free_side: Option<Rot> = order.first().and_then(|a| {
-            let pins = &placed[a].pins;
-            [180, 0].into_iter().find(|&o| !pins.iter().any(|p| p.out == o))
-        });
-        let side_of = |pin: Option<PlacedPin>| -> Option<Rot> {
-            match pin {
-                Some(t) if is_horizontal(t.out) => Some(t.out),
-                Some(_) => free_side,
-                None => None,
-            }
-        };
-        let mut sides: Vec<(Option<Rot>, Option<PlacedPin>, Vec<Placed>)> = Vec::new();
-        for p in row {
-            let pin = served(&p, &placed);
-            let side = side_of(pin);
-            match sides.iter_mut().find(|(s, _, _)| *s == side) {
-                Some((_, _, list)) => list.push(p),
-                None => sides.push((side, pin, vec![p])),
-            }
+    place_row(&ctx, row, &mut placed, &mut order, &mut occupied);
+
+    // Banks at their pins; those with no clear spot fall back to the row.
+    let mut row: Vec<Vec<Placed>> = Vec::new();
+    for b in banks.iter().filter(|b| b.pin.is_some() && !attached.contains(&b.caps[0])) {
+        if ctx.attach_bank(b, &mut placed, &mut order, &mut occupied) {
+            continue;
         }
-        for (side, pin, mut list) in sides {
-            let rail_name = |p: &Placed| {
-                let inst = &d.instances[p.inst];
-                inst.pin_net.iter().flatten().map(|&n| &d.nets[n]).find(|n| matches!(n.kind, NetKind::Rail(RailKind::Supply))).map(|n| n.name.clone()).unwrap_or_default()
-            };
-            list.sort_by_key(|p| (rail_name(p), p.inst));
-            // A row under the circuit wraps at the circuit's width, so a long bank of decoupling
-            // caps does not widen the group (and push its neighbours away from its pins).
-            let limit = match side {
-                None => occupied.iter().copied().reduce(Rect::union).map_or(i32::MAX, |r| r.w()),
-                Some(_) => i32::MAX,
-            };
-            let (mut x, mut y, mut row_h) = (0, 0, 0);
-            for p in &mut list {
-                let ext = p.rects.iter().copied().reduce(Rect::union).unwrap();
-                if x > 0 && x + ext.w() > limit {
-                    (x, y, row_h) = (0, y + row_h + 2 * CLEAR, 0);
-                }
-                p.translate(pt(snap50(x - ext.x0), snap50(y)));
-                x = p.rects.iter().copied().reduce(Rect::union).unwrap().x1 + 2 * CLEAR + 50;
-                row_h = row_h.max(ext.h());
-            }
-            let row_ext = list.iter().flat_map(|p| p.rects.iter().copied()).reduce(Rect::union).unwrap();
-            let gap = 2 * CLEAR + 100;
-            // Level with the pin it serves (or the anchor's middle), beside the chosen side.
-            let level = match pin {
-                Some(t) if is_horizontal(t.out) => t.at.y,
-                _ => anchor_rects.center().y,
-            };
-            let base = match side {
-                Some(180) => pt(anchor_rects.x0 - gap - row_ext.x1, level - row_ext.center().y),
-                Some(_) => pt(anchor_rects.x1 + gap - row_ext.x0, level - row_ext.center().y),
-                None => pt(anchor_rects.center().x - row_ext.w() / 2 - row_ext.x0, anchor_rects.y1 + gap - row_ext.y0),
-            };
-            let base = pt(snap50(base.x), snap50(base.y));
-            let fits = |d: Pt, occupied: &[Rect]| list.iter().all(|p| !collides(p, d, occupied));
-            let shift = ring_offsets().iter().map(|&o| base + o).find(|&d| fits(d, &occupied)).unwrap_or(base);
-            for mut p in list {
-                p.translate(shift);
+        if b.caps.len() > 1 {
+            row.push(ctx.bank_unit(b, true, false).0);
+            continue;
+        }
+        let proto = ctx.unbank(b.caps[0]);
+        match b.pin.and_then(|(c, k)| placed.get(&c).map(|p| p.pins[k])).filter(|_| near.contains_key(&b.caps[0])) {
+            Some(t) => {
+                let p = place_at_pin(&proto, t, &occupied);
                 commit(p, &mut placed, &mut order, &mut occupied);
             }
+            None => row.push(vec![proto]),
         }
     }
+    place_row(&ctx, row, &mut placed, &mut order, &mut occupied);
 
     let occupied: Vec<Rect> = order.iter().flat_map(|i| placed[i].rects.iter().copied()).collect();
     route_group(&mut ctx, &placed, &order, &occupied)
+}
+
+/// A rail-only part placed in front of the pin it serves (a `near` hint).
+fn place_at_pin(proto: &Placed, t: PlacedPin, occupied: &[Rect]) -> Placed {
+    let ext = proto.rects.iter().copied().reduce(Rect::union).unwrap();
+    let desired = t.at + dir_vec(t.out) * 300 - pt(ext.center().x, 0);
+    place_near(proto, pt(snap50(desired.x), snap50(desired.y)), occupied)
+}
+
+/// Rail-only parts and banks with no pin to stand at: one row per side of the anchor they serve
+/// (beside it, or under the circuit), supplies on top and grounds on one baseline. Each unit (a
+/// part, or a bank's parts) moves as one.
+fn place_row(ctx: &Ctx, mut row: Vec<Vec<Placed>>, placed: &mut HashMap<usize, Placed>, order: &mut Vec<usize>, occupied: &mut Vec<Rect>) {
+    let d = ctx.d;
+    let commit = |p: Placed, placed: &mut HashMap<usize, Placed>, order: &mut Vec<usize>, occupied: &mut Vec<Rect>| {
+        occupied.extend(p.rects.iter().copied());
+        order.push(p.inst);
+        placed.insert(p.inst, p);
+    };
+    let extent = |u: &[Placed]| u.iter().flat_map(|p| p.rects.iter().copied()).reduce(Rect::union).unwrap();
+    // A group made only of rail-connected parts (an LDO between two rails): its biggest part
+    // anchors it, the rest go beside the pins they serve.
+    if order.is_empty() && !row.is_empty() {
+        let big = (0..row.len()).max_by_key(|&k| (row[k][0].pins.len(), std::cmp::Reverse(row[k][0].inst))).unwrap_or(0);
+        for p in row.remove(big) {
+            commit(p, placed, order, occupied);
+        }
+    }
+    if row.is_empty() {
+        return;
+    }
+    // The pin each part serves: a pin on the same supply rail, preferring the biggest part.
+    let served = |p: &Placed, placed: &HashMap<usize, Placed>| -> Option<PlacedPin> {
+        let inst = &d.instances[p.inst];
+        let supply: Vec<usize> = inst.pin_net.iter().flatten().copied().filter(|&n| matches!(d.nets[n].kind, NetKind::Rail(RailKind::Supply))).collect();
+        order.iter().find_map(|o| {
+            let q = &placed[o];
+            (0..q.pins.len()).find(|&k| d.instances[*o].pin_net[k].is_some_and(|n| supply.contains(&n))).map(|k| q.pins[k])
+        })
+    };
+    let anchor_rects: Rect = order.first().map(|i| placed[i].rects.iter().copied().reduce(Rect::union).unwrap()).unwrap();
+    // A cap serving a top or bottom pin goes to a side of the anchor that has no pins, when
+    // there is one; otherwise under it.
+    let free_side: Option<Rot> = order.first().and_then(|a| {
+        let pins = &placed[a].pins;
+        [180, 0].into_iter().find(|&o| !pins.iter().any(|p| p.out == o))
+    });
+    let side_of = |pin: Option<PlacedPin>| -> Option<Rot> {
+        match pin {
+            Some(t) if is_horizontal(t.out) => Some(t.out),
+            Some(_) => free_side,
+            None => None,
+        }
+    };
+    // (side of the anchor, the pin served, the units in that row)
+    type Side = (Option<Rot>, Option<PlacedPin>, Vec<Vec<Placed>>);
+    let mut sides: Vec<Side> = Vec::new();
+    for u in row {
+        let pin = served(&u[0], placed);
+        let side = side_of(pin);
+        match sides.iter_mut().find(|(s, _, _)| *s == side) {
+            Some((_, _, list)) => list.push(u),
+            None => sides.push((side, pin, vec![u])),
+        }
+    }
+    for (side, pin, mut list) in sides {
+        let rail_name = |p: &Placed| {
+            let inst = &d.instances[p.inst];
+            inst.pin_net.iter().flatten().map(|&n| &d.nets[n]).find(|n| matches!(n.kind, NetKind::Rail(RailKind::Supply))).map(|n| n.name.clone()).unwrap_or_default()
+        };
+        list.sort_by_key(|u| (rail_name(&u[0]), u[0].inst));
+        // A row under the circuit wraps at the circuit's width, so a long bank of decoupling
+        // caps does not widen the group (and push its neighbours away from its pins).
+        let limit = match side {
+            None => occupied.iter().copied().reduce(Rect::union).map_or(i32::MAX, |r| r.w()),
+            Some(_) => i32::MAX,
+        };
+        let (mut x, mut y, mut row_h) = (0, 0, 0);
+        for u in &mut list {
+            let ext = extent(u);
+            if x > 0 && x + ext.w() > limit {
+                (x, y, row_h) = (0, y + row_h + 2 * CLEAR, 0);
+            }
+            // A single part keeps its own height (supplies on top, grounds on one baseline); a
+            // bank's top goes to the row's top.
+            let dv = pt(snap50(x - ext.x0), snap50(y - if u.len() > 1 { ext.y0 } else { 0 }));
+            for p in u.iter_mut() {
+                p.translate(dv);
+            }
+            x = extent(u).x1 + 2 * CLEAR + 50;
+            row_h = row_h.max(ext.h());
+        }
+        let row_ext = list.iter().map(|u| extent(u)).reduce(Rect::union).unwrap();
+        let gap = 2 * CLEAR + 100;
+        // Level with the pin it serves (or the anchor's middle), beside the chosen side.
+        let level = match pin {
+            Some(t) if is_horizontal(t.out) => t.at.y,
+            _ => anchor_rects.center().y,
+        };
+        let base = match side {
+            Some(180) => pt(anchor_rects.x0 - gap - row_ext.x1, level - row_ext.center().y),
+            Some(_) => pt(anchor_rects.x1 + gap - row_ext.x0, level - row_ext.center().y),
+            None => pt(anchor_rects.center().x - row_ext.w() / 2 - row_ext.x0, anchor_rects.y1 + gap - row_ext.y0),
+        };
+        let base = pt(snap50(base.x), snap50(base.y));
+        let fits = |d: Pt, occupied: &[Rect]| list.iter().flatten().all(|p| !collides(p, d, occupied));
+        let shift = ring_offsets().iter().map(|&o| base + o).find(|&d| fits(d, occupied)).unwrap_or(base);
+        for u in list {
+            for mut p in u {
+                p.translate(shift);
+                commit(p, placed, order, occupied);
+            }
+        }
+    }
 }
 
 /// Line things up: nudge parts so connected pins share a row or column (straight wires instead

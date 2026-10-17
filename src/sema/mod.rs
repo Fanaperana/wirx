@@ -354,7 +354,7 @@ impl Builder {
     }
 
     pub fn add_group(&mut self, name: String, sheet: usize, framed: bool) -> usize {
-        self.design.groups.push(Group { name, sheet, instances: vec![], near: vec![], flow: 0, framed });
+        self.design.groups.push(Group { name, sheet, instances: vec![], near: vec![], chained: vec![], flow: 0, framed });
         self.design.sheets[sheet].groups.push(self.design.groups.len() - 1);
         self.design.groups.len() - 1
     }

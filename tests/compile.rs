@@ -344,3 +344,194 @@ fn library_pin_names_have_short_forms() {
     );
     assert!(!has_errors(&c.diags), "{:#?}", messages(&c));
 }
+
+// ---------------------------------------------------------------- decoupling banks
+
+/// Drawn power symbols: (key, rail name).
+fn rail_symbols(s: &wirx::layout::Schematic) -> Vec<(String, String)> {
+    let mut v = Vec::new();
+    for sheet in &s.sheets {
+        for it in &sheet.items {
+            if let wirx::layout::Item::Symbol { key, fields, inst: None, .. } = it
+                && (key.starts_with("pwr:") || key.starts_with("bank:"))
+            {
+                v.push((key.clone(), fields.iter().find(|f| f.name == "Value").unwrap().value.clone()));
+            }
+        }
+    }
+    v
+}
+
+fn inst(d: &wirx::ir::Design, reference: &str) -> usize {
+    d.instances.iter().position(|i| i.reference == reference).unwrap_or_else(|| panic!("no {reference}"))
+}
+
+/// Where pin `number` of part `reference` was drawn.
+fn pin_at(s: &wirx::layout::Schematic, d: &wirx::ir::Design, reference: &str, number: &str) -> wirx::geom::Pt {
+    let i = inst(d, reference);
+    for sheet in &s.sheets {
+        for it in &sheet.items {
+            if let wirx::layout::Item::Symbol { lib_id, at, orient, inst: Some(j), .. } = it
+                && *j == i
+            {
+                let sym = s.symbols.iter().find(|x| &x.id == lib_id).unwrap();
+                let pin = sym.pins.iter().find(|p| p.number == number).unwrap();
+                return wirx::symbol::place_pin(pin, *orient, *at).at;
+            }
+        }
+    }
+    panic!("{reference} not drawn")
+}
+
+/// Power symbols of a part's own (a part outside any bank has one per rail pin).
+fn own_symbols(s: &wirx::layout::Schematic, d: &wirx::ir::Design, reference: &str) -> usize {
+    let path = &d.instances[inst(d, reference)].path;
+    rail_symbols(s).iter().filter(|(k, _)| k.starts_with(&format!("pwr:{path}:"))).count()
+}
+
+fn bank_layout(src: &str) -> (wirx::ir::Design, wirx::layout::Schematic) {
+    let c = check(src);
+    assert!(!has_errors(&c.diags), "{:#?}", messages(&c));
+    let d = c.design.unwrap();
+    let (s, _) = wirx::draw(&d).unwrap_or_else(|e| panic!("{e:#?}"));
+    (d, s)
+}
+
+const CHIP: &str = r#"
+    fn CHIP() {
+        part(#{ name: "CHIP", prefix: "U", footprint: "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm",
+            symbol: #{ left: [[1, "A", input]], right: [[2, "Y", output]],
+                top: [[3, "VCC", power_in], gap, gap, [5, "VEE", power_in]], bottom: [[4, "GND", power_in]] } })
+    }
+"#;
+
+/// Two capacitors on the chip's only supply pin: one bank beside the pin, one supply symbol and
+/// one ground return, the smallest capacitor next to the pin.
+#[test]
+fn decoupling_caps_share_one_bank_at_their_pin() {
+    let (d, s) = bank_layout(&format!(
+        r#"{CHIP}
+        let u = CHIP();
+        u.VCC -> P3V3; u.GND -> GND; nc([u.A, u.Y, u.VEE]);
+        P3V3 -> C("10uF", "0805") -> GND;
+        P3V3 -> C("100nF", "0603") -> GND;
+        P3V3.driven(); GND.driven();
+        "#
+    ));
+    let rails = rail_symbols(&s);
+    assert_eq!(rails.iter().filter(|r| r.1 == "+3V3").count(), 1, "{rails:?}");
+    assert_eq!(own_symbols(&s, &d, "U1"), 1, "only U1's GND keeps its own symbol: {rails:?}");
+    assert_eq!((own_symbols(&s, &d, "C1"), own_symbols(&s, &d, "C2")), (0, 0), "{rails:?}");
+    assert_eq!(rails.iter().filter(|r| r.0.ends_with(":ground")).count(), 1, "one ground return: {rails:?}");
+    let vcc = pin_at(&s, &d, "U1", "3");
+    let dist = |r: &str| pin_at(&s, &d, r, "1").manhattan(vcc);
+    assert!(dist("C2") < dist("C1"), "100nF next to the pin, 10uF beyond it");
+}
+
+/// A regulator's input and output capacitors form two banks, one per rail, each at its own pin;
+/// the polarized capacitor keeps + on the supply.
+#[test]
+fn separate_rails_make_separate_banks() {
+    let (d, s) = bank_layout(
+        r#"
+        let u = AMS1117_3V3();
+        u.VIN -> P5V; u.VOUT -> P3V3; u.GND -> GND;
+        P5V -> C("10uF", "0805") -> GND;
+        P3V3 -> C_Pol("22uF", "Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A") -> GND;
+        P3V3 -> C("100nF", "0603") -> GND;
+        P5V.driven(); GND.driven();
+        "#,
+    );
+    let rails = rail_symbols(&s);
+    assert_eq!(rails.iter().filter(|r| r.1 == "+5V").count(), 1, "{rails:?}");
+    assert_eq!(rails.iter().filter(|r| r.1 == "+3V3").count(), 1, "{rails:?}");
+    let (vin, vout) = (pin_at(&s, &d, "U1", "3"), pin_at(&s, &d, "U1", "2"));
+    let at = |r: &str| pin_at(&s, &d, r, "1");
+    assert!(at("C1").manhattan(vin) < at("C1").manhattan(vout), "input cap at VIN");
+    for c in ["C2", "C3"] {
+        assert!(at(c).manhattan(vout) < at(c).manhattan(vin), "{c}: output cap at VOUT");
+    }
+    assert!(pin_at(&s, &d, "C2", "1").y < pin_at(&s, &d, "C2", "2").y, "C_Pol + (on +3V3) above -");
+}
+
+/// Two chips on one rail: `near` and chains say which capacitor serves which pin; a capacitor
+/// with neither is not joined to a guessed pin.
+#[test]
+fn explicit_associations_pick_the_pin() {
+    let (d, s) = bank_layout(&format!(
+        r#"{CHIP}
+        let u1 = CHIP();
+        let u2 = CHIP();
+        for u in [u1, u2] {{ u.VCC -> P3V3; u.GND -> GND; nc([u.A, u.Y, u.VEE]); }}
+        let c1 = C("100nF", "0603");
+        P3V3 -> c1 -> GND;
+        near(c1, u1.VCC);
+        let c2 = C("100nF", "0603");
+        P3V3 -> c2 -> GND;
+        near(c2, u2.VCC);
+        P3V3 -> C("10uF", "0805") -> GND;
+        u2.VCC -> C("1uF", "0603") -> GND;
+        P3V3.driven(); GND.driven();
+        "#
+    ));
+    let rails = rail_symbols(&s);
+    assert_eq!((own_symbols(&s, &d, "U1"), own_symbols(&s, &d, "U2")), (1, 1), "VCC drawn by the banks: {rails:?}");
+    assert_eq!((own_symbols(&s, &d, "C1"), own_symbols(&s, &d, "C2"), own_symbols(&s, &d, "C4")), (0, 0, 0), "{rails:?}");
+    assert_eq!(own_symbols(&s, &d, "C3"), 2, "the unhinted cap keeps its own symbols: {rails:?}");
+    let (v1, v2) = (pin_at(&s, &d, "U1", "3"), pin_at(&s, &d, "U2", "3"));
+    let at = |r: &str| pin_at(&s, &d, r, "1");
+    assert!(at("C1").manhattan(v1) < at("C1").manhattan(v2));
+    for c in ["C2", "C4"] {
+        assert!(at(c).manhattan(v2) < at(c).manhattan(v1), "{c} at U2");
+    }
+}
+
+/// A polarized capacitor is drawn as wired, never flipped to look conventional: wired backwards
+/// (+ to ground) it stands with + down, on the ground return. One on a negative rail keeps its
+/// own symbols (banks are drawn supply-up).
+#[test]
+fn polarized_caps_follow_their_wiring() {
+    let (d, s) = bank_layout(&format!(
+        r#"{CHIP}
+        let u = CHIP();
+        let vee = N5V.driven();
+        u.VCC -> P5V; u.VEE -> vee; u.GND -> GND; nc([u.A, u.Y]);
+        let c = C_Pol("10uF", "Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A");
+        c["+"] -> GND; c["-"] -> P5V;
+        near(c, u.VCC);
+        let n = C_Pol("10uF", "Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A");
+        n["+"] -> GND; n["-"] -> vee;
+        near(n, u.VEE);
+        P5V.driven(); GND.driven();
+        "#
+    ));
+    assert_eq!(own_symbols(&s, &d, "C1"), 0, "C1 is a bank at VCC");
+    assert!(pin_at(&s, &d, "C1", "1").y > pin_at(&s, &d, "C1", "2").y, "+ (on GND) below - (on +5V)");
+    let (vee, vcc) = (pin_at(&s, &d, "U1", "5"), pin_at(&s, &d, "U1", "3"));
+    assert!(pin_at(&s, &d, "C1", "2").manhattan(vcc) < pin_at(&s, &d, "C1", "2").manhattan(vee));
+    assert_eq!(own_symbols(&s, &d, "C2"), 2, "negative-rail cap keeps its own symbols");
+}
+
+/// The chessboard fixture: decoupling banks at their pins, signal capacitors on their signals.
+#[test]
+fn chessboard_decoupling_banks() {
+    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("examples/chessboard.wx");
+    let d = wirx::check_file(&path).unwrap().design.unwrap();
+    let (s, _) = wirx::draw(&d).unwrap_or_else(|e| panic!("{e:#?}"));
+    let value = |r: &str| d.instances[inst(&d, r)].value.clone();
+    // ESP32: C6 10uF and C7 100nF share the bank at U2.VCC; C8 stays on ESP_EN.
+    assert_eq!((value("C6"), value("C7"), value("C8")), ("10uF".into(), "100nF".into(), "1uF".into()));
+    assert_eq!((own_symbols(&s, &d, "C6"), own_symbols(&s, &d, "C7")), (0, 0));
+    assert_eq!(own_symbols(&s, &d, "U2"), 1, "U2.VCC is drawn by the bank, GND keeps its symbol");
+    assert_eq!(own_symbols(&s, &d, "C8"), 1, "C8 keeps its GND symbol and its EN wire");
+    let vcc = pin_at(&s, &d, "U2", "2");
+    assert!(pin_at(&s, &d, "C7", "1").manhattan(vcc) < pin_at(&s, &d, "C6", "1").manhattan(vcc));
+    // Regulator: C3 on +5V at VIN; C4 and C5 on +3V3 at VOUT.
+    let (vin, vout) = (pin_at(&s, &d, "U1", "3"), pin_at(&s, &d, "U1", "2"));
+    assert!(pin_at(&s, &d, "C3", "1").manhattan(vin) < pin_at(&s, &d, "C3", "1").manhattan(vout));
+    for c in ["C4", "C5"] {
+        assert_eq!(own_symbols(&s, &d, c), 0);
+        assert!(pin_at(&s, &d, c, "1").manhattan(vout) < pin_at(&s, &d, c, "1").manhattan(vin), "{c}");
+    }
+    assert!(pin_at(&s, &d, "C4", "1").y < pin_at(&s, &d, "C4", "2").y, "tantalum + on +3V3, up");
+}

@@ -287,6 +287,26 @@ near(c1, u.VDD);       // keep c1 at that pin
 flow(down);            // main signal direction in the current group
 ```
 
+**Decoupling banks.** Capacitors between one supply and ground are drawn as a bank: side by side,
+one supply wire over them, one ground return under them, one power symbol for each rail, largest
+value farthest from the pin. The bank stands at the pin it serves, joined to it by a wire. That
+pin is, in order:
+
+1. a `near(cap, u.VDD)` hint (never overridden);
+2. the pin the capacitor was chained to: `u.VDD -> C("100nF") -> GND`, or
+   `for p in u.pins(power_in) { p -> C("100nF") -> GND; }`;
+3. the group's only power pin (`power_in` / `power_out`) on that rail.
+
+Several power pins on the rail and no hint: the capacitors still form a bank, drawn on their own,
+not joined to a guessed pin. Write `near` (or chain from the pin) when it matters which pin a
+capacitor belongs to. Banks are not drawn at a pin whose power symbol it shares with neighbouring
+pins (adjacent pins on one rail), and capacitors on negative rails keep their own symbols. A
+capacitor on a signal (reset, timing, filter, tank) is not a bank: it stays on its signal.
+Polarized capacitors are drawn as wired, + on the side it is connected to.
+
+Banks are a drawing convention. They do not mean the PCB placement or the decoupling has been
+checked.
+
 ## Imports and title block
 
 ```rhai

@@ -280,6 +280,16 @@ fn link(st: &Shared, ctx: &NativeCallContext, a: Dynamic, b: Dynamic) -> RResult
     let mut right = Vec::new();
     nodes_of(st, ctx, &b, true, &mut right, &mut Vec::new())?;
     let mut s = st.borrow_mut();
+    // `u.VCC -> C(..)`: remember which pin the part was wired to.
+    let pin_part = |p: &Dynamic, q: &Dynamic| -> Option<(usize, usize, usize)> {
+        let pin = p.clone().try_cast::<PinRef>()?;
+        let part = q.clone().try_cast::<Part>()?;
+        (!pin.pins.is_empty() && pin.inst != part.id).then(|| (part.id, pin.inst, pin.pins[0]))
+    };
+    if let Some(h) = pin_part(&a, &b).or_else(|| pin_part(&b, &a)) {
+        let g = s.b.design.instances[h.0].group;
+        s.b.design.groups[g].chained.push(h);
+    }
     let all: Vec<usize> = left.into_iter().chain(right).collect();
     for w in all.windows(2) {
         s.b.union(w[0], w[1]);
@@ -946,6 +956,11 @@ pub fn run(name: &str, text: &str, base_dir: &Path) -> (Sources, Option<Design>,
             b.design.groups[g].instances.clear();
             b.design.groups[root].instances.push(inst);
             b.design.instances[inst].group = root;
+            // Its placement hints go along.
+            let near = std::mem::take(&mut b.design.groups[g].near);
+            let chained = std::mem::take(&mut b.design.groups[g].chained);
+            b.design.groups[root].near.extend(near);
+            b.design.groups[root].chained.extend(chained);
         }
     }
     let (design, diags) = b.finish();

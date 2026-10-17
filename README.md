@@ -147,8 +147,15 @@ Details and examples: [docs/rhai-syntax.md](docs/rhai-syntax.md#symbols).
 2. **Placement.** In each group the part with the most pins anchors the layout. Parts connected to
    its pins are placed in front of those pins: a series part facing the pin, a pull-down hanging
    below the line. Then their neighbours, and so on.
-3. **Rail-only parts.** Decoupling caps settle next to the supply pin they serve. Adjacent pins on
-   the same rail share one power symbol.
+3. **Rail-only parts and decoupling banks.** Capacitors between one supply and ground stand side
+   by side in a bank: one supply wire over them, one ground return under them, one power symbol
+   for each. The bank is drawn at the pin it serves, joined to it by a wire, smallest capacitor
+   next to the pin. Its pin is a `near(cap, u.VCC)` hint first, then the pin the capacitor was
+   chained to (`u.VCC -> C("100nF") -> GND`), then the one power pin on that rail in the group.
+   With several candidate pins and no hint, the bank is drawn on its own rather than joined to a
+   guessed pin. Capacitors on a signal (reset, timing, filters) stay on that signal. This is
+   presentation only: it says nothing about where the capacitors go on the board. Adjacent pins
+   on the same rail share one power symbol.
 4. **Routing.** Wires use an orthogonal router on the 50 mil grid. It never lets two nets touch:
    wires cross only by passing straight through, never along or onto another net. Short nets are
    routed first; failures are ripped up and retried. A label is the last resort, and it is

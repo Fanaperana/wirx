@@ -87,6 +87,9 @@ pub struct Group {
     pub instances: Vec<usize>,
     /// `a near b.pin`: (a, b, pin index).
     pub near: Vec<(usize, usize, usize)>,
+    /// `b.pin -> a` (or `a -> b.pin`) written directly in a chain: (a, b, pin index). A weaker
+    /// association than `near`, used to put decoupling capacitors beside the pin they were wired to.
+    pub chained: Vec<(usize, usize, usize)>,
     /// Main direction of signal flow (0 = right, 270 = down).
     pub flow: u16,
     /// Draw a named frame around the group (module instances).
