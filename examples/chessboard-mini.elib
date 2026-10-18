@@ -1,0 +1,3797 @@
+{
+  "format": "eleceda-library",
+  "version": 1,
+  "name": "wirx",
+  "symbols": [
+    {
+      "id": "wirx:TYPE-C-31-M-12",
+      "name": "TYPE-C-31-M-12",
+      "refPrefix": "J",
+      "unitCount": 1,
+      "pinNameOffset": 20,
+      "graphics": [
+        {
+          "type": "rect",
+          "start": {
+            "x": -200,
+            "y": -900
+          },
+          "end": {
+            "x": 200,
+            "y": 900
+          },
+          "unit": 0,
+          "width": 10,
+          "fill": "background"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 300,
+            "y": -750
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "A4B9",
+          "name": "VBUS",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": -650
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "B4A9",
+          "name": "VBUS",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": -550
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "A5",
+          "name": "CC1",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": -450
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "B5",
+          "name": "CC2",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": -350
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "A6",
+          "name": "DP",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": -250
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "B6",
+          "name": "DP",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": -150
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "A7",
+          "name": "DM",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": -50
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "B7",
+          "name": "DM",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": 50
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "A8",
+          "name": "SBU1",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": 150
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "B8",
+          "name": "SBU2",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": 250
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "A1B12",
+          "name": "GND",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": 350
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "B1A12",
+          "name": "GND",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": 450
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": 550
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "2",
+          "name": "GND",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": 650
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "3",
+          "name": "GND",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": 750
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "4",
+          "name": "GND",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "J",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "TYPE-C-31-M-12",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:USBLC6-2SC6",
+      "name": "USBLC6-2SC6",
+      "refPrefix": "U",
+      "unitCount": 1,
+      "pinNameOffset": 20,
+      "graphics": [
+        {
+          "type": "rect",
+          "start": {
+            "x": -200,
+            "y": -300
+          },
+          "end": {
+            "x": 200,
+            "y": 300
+          },
+          "unit": 0,
+          "width": 10,
+          "fill": "background"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": -300,
+            "y": -150
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "3",
+          "name": "IO2",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -300,
+            "y": -50
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "4",
+          "name": "IO2",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -300,
+            "y": 50
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "1",
+          "name": "IO1",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -300,
+            "y": 150
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "6",
+          "name": "IO1",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": -400
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "5",
+          "name": "VBUS",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 400
+          },
+          "dir": 90,
+          "length": 100,
+          "number": "2",
+          "name": "GND",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "U",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "USBLC6-2SC6",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Package_TO_SOT_SMD:SOT-23-6",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:R",
+      "name": "R",
+      "description": "Resistor",
+      "refPrefix": "R",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "rect",
+          "start": {
+            "x": -40,
+            "y": -100
+          },
+          "end": {
+            "x": 40,
+            "y": 100
+          },
+          "unit": 0,
+          "width": 10,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "~",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "~",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "R",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "10k",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Resistor_SMD:R_0603_1608Metric",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:D_Schottky",
+      "name": "D_Schottky",
+      "description": "Schottky diode",
+      "refPrefix": "D",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": 50,
+              "y": 50
+            },
+            {
+              "x": 50,
+              "y": -50
+            },
+            {
+              "x": -50,
+              "y": 0
+            },
+            {
+              "x": 50,
+              "y": 50
+            }
+          ],
+          "unit": 0,
+          "width": 10,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 50,
+              "y": 0
+            }
+          ],
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": -80,
+              "y": 30
+            },
+            {
+              "x": -80,
+              "y": 50
+            },
+            {
+              "x": -50,
+              "y": 50
+            },
+            {
+              "x": -50,
+              "y": -50
+            },
+            {
+              "x": -20,
+              "y": -50
+            },
+            {
+              "x": -20,
+              "y": -30
+            }
+          ],
+          "unit": 0,
+          "width": 10,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": -150,
+            "y": 0
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "1",
+          "name": "K",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 150,
+            "y": 0
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "2",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "D",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "BAT54",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Diode_SMD:D_SOD-123",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:AP2112K-3.3",
+      "name": "AP2112K-3.3",
+      "refPrefix": "U",
+      "unitCount": 1,
+      "pinNameOffset": 20,
+      "graphics": [
+        {
+          "type": "rect",
+          "start": {
+            "x": -200,
+            "y": -200
+          },
+          "end": {
+            "x": 200,
+            "y": 200
+          },
+          "unit": 0,
+          "width": 10,
+          "fill": "background"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": -300,
+            "y": -50
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "1",
+          "name": "VIN",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -300,
+            "y": 50
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "3",
+          "name": "EN",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": -50
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "5",
+          "name": "VOUT",
+          "type": "power_out",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": 50
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "4",
+          "name": "NC",
+          "type": "no_connect",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 300
+          },
+          "dir": 90,
+          "length": 100,
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "U",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "AP2112K-3.3",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Package_TO_SOT_SMD:SOT-23-5",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:C",
+      "name": "C",
+      "description": "Unpolarized capacitor",
+      "refPrefix": "C",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": -80,
+              "y": -30
+            },
+            {
+              "x": 80,
+              "y": -30
+            }
+          ],
+          "unit": 0,
+          "width": 20,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": -80,
+              "y": 30
+            },
+            {
+              "x": 80,
+              "y": 30
+            }
+          ],
+          "unit": 0,
+          "width": 20,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 120,
+          "number": "1",
+          "name": "~",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 120,
+          "number": "2",
+          "name": "~",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "C",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "100nF",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Capacitor_SMD:C_0603_1608Metric",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:LED",
+      "name": "LED",
+      "description": "Light emitting diode",
+      "refPrefix": "D",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": 50,
+              "y": 50
+            },
+            {
+              "x": 50,
+              "y": -50
+            },
+            {
+              "x": -50,
+              "y": 0
+            },
+            {
+              "x": 50,
+              "y": 50
+            }
+          ],
+          "unit": 0,
+          "width": 10,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 50,
+              "y": 0
+            }
+          ],
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": -50,
+              "y": -50
+            },
+            {
+              "x": -50,
+              "y": 50
+            }
+          ],
+          "unit": 0,
+          "width": 10,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": -30,
+              "y": -70
+            },
+            {
+              "x": 10,
+              "y": -110
+            }
+          ],
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": 10,
+              "y": -110
+            },
+            {
+              "x": -15,
+              "y": -105
+            },
+            {
+              "x": 5,
+              "y": -85
+            },
+            {
+              "x": 10,
+              "y": -110
+            }
+          ],
+          "unit": 0,
+          "fill": "outline"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": 20,
+              "y": -70
+            },
+            {
+              "x": 60,
+              "y": -110
+            }
+          ],
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": 60,
+              "y": -110
+            },
+            {
+              "x": 35,
+              "y": -105
+            },
+            {
+              "x": 55,
+              "y": -85
+            },
+            {
+              "x": 60,
+              "y": -110
+            }
+          ],
+          "unit": 0,
+          "fill": "outline"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": -150,
+            "y": 0
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "1",
+          "name": "K",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 150,
+            "y": 0
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "2",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "D",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "LED",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "LED_SMD:LED_0603_1608Metric",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:RP2350A",
+      "name": "RP2350A",
+      "description": "Raspberry Pi RP2350A, dual Cortex-M33 / Hazard3, 520 KB SRAM, QFN-60",
+      "refPrefix": "U",
+      "unitCount": 1,
+      "pinNameOffset": 20,
+      "graphics": [
+        {
+          "type": "rect",
+          "start": {
+            "x": -1300,
+            "y": -1600
+          },
+          "end": {
+            "x": 1300,
+            "y": 1600
+          },
+          "unit": 0,
+          "width": 10,
+          "fill": "background"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": -1400,
+            "y": -800
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "26",
+          "name": "RUN",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -1400,
+            "y": -600
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "51",
+          "name": "USB_DM",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -1400,
+            "y": -500
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "52",
+          "name": "USB_DP",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -1400,
+            "y": -300
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "60",
+          "name": "~{QSPI_SS}",
+          "type": "output",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -1400,
+            "y": -200
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "56",
+          "name": "QSPI_SCLK",
+          "type": "output",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -1400,
+            "y": -100
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "57",
+          "name": "QSPI_SD0",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -1400,
+            "y": 0
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "59",
+          "name": "QSPI_SD1",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -1400,
+            "y": 100
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "58",
+          "name": "QSPI_SD2",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -1400,
+            "y": 200
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "55",
+          "name": "QSPI_SD3",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -1400,
+            "y": 400
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "21",
+          "name": "XIN",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -1400,
+            "y": 500
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "22",
+          "name": "XOUT",
+          "type": "output",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -1400,
+            "y": 700
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "24",
+          "name": "SWCLK",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -1400,
+            "y": 800
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "25",
+          "name": "SWDIO",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": -1450
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "2",
+          "name": "GPIO0",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": -1350
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "3",
+          "name": "GPIO1",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": -1250
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "4",
+          "name": "GPIO2",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": -1150
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "5",
+          "name": "GPIO3",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": -1050
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "7",
+          "name": "GPIO4",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": -950
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "8",
+          "name": "GPIO5",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": -850
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "9",
+          "name": "GPIO6",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": -750
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "10",
+          "name": "GPIO7",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": -650
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "12",
+          "name": "GPIO8",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": -550
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "13",
+          "name": "GPIO9",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": -450
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "14",
+          "name": "GPIO10",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": -350
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "15",
+          "name": "GPIO11",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": -250
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "16",
+          "name": "GPIO12",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": -150
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "17",
+          "name": "GPIO13",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": -50
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "18",
+          "name": "GPIO14",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": 50
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "19",
+          "name": "GPIO15",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": 150
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "27",
+          "name": "GPIO16",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": 250
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "28",
+          "name": "GPIO17",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": 350
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "29",
+          "name": "GPIO18",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": 450
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "31",
+          "name": "GPIO19",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": 550
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "32",
+          "name": "GPIO20",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": 650
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "33",
+          "name": "GPIO21",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": 750
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "34",
+          "name": "GPIO22",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": 850
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "35",
+          "name": "GPIO23",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": 950
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "36",
+          "name": "GPIO24",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": 1050
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "37",
+          "name": "GPIO25",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": 1150
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "40",
+          "name": "GPIO26/ADC0",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": 1250
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "41",
+          "name": "GPIO27/ADC1",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": 1350
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "42",
+          "name": "GPIO28/ADC2",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1400,
+            "y": 1450
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "43",
+          "name": "GPIO29/ADC3",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -1150,
+            "y": -1700
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "46",
+          "name": "VREG_AVDD",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -850,
+            "y": -1700
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "48",
+          "name": "VREG_LX",
+          "type": "power_out",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -750,
+            "y": -1700
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "50",
+          "name": "VREG_FB",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -50,
+            "y": -1700
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "49",
+          "name": "VREG_VIN",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 350,
+            "y": -1700
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "6",
+          "name": "DVDD",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 350,
+            "y": -1700
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "23",
+          "name": "DVDD",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0,
+          "hidden": true
+        },
+        {
+          "at": {
+            "x": 350,
+            "y": -1700
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "39",
+          "name": "DVDD",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0,
+          "hidden": true
+        },
+        {
+          "at": {
+            "x": 550,
+            "y": -1700
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "53",
+          "name": "USB_OTP_VDD",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 750,
+            "y": -1700
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "44",
+          "name": "ADC_AVDD",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 950,
+            "y": -1700
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "54",
+          "name": "QSPI_IOVDD",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1150,
+            "y": -1700
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "1",
+          "name": "IOVDD",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 1150,
+            "y": -1700
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "11",
+          "name": "IOVDD",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0,
+          "hidden": true
+        },
+        {
+          "at": {
+            "x": 1150,
+            "y": -1700
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "20",
+          "name": "IOVDD",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0,
+          "hidden": true
+        },
+        {
+          "at": {
+            "x": 1150,
+            "y": -1700
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "30",
+          "name": "IOVDD",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0,
+          "hidden": true
+        },
+        {
+          "at": {
+            "x": 1150,
+            "y": -1700
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "38",
+          "name": "IOVDD",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0,
+          "hidden": true
+        },
+        {
+          "at": {
+            "x": 1150,
+            "y": -1700
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "45",
+          "name": "IOVDD",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0,
+          "hidden": true
+        },
+        {
+          "at": {
+            "x": -50,
+            "y": 1700
+          },
+          "dir": 90,
+          "length": 100,
+          "number": "47",
+          "name": "VREG_PGND",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 50,
+            "y": 1700
+          },
+          "dir": 90,
+          "length": 100,
+          "number": "61",
+          "name": "GND",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "U",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "RP2350A",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Package_DFN_QFN:QFN-60-1EP_7x7mm_P0.4mm_EP3.4x3.4mm",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:L",
+      "name": "L",
+      "description": "Inductor",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "~",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "~",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "10uH",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Inductor_SMD:L_0805_2012Metric",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:Crystal_12MHz_3225",
+      "name": "Crystal_12MHz_3225",
+      "refPrefix": "Y",
+      "unitCount": 1,
+      "pinNameOffset": 20,
+      "graphics": [
+        {
+          "type": "rect",
+          "start": {
+            "x": -200,
+            "y": -200
+          },
+          "end": {
+            "x": 200,
+            "y": 200
+          },
+          "unit": 0,
+          "width": 10,
+          "fill": "background"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": -300,
+            "y": 0
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "1",
+          "name": "X1",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": 0
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "3",
+          "name": "X2",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -50,
+            "y": 300
+          },
+          "dir": 90,
+          "length": 100,
+          "number": "2",
+          "name": "GND",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 50,
+            "y": 300
+          },
+          "dir": 90,
+          "length": 100,
+          "number": "4",
+          "name": "GND",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "Y",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "12MHz",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:W25Q128JVSIQ",
+      "name": "W25Q128JVSIQ",
+      "refPrefix": "U",
+      "unitCount": 1,
+      "pinNameOffset": 20,
+      "graphics": [
+        {
+          "type": "rect",
+          "start": {
+            "x": -200,
+            "y": -400
+          },
+          "end": {
+            "x": 200,
+            "y": 400
+          },
+          "unit": 0,
+          "width": 10,
+          "fill": "background"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": -300,
+            "y": -250
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "1",
+          "name": "CS",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -300,
+            "y": -150
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "6",
+          "name": "CLK",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -300,
+            "y": -50
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "5",
+          "name": "DI",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -300,
+            "y": 50
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "2",
+          "name": "DO",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -300,
+            "y": 150
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "3",
+          "name": "IO2",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -300,
+            "y": 250
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "7",
+          "name": "IO3",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": -500
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "8",
+          "name": "VCC",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 500
+          },
+          "dir": 90,
+          "length": 100,
+          "number": "4",
+          "name": "GND",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "U",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "W25Q128JVSIQ",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Package_SO:SOIC-8_5.3x5.3mm_P1.27mm",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:SW_Push",
+      "name": "SW_Push",
+      "description": "Push button, normally open",
+      "refPrefix": "SW",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "circle",
+          "center": {
+            "x": -80,
+            "y": 0
+          },
+          "radius": 20,
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "circle",
+          "center": {
+            "x": 80,
+            "y": 0
+          },
+          "radius": 20,
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": -100,
+              "y": -50
+            },
+            {
+              "x": 100,
+              "y": -50
+            }
+          ],
+          "unit": 0,
+          "width": 10,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": 0,
+              "y": -50
+            },
+            {
+              "x": 0,
+              "y": -110
+            }
+          ],
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": -200,
+            "y": 0
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 200,
+            "y": 0
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "SW",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "SW_Push",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Button_Switch_SMD:SW_SPST_TL3342",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:Conn_01x03",
+      "name": "Conn_01x03",
+      "description": "Generic connector, 3 pins",
+      "refPrefix": "J",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "graphics": [
+        {
+          "type": "rect",
+          "start": {
+            "x": -50,
+            "y": -200
+          },
+          "end": {
+            "x": 50,
+            "y": 200
+          },
+          "unit": 0,
+          "width": 10,
+          "fill": "background"
+        },
+        {
+          "type": "rect",
+          "start": {
+            "x": -50,
+            "y": -105
+          },
+          "end": {
+            "x": 0,
+            "y": -95
+          },
+          "unit": 0,
+          "fill": "outline"
+        },
+        {
+          "type": "rect",
+          "start": {
+            "x": -50,
+            "y": -5
+          },
+          "end": {
+            "x": 0,
+            "y": 5
+          },
+          "unit": 0,
+          "fill": "outline"
+        },
+        {
+          "type": "rect",
+          "start": {
+            "x": -50,
+            "y": 95
+          },
+          "end": {
+            "x": 0,
+            "y": 105
+          },
+          "unit": 0,
+          "fill": "outline"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": -200,
+            "y": -100
+          },
+          "dir": 0,
+          "length": 150,
+          "number": "1",
+          "name": "Pin_1",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -200,
+            "y": 0
+          },
+          "dir": 0,
+          "length": 150,
+          "number": "2",
+          "name": "Pin_2",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -200,
+            "y": 100
+          },
+          "dir": 0,
+          "length": 150,
+          "number": "3",
+          "name": "Pin_3",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "J",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "Conn_01x03",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:LDC1614",
+      "name": "LDC1614",
+      "refPrefix": "U",
+      "unitCount": 1,
+      "pinNameOffset": 20,
+      "graphics": [
+        {
+          "type": "rect",
+          "start": {
+            "x": -300,
+            "y": -600
+          },
+          "end": {
+            "x": 300,
+            "y": 600
+          },
+          "unit": 0,
+          "width": 10,
+          "fill": "background"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": -400,
+            "y": -500
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "9",
+          "name": "IN0A",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -400,
+            "y": -400
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "10",
+          "name": "IN0B",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -400,
+            "y": -200
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "11",
+          "name": "IN1A",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -400,
+            "y": -100
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "12",
+          "name": "IN1B",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -400,
+            "y": 100
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "13",
+          "name": "IN2A",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -400,
+            "y": 200
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "14",
+          "name": "IN2B",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -400,
+            "y": 400
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "15",
+          "name": "IN3A",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": -400,
+            "y": 500
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "16",
+          "name": "IN3B",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 400,
+            "y": -400
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "2",
+          "name": "SDA",
+          "type": "bidirectional",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 400,
+            "y": -300
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "1",
+          "name": "SCL",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 400,
+            "y": -100
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "5",
+          "name": "INTB",
+          "type": "open_collector",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 400,
+            "y": 100
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "3",
+          "name": "CLKIN",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 400,
+            "y": 300
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "6",
+          "name": "SD",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 400,
+            "y": 400
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "4",
+          "name": "ADDR",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": -700
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "7",
+          "name": "VDD",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 700
+          },
+          "dir": 90,
+          "length": 100,
+          "number": "8",
+          "name": "GND",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 700
+          },
+          "dir": 90,
+          "length": 100,
+          "number": "17",
+          "name": "GND",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0,
+          "hidden": true
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "U",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "LDC1614",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Package_DFN_QFN:WQFN-16-1EP_4x4mm_P0.5mm_EP2.6x2.6mm_ThermalVias",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "https://www.ti.com/lit/ds/symlink/ldc1614.pdf",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:OSC_40MHz_2520",
+      "name": "OSC_40MHz_2520",
+      "description": "40 MHz 3.3 V CMOS oscillator, e.g. ECS-2520MV series; confirm the exact part number",
+      "refPrefix": "X",
+      "unitCount": 1,
+      "pinNameOffset": 20,
+      "graphics": [
+        {
+          "type": "rect",
+          "start": {
+            "x": -200,
+            "y": -200
+          },
+          "end": {
+            "x": 200,
+            "y": 200
+          },
+          "unit": 0,
+          "width": 10,
+          "fill": "background"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": -300,
+            "y": 0
+          },
+          "dir": 0,
+          "length": 100,
+          "number": "1",
+          "name": "OE",
+          "type": "input",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 300,
+            "y": 0
+          },
+          "dir": 180,
+          "length": 100,
+          "number": "3",
+          "name": "OUT",
+          "type": "output",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": -300
+          },
+          "dir": 270,
+          "length": 100,
+          "number": "4",
+          "name": "VDD",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 300
+          },
+          "dir": 90,
+          "length": 100,
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "X",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "40MHz",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Oscillator:Oscillator_SMD_ECS_2520MV-xxx-xx-4Pin_2.5x2.0mm",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:SENSOR_COIL_A",
+      "name": "SENSOR_COIL_A",
+      "description": "Square A sensor coil: ready-made flat spiral coil (20-30 mm, 8-20 uH), off-board on a JST-PH connector. Measure L, then set the tank capacitor",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "~10uH flat coil",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:SENSOR_COIL_B",
+      "name": "SENSOR_COIL_B",
+      "description": "Square B sensor coil: ready-made flat spiral coil (20-30 mm, 8-20 uH), off-board on a JST-PH connector. Measure L, then set the tank capacitor",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "~10uH flat coil",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:SENSOR_COIL_C",
+      "name": "SENSOR_COIL_C",
+      "description": "Square C sensor coil: ready-made flat spiral coil (20-30 mm, 8-20 uH), off-board on a JST-PH connector. Measure L, then set the tank capacitor",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "~10uH flat coil",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:SENSOR_COIL_D",
+      "name": "SENSOR_COIL_D",
+      "description": "Square D sensor coil: ready-made flat spiral coil (20-30 mm, 8-20 uH), off-board on a JST-PH connector. Measure L, then set the tank capacitor",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "~10uH flat coil",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    }
+  ]
+}

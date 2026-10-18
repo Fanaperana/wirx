@@ -1,0 +1,45 @@
+// Four passive piece tags for the mini chessboard (chessboard-mini.wx). Not electrically
+// connected to the board: each piece hides a closed loop of a flat coil and a capacitor.
+// Nominal resonances with a 10 uH coil, against the squares' ~1.93 MHz sensor frequency:
+//   Pawn   2.4 nF  1.03 MHz   (47 % below)
+//   Knight 1.3 nF  1.40 MHz   (27 % below)
+//   Rook   330 pF  2.77 MHz   (43 % above)
+//   Queen  180 pF  3.75 MHz   (94 % above)
+// A tag below the sensor frequency pulls it one way, one above pulls it the other way, and the
+// closer the tag is to the sensor frequency, the bigger the pull: four distinct signatures.
+// Measure each tag coil and recompute its capacitor (C = 1 / ((2 pi f)^2 L)) before assembly;
+// see chessboard-mini-notes.md. Calibrate each real piece on the board.
+title("Mini chessboard piece tags");
+revision("A");
+date("2026-10-17");
+company("Chessboard prototype");
+
+fn piece_tag(kind, cap, freq) {
+    let a = net();
+    let b = net();
+    let coil = part(#{
+        name: `${kind}_TAG_COIL`,
+        prefix: "L",
+        value: "~10uH flat coil",
+        symbol: "inductor",
+        description: `${kind} tag coil: ready-made flat spiral coil (15-25 mm) in the piece base, soldered to the tag's two pads. Measure L before choosing the capacitor`,
+        fields: #{ Piece: kind, Resonance: freq },
+        footprint: "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+        pins: [[1, "A", passive, left], [2, "B", passive, right]],
+    });
+    a -> coil.A;
+    b -> coil.B;
+    // C0G/NP0 1%: stable with temperature, so the signature does not drift.
+    a -> C(cap, "0603", #{ Tolerance: "1%", Dielectric: "C0G/NP0", Piece: kind }) -> b;
+    // Parallel trim footprint, left empty until the real tag is measured.
+    a -> C("100pF", "0603", #{ dnp: true, Tolerance: "1%", Dielectric: "C0G/NP0", Function: "Tag trim" }) -> b;
+}
+
+sheet("Piece tags", || {
+    let kinds = ["Pawn", "Knight", "Rook", "Queen"];
+    let caps = ["2.4nF", "1.3nF", "330pF", "180pF"];
+    let freqs = ["1.03MHz", "1.40MHz", "2.77MHz", "3.75MHz"];
+    for i in 0..4 {
+        group(kinds[i], || { piece_tag(kinds[i], caps[i], freqs[i]); });
+    }
+});

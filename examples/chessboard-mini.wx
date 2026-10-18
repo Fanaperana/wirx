@@ -1,0 +1,377 @@
+// Mini chessboard prototype: two sensing squares read by a TI LDC1614 inductance-to-digital
+// converter, an RP2350A with USB-C, and four passive LC piece tags (chessboard-mini-tags.wx).
+// Each square is an off-the-shelf flat coil plugged into a 2-pin connector; its tank capacitor
+// sets the sensor frequency (~1.9 MHz with a 10 uH coil). A piece hides a coil + capacitor tuned
+// to its own frequency, which pulls the square's frequency by a different amount and direction.
+// Read chessboard-mini-notes.md before ordering: coil inductances must be measured, then the
+// tank and tag capacitors recomputed. This is a bench prototype, not a validated design.
+title("Mini chessboard prototype");
+revision("A");
+date("2026-10-17");
+company("Chessboard prototype");
+
+// ---------------------------------------------------------------- parts
+
+// RP2350A, QFN-60 (pin numbers from the RP2350 datasheet; 61 is the exposed pad). Drawn like
+// the RP2350B example: system pins left, GPIOs right, supplies on top (IOVDD and DVDD stacked:
+// each drawn once), grounds at the bottom.
+fn RP2350A() {
+    let right = [];
+    for i in 0..26 {
+        right.push([[2, 3, 4, 5, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37][i], `GPIO${i}`, bidirectional]);
+    }
+    for i in 0..4 {
+        right.push([40 + i, `GPIO${26 + i}/ADC${i}`, bidirectional]);
+    }
+    part(#{
+        name: "RP2350A",
+        prefix: "U",
+        description: "Raspberry Pi RP2350A, dual Cortex-M33 / Hazard3, 520 KB SRAM, QFN-60",
+        footprint: "Package_DFN_QFN:QFN-60-1EP_7x7mm_P0.4mm_EP3.4x3.4mm",
+        datasheet: "https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf",
+        symbol: #{
+            left: [
+                [26, "RUN", input],
+                gap,
+                [51, "USB_DM", bidirectional],
+                [52, "USB_DP", bidirectional],
+                gap,
+                [60, "~{QSPI_SS}", output],
+                [56, "QSPI_SCLK", output],
+                [57, "QSPI_SD0", bidirectional],
+                [59, "QSPI_SD1", bidirectional],
+                [58, "QSPI_SD2", bidirectional],
+                [55, "QSPI_SD3", bidirectional],
+                gap,
+                [21, "XIN", input],
+                [22, "XOUT", output],
+                gap,
+                [24, "SWCLK", input],
+                [25, "SWDIO", bidirectional],
+            ],
+            right: right,
+            top: [
+                [46, "VREG_AVDD", power_in],
+                gap, gap,
+                [48, "VREG_LX", power_out],
+                [50, "VREG_FB", passive],
+                gap, gap, gap, gap, gap, gap,
+                [49, "VREG_VIN", power_in],
+                gap, gap, gap,
+                [[6, 23, 39], "DVDD", power_in],
+                gap,
+                [53, "USB_OTP_VDD", power_in],
+                gap,
+                [44, "ADC_AVDD", power_in],
+                gap,
+                [54, "QSPI_IOVDD", power_in],
+                gap,
+                [[1, 11, 20, 30, 38, 45], "IOVDD", power_in],
+            ],
+            bottom: [[47, "VREG_PGND", power_in], [61, "GND", power_in]],
+        },
+    })
+}
+
+// TI LDC1614: 4-channel, 28-bit inductance-to-digital converter, WQFN-16 (pins as in KiCad's
+// Sensor_Proximity library; 17 is the exposed pad, tied to GND).
+fn LDC1614() {
+    part(#{
+        name: "LDC1614",
+        prefix: "U",
+        mpn: "LDC1614RGHR",
+        footprint: "Package_DFN_QFN:WQFN-16-1EP_4x4mm_P0.5mm_EP2.6x2.6mm_ThermalVias",
+        datasheet: "https://www.ti.com/lit/ds/symlink/ldc1614.pdf",
+        symbol: #{
+            left: [[9, "IN0A", input], [10, "IN0B", input], gap, [11, "IN1A", input], [12, "IN1B", input], gap,
+                [13, "IN2A", input], [14, "IN2B", input], gap, [15, "IN3A", input], [16, "IN3B", input]],
+            right: [[2, "SDA", bidirectional], [1, "SCL", input], gap, [5, "INTB", open_collector],
+                gap, [3, "CLKIN", input], gap, [6, "SD", input], [4, "ADDR", input]],
+            top: [[7, "VDD", power_in]],
+            bottom: [[[8, 17], "GND", power_in]],
+        },
+    })
+}
+
+// 40 MHz 3.3 V CMOS oscillator for the LDC1614's reference clock (the datasheet's recommended
+// fREF; better stability than the internal oscillator). 2.5 x 2.0 mm, pin 1 output enable.
+fn Osc_40MHz() {
+    part(#{
+        name: "OSC_40MHz_2520",
+        prefix: "X",
+        value: "40MHz",
+        footprint: "Oscillator:Oscillator_SMD_ECS_2520MV-xxx-xx-4Pin_2.5x2.0mm",
+        description: "40 MHz 3.3 V CMOS oscillator, e.g. ECS-2520MV series; confirm the exact part number",
+        symbol: #{ left: [[1, "OE", input]], right: [[3, "OUT", output]], top: [[4, "VDD", power_in]], bottom: [[2, "GND", power_in]] },
+    })
+}
+
+// An off-the-shelf flat spiral coil, plugged into a 2-pin JST-PH connector (the connector is
+// what goes on the board). Measure its inductance at ~2 MHz before choosing the tank capacitor.
+fn sensor_coil(square, fitted) {
+    part(#{
+        name: `SENSOR_COIL_${square}`,
+        prefix: "L",
+        value: "~10uH flat coil",
+        symbol: "inductor",
+        description: `Square ${square} sensor coil: ready-made flat spiral coil (20-30 mm, 8-20 uH), off-board on a JST-PH connector. Measure L, then set the tank capacitor`,
+        fields: #{ Square: square, Populate: if fitted { "yes" } else { "no (spare channel)" } },
+        footprint: "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+        pins: [[1, "A", passive, left], [2, "B", passive, right]],
+    })
+}
+
+// USB Type-C receptacle, USB 2.0 (16 pins; shield tabs to ground).
+fn USB_C() {
+    part(#{
+        name: "TYPE-C-31-M-12",
+        prefix: "J",
+        footprint: "Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12",
+        fields: #{ LCSC: "C165948" },
+        pins: [
+            [["A4B9", "B4A9"], "VBUS", passive, right],
+            ["A5", "CC1", passive, right],
+            ["B5", "CC2", passive, right],
+            [["A6", "B6"], "DP", bidirectional, right],
+            [["A7", "B7"], "DM", bidirectional, right],
+            ["A8", "SBU1", bidirectional, right],
+            ["B8", "SBU2", bidirectional, right],
+            [["A1B12", "B1A12", "1", "2", "3", "4"], "GND", passive, right],
+        ],
+    })
+}
+
+// USB ESD protection: two data lines plus VBUS.
+fn USBLC6_2SC6() {
+    part(#{
+        name: "USBLC6-2SC6",
+        prefix: "U",
+        footprint: "Package_TO_SOT_SMD:SOT-23-6",
+        pins: [[[3, 4], "IO2", passive, left], [[1, 6], "IO1", passive, left], [5, "VBUS", passive, top], [2, "GND", passive, bottom]],
+    })
+}
+
+// 600 mA 3.3 V LDO.
+fn AP2112K_3V3() {
+    part(#{
+        name: "AP2112K-3.3",
+        prefix: "U",
+        footprint: "Package_TO_SOT_SMD:SOT-23-5",
+        pins: [[1, "VIN", power_in, left], [3, "EN", input, left], [5, "VOUT", power_out, right], [4, "NC", no_connect, right], [2, "GND", power_in, bottom]],
+    })
+}
+
+// 16 MB QSPI flash.
+fn W25Q128JV() {
+    part(#{
+        name: "W25Q128JVSIQ",
+        prefix: "U",
+        footprint: "Package_SO:SOIC-8_5.3x5.3mm_P1.27mm",
+        pins: [
+            [1, "CS", input, left], [6, "CLK", input, left], [5, "DI", bidirectional, left], [2, "DO", bidirectional, left],
+            [3, "IO2", bidirectional, left], [7, "IO3", bidirectional, left], [8, "VCC", power_in, top], [4, "GND", power_in, bottom],
+        ],
+    })
+}
+
+// Recommended ABM8-272-T3: 12 MHz, 10 pF load, 3225 package; pins 2 and 4 are the case.
+fn Crystal_3225() {
+    part(#{
+        name: "Crystal_12MHz_3225",
+        prefix: "Y",
+        value: "12MHz",
+        mpn: "ABM8-272-T3",
+        footprint: "Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm",
+        pins: [[1, "X1", passive, left], [3, "X2", passive, right], [[2, 4], "GND", passive, bottom]],
+    })
+}
+
+// ---------------------------------------------------------------- power sheet
+
+fn usb_input(vbus) {
+    let j = USB_C();
+    let esd = USBLC6_2SC6();
+    j.VBUS -> vbus;
+    j.GND -> GND;
+    j.CC1 -> R("5k1", "0402") -> GND;
+    j.CC2 -> R("5k1", "0402") -> GND;
+    nc([j.SBU1, j.SBU2]);
+    // Data: connector -> ESD -> 27 R series -> chip.
+    j.DP -> esd.IO2 -> R("27", "0402") -> net("USB_DP");
+    j.DM -> esd.IO1 -> R("27", "0402") -> net("USB_DM");
+    esd.VBUS -> vbus;
+    esd.GND -> GND;
+}
+
+fn ldo_3v3(vin, vout) {
+    let u = AP2112K_3V3();
+    vin -> [u.VIN, u.EN];
+    u.VIN -> C("10uF", "0603") -> GND;
+    u.VOUT -> vout;
+    u.VOUT -> C("10uF", "0603") -> GND;
+    u.GND -> GND;
+}
+
+fn power_led(rail) {
+    rail -> R("1k", "0402") -> LED("green", "0603") -> GND;
+}
+
+// ---------------------------------------------------------------- MCU sheet
+
+fn mcu() {
+    let u = RP2350A();
+    let v1v1 = supply("+1V1").driven();   // made by the chip's own regulator, through L1
+
+    P3V3 -> [u.IOVDD, u.USB_OTP_VDD, u.QSPI_IOVDD, u.ADC_AVDD, u.VREG_VIN];
+    [u.GND, u.VREG_PGND] -> GND;
+
+    // Core regulator: VREG_LX -> 3.3 uH -> 1.1 V core; VREG_AVDD filtered from 3.3 V.
+    u.VREG_LX -> L("3.3uH", #{ footprint: "Inductor_SMD:L_Murata_DFE201610P", value: "3.3uH" }) -> v1v1;
+    v1v1 -> [u.DVDD, u.VREG_FB];
+    let avdd = net("VREG_AVDD").driven();          // 3.3 V through an RC filter
+    P3V3 -> R("33", "0402") -> avdd -> C("4.7uF", "0402") -> GND;
+    avdd -> u.VREG_AVDD;
+
+    // Decoupling, each capacitor wired from the pin it serves: 100 nF per supply pin (IOVDD's
+    // six pins are drawn as one), plus bulk on IOVDD and DVDD.
+    let p3v3_pins = [u.IOVDD, u.IOVDD, u.IOVDD, u.IOVDD, u.IOVDD, u.IOVDD,
+                     u.USB_OTP_VDD, u.ADC_AVDD, u.QSPI_IOVDD, u.VREG_VIN];
+    for p in p3v3_pins { p -> C("100nF", "0402") -> GND; }
+    u.IOVDD -> C("4.7uF", "0402") -> GND;
+    for i in 0..3 { u.DVDD -> C("100nF", "0402") -> GND; }
+    u.DVDD -> C("4.7uF", "0402") -> GND;
+
+    u.USB_DP -> net("USB_DP");
+    u.USB_DM -> net("USB_DM");
+    u.RUN -> net("RUN");
+    u.SWCLK -> net("SWCLK");
+    u.SWDIO -> net("SWDIO");
+    u.XIN -> net("XIN");
+    u.XOUT -> net("XOUT");
+    for s in ["QSPI_SS", "QSPI_SCLK", "QSPI_SD0", "QSPI_SD1", "QSPI_SD2", "QSPI_SD3"] {
+        u.pin(s) -> net(s);
+    }
+
+    // The sensor: I2C0 on GPIO4/5, the LDC1614's interrupt and shutdown on GPIO6/7.
+    u.GPIO4 -> net("I2C_SDA");
+    u.GPIO5 -> net("I2C_SCL");
+    u.GPIO6 -> net("LDC_INTB");
+    u.GPIO7 -> net("LDC_SD");
+    u.GPIO25 -> R("330", "0402") -> LED("blue", "0603") -> GND;   // status LED
+    nc([u.GPIO0, u.GPIO1, u.GPIO2, u.GPIO3, u.GPIO8, u.GPIO9, u.GPIO10, u.GPIO11, u.GPIO12, u.GPIO13,
+        u.GPIO14, u.GPIO15, u.GPIO16, u.GPIO17, u.GPIO18, u.GPIO19, u.GPIO20, u.GPIO21, u.GPIO22,
+        u.GPIO23, u.GPIO24, u.GPIO26, u.GPIO27, u.GPIO28, u.GPIO29]);
+}
+
+fn crystal() {
+    let y = Crystal_3225();
+    // Raspberry Pi's recommended load: 15 pF / 2 + about 3 pF stray = 10.5 pF.
+    net("XIN") -> y.X1 -> C("15pF", "0402") -> GND;
+    net("XOUT") -> R("1k", "0402") -> y.X2 -> C("15pF", "0402") -> GND;
+    y.GND -> GND;
+}
+
+fn flash() {
+    let f = W25Q128JV();
+    net("QSPI_SS") -> f.CS;
+    net("QSPI_SCLK") -> f.CLK;
+    net("QSPI_SD0") -> f.DI;
+    net("QSPI_SD1") -> f.DO;
+    net("QSPI_SD2") -> f.IO2;
+    net("QSPI_SD3") -> f.IO3;
+    P3V3 -> f.VCC;
+    f.GND -> GND;
+    f.VCC -> C("100nF", "0402") -> GND;
+    P3V3 -> R("10k", "0402") -> net("QSPI_SS");   // keep the flash deselected at reset
+}
+
+fn buttons() {
+    // BOOTSEL pulls QSPI_SS low through 1k; RESET pulls RUN low.
+    net("QSPI_SS") -> R("1k", "0402") -> SW_Push("BOOTSEL") -> GND;
+    net("RUN") -> SW_Push("RESET") -> GND;
+}
+
+fn swd() {
+    let j = Conn(3, "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical", #{ value: "SWD" });
+    j[1] -> net("SWCLK");
+    j[2] -> GND;
+    j[3] -> net("SWDIO");
+}
+
+// ---------------------------------------------------------------- sensor sheet
+
+fn sensor() {
+    let u = LDC1614();
+    u.VDD -> P3V3;
+    u.GND -> GND;
+    u.VDD -> C("1uF", "0402") -> GND;
+    u.VDD -> C("100nF", "0402") -> GND;
+
+    // I2C address 0x2A (ADDR low); 4.7k pull-ups for 400 kHz.
+    u.ADDR -> GND;
+    u.SDA -> net("I2C_SDA");
+    u.SCL -> net("I2C_SCL");
+    P3V3 -> R("4k7", "0402") -> u.SDA;
+    P3V3 -> R("4k7", "0402") -> u.SCL;
+    // INTB is open drain; SD high shuts the LDC down, so it runs until the firmware says otherwise.
+    u.INTB -> net("LDC_INTB");
+    P3V3 -> R("10k", "0402") -> u.INTB;
+    u.SD -> net("LDC_SD");
+    u.SD -> R("10k", "0402") -> GND;
+
+    // Reference clock: 40 MHz oscillator, always enabled.
+    let x = Osc_40MHz();
+    x.VDD -> P3V3;
+    x.GND -> GND;
+    x.OE -> P3V3;
+    x.VDD -> C("100nF", "0402") -> GND;
+    x.OUT -> u.CLKIN;
+
+    net("LDC_IN0A") -> u.IN0A;
+    net("LDC_IN0B") -> u.IN0B;
+    net("LDC_IN1A") -> u.IN1A;
+    net("LDC_IN1B") -> u.IN1B;
+    net("LDC_IN2A") -> u.IN2A;
+    net("LDC_IN2B") -> u.IN2B;
+    net("LDC_IN3A") -> u.IN3A;
+    net("LDC_IN3B") -> u.IN3B;
+}
+
+// One square: the coil and its tank capacitor in parallel across INxA / INxB. 680 pF with a
+// 10 uH coil resonates at ~1.93 MHz; C0G 1% for stability. The trim footprint stays empty
+// until the real coil is measured (C = 1 / ((2 pi f)^2 L)).
+// Squares C and D are footprints for growing to a 2 x 2 patch: left unpopulated for now.
+fn square(name, a, b, fitted) {
+    let coil = sensor_coil(name, fitted);
+    a -> coil.A;
+    b -> coil.B;
+    a -> C("680pF", "0603", #{ dnp: !fitted, Tolerance: "1%", Dielectric: "C0G/NP0", Function: "Sensor tank" }) -> b;
+    a -> C("100pF", "0603", #{ dnp: true, Tolerance: "1%", Dielectric: "C0G/NP0", Function: "Tank trim" }) -> b;
+}
+
+// ---------------------------------------------------------------- sheets
+
+sheet("Power", || {
+    let vbus = VBUS.driven();
+    GND.driven();
+    usb_input(vbus);
+    vbus -> D_Schottky("SS34", "Diode_SMD:D_SMA") -> P5V.driven();
+    ldo_3v3(P5V, P3V3);
+    power_led(P3V3);
+});
+
+sheet("MCU", || {
+    mcu();
+    crystal();
+    flash();
+    buttons();
+    swd();
+});
+
+sheet("Sensor", || {
+    sensor();
+    group("Square A", || { square("A", net("LDC_IN0A"), net("LDC_IN0B"), true); });
+    group("Square B", || { square("B", net("LDC_IN1A"), net("LDC_IN1B"), true); });
+    group("Square C (spare)", || { square("C", net("LDC_IN2A"), net("LDC_IN2B"), false); });
+    group("Square D (spare)", || { square("D", net("LDC_IN3A"), net("LDC_IN3B"), false); });
+});

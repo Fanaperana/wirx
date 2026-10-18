@@ -1,0 +1,2293 @@
+{
+  "format": "eleceda-schematic",
+  "version": 2,
+  "name": "chessboard-mini-tags",
+  "sheets": [
+    {
+      "id": "db57cf5f-b802-566e-8ad1-f2deb85f3282",
+      "name": "Piece tags",
+      "paper": "A4",
+      "items": [
+        {
+          "kind": "symbol",
+          "id": "1ea3a327-b4e6-51fd-ae1c-d03d35c8919f",
+          "libId": "wirx:Pawn_TAG_COIL",
+          "at": {
+            "x": 3400,
+            "y": 1750
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "L1",
+              "at": {
+                "x": 65,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "~10uH flat coil",
+              "at": {
+                "x": 65,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Pawn",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Resonance",
+              "value": "1.03MHz",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "1830e89a-f8b5-5aa3-9579-d6f397a72af9",
+          "libId": "wirx:C",
+          "at": {
+            "x": 3400,
+            "y": 1150
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C1",
+              "at": {
+                "x": 120,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "2.4nF",
+              "at": {
+                "x": 120,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Pawn",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "dc809cec-13bc-5ea5-8415-a51e474e9d43",
+          "libId": "wirx:C",
+          "at": {
+            "x": 3850,
+            "y": 1150
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C2",
+              "at": {
+                "x": 120,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100pF",
+              "at": {
+                "x": 120,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Function",
+              "value": "Tag trim",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ],
+          "dnp": true
+        },
+        {
+          "kind": "wire",
+          "id": "8232f4c3-4a89-5384-90d8-03eaa0eed9d1",
+          "a": {
+            "x": 3400,
+            "y": 1300
+          },
+          "b": {
+            "x": 3400,
+            "y": 1600
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "8286f396-c565-5650-8615-26ad839da1e2",
+          "a": {
+            "x": 3850,
+            "y": 1300
+          },
+          "b": {
+            "x": 3850,
+            "y": 1350
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "1e9f26ea-ab10-5a51-8e09-82ae6cdfe4f9",
+          "a": {
+            "x": 3850,
+            "y": 1350
+          },
+          "b": {
+            "x": 3400,
+            "y": 1350
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "99b02735-d484-5a4f-b1d8-1e51e52b0927",
+          "a": {
+            "x": 3400,
+            "y": 1000
+          },
+          "b": {
+            "x": 3400,
+            "y": 950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "d7bcad92-6ae7-56f5-8db1-cda241a25661",
+          "a": {
+            "x": 3400,
+            "y": 950
+          },
+          "b": {
+            "x": 3300,
+            "y": 950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "f2f5bd57-5bb1-5d43-9078-6d4d082ecaa4",
+          "a": {
+            "x": 3300,
+            "y": 950
+          },
+          "b": {
+            "x": 3300,
+            "y": 1950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "ae1bad72-0505-5aa5-99b5-cda0be3778d2",
+          "a": {
+            "x": 3300,
+            "y": 1950
+          },
+          "b": {
+            "x": 3400,
+            "y": 1950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "267ceade-fd13-5773-82e3-f9b041e5a3d9",
+          "a": {
+            "x": 3400,
+            "y": 1950
+          },
+          "b": {
+            "x": 3400,
+            "y": 1900
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "da7ca151-b6c3-5b73-8e2f-c4ddb182e6cd",
+          "a": {
+            "x": 3850,
+            "y": 1000
+          },
+          "b": {
+            "x": 3850,
+            "y": 950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "a6121391-f7e1-5e36-9d80-e43da15b595d",
+          "a": {
+            "x": 3850,
+            "y": 950
+          },
+          "b": {
+            "x": 3400,
+            "y": 950
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "9d0bbf7c-18e5-50c5-8813-b77c06ace53d",
+          "at": {
+            "x": 3400,
+            "y": 950
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "9f0c7fb3-22a1-56ce-9119-f843daa80d6b",
+          "at": {
+            "x": 3400,
+            "y": 1350
+          }
+        },
+        {
+          "kind": "block",
+          "id": "a35f3f67-7006-5820-92e3-1b9bdb883a55",
+          "name": "Pawn",
+          "at": {
+            "x": 3100,
+            "y": 750
+          },
+          "size": {
+            "w": 1250,
+            "h": 1400
+          }
+        },
+        {
+          "kind": "symbol",
+          "id": "5d8559f6-e325-5774-be21-823bd0b4dca4",
+          "libId": "wirx:Knight_TAG_COIL",
+          "at": {
+            "x": 4800,
+            "y": 1750
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "L2",
+              "at": {
+                "x": 65,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "~10uH flat coil",
+              "at": {
+                "x": 65,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Knight",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Resonance",
+              "value": "1.40MHz",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "e88b3f6d-b633-5cbe-aa33-6ac7cd17a3e7",
+          "libId": "wirx:C",
+          "at": {
+            "x": 4800,
+            "y": 1150
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C3",
+              "at": {
+                "x": 120,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "1.3nF",
+              "at": {
+                "x": 120,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Knight",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "aee540b2-9282-53d7-8940-c5ec7f114a8a",
+          "libId": "wirx:C",
+          "at": {
+            "x": 5250,
+            "y": 1150
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C4",
+              "at": {
+                "x": 120,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100pF",
+              "at": {
+                "x": 120,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Function",
+              "value": "Tag trim",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ],
+          "dnp": true
+        },
+        {
+          "kind": "wire",
+          "id": "484aa954-5541-5bba-bf67-0967437827aa",
+          "a": {
+            "x": 4800,
+            "y": 1300
+          },
+          "b": {
+            "x": 4800,
+            "y": 1600
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "5c9a45a7-9f18-5f47-b984-03125fd9c6a6",
+          "a": {
+            "x": 5250,
+            "y": 1300
+          },
+          "b": {
+            "x": 5250,
+            "y": 1350
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "2bd2a244-089e-5e9d-bf95-141352c5d0da",
+          "a": {
+            "x": 5250,
+            "y": 1350
+          },
+          "b": {
+            "x": 4800,
+            "y": 1350
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "beb055b9-707a-58f2-8bb0-90d49b291e15",
+          "a": {
+            "x": 4800,
+            "y": 1000
+          },
+          "b": {
+            "x": 4800,
+            "y": 950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "adcb32e4-d5df-516f-86ac-e84bdc35d4d5",
+          "a": {
+            "x": 4800,
+            "y": 950
+          },
+          "b": {
+            "x": 4700,
+            "y": 950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "e0eb3f89-7351-563c-8244-e39e800e8251",
+          "a": {
+            "x": 4700,
+            "y": 950
+          },
+          "b": {
+            "x": 4700,
+            "y": 1950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "3aebe8e1-6c34-5841-ba4a-95434ae03e54",
+          "a": {
+            "x": 4700,
+            "y": 1950
+          },
+          "b": {
+            "x": 4800,
+            "y": 1950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "e7c13a49-03ef-5c01-9efb-a43a2ec923e9",
+          "a": {
+            "x": 4800,
+            "y": 1950
+          },
+          "b": {
+            "x": 4800,
+            "y": 1900
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "25411782-730c-5823-959a-daf6963f1569",
+          "a": {
+            "x": 5250,
+            "y": 1000
+          },
+          "b": {
+            "x": 5250,
+            "y": 950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "1b874283-6802-5b45-8068-0b7d51ea2814",
+          "a": {
+            "x": 5250,
+            "y": 950
+          },
+          "b": {
+            "x": 4800,
+            "y": 950
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "f2fe6d60-ba78-5b39-a290-741f4ac1a32c",
+          "at": {
+            "x": 4800,
+            "y": 950
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "727fc72a-2117-5d91-825e-d85ef8b4bbb1",
+          "at": {
+            "x": 4800,
+            "y": 1350
+          }
+        },
+        {
+          "kind": "block",
+          "id": "35692b53-6f23-5afb-9f8e-096ef6a0d778",
+          "name": "Knight",
+          "at": {
+            "x": 4500,
+            "y": 750
+          },
+          "size": {
+            "w": 1250,
+            "h": 1400
+          }
+        },
+        {
+          "kind": "symbol",
+          "id": "fc36e63b-0c33-56ec-99e1-7fd531b2238c",
+          "libId": "wirx:Rook_TAG_COIL",
+          "at": {
+            "x": 6200,
+            "y": 1750
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "L3",
+              "at": {
+                "x": 65,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "~10uH flat coil",
+              "at": {
+                "x": 65,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Rook",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Resonance",
+              "value": "2.77MHz",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "42d9fe98-c583-5e09-9b00-19762ca6ebbb",
+          "libId": "wirx:C",
+          "at": {
+            "x": 6200,
+            "y": 1150
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C5",
+              "at": {
+                "x": 120,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "330pF",
+              "at": {
+                "x": 120,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Rook",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "32707330-1b66-5612-bd2d-edc7b2d60376",
+          "libId": "wirx:C",
+          "at": {
+            "x": 6650,
+            "y": 1150
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C6",
+              "at": {
+                "x": 120,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100pF",
+              "at": {
+                "x": 120,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Function",
+              "value": "Tag trim",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ],
+          "dnp": true
+        },
+        {
+          "kind": "wire",
+          "id": "46a17792-3af4-54ba-8394-0b702823f322",
+          "a": {
+            "x": 6200,
+            "y": 1300
+          },
+          "b": {
+            "x": 6200,
+            "y": 1600
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "dc6218f3-4aea-5df4-829d-a56368f51691",
+          "a": {
+            "x": 6650,
+            "y": 1300
+          },
+          "b": {
+            "x": 6650,
+            "y": 1350
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "c410479c-eb51-54b7-91ca-bffa4ece4c5e",
+          "a": {
+            "x": 6650,
+            "y": 1350
+          },
+          "b": {
+            "x": 6200,
+            "y": 1350
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "2ed4908c-d98e-5f16-b64a-a7ceac09e8ee",
+          "a": {
+            "x": 6200,
+            "y": 1000
+          },
+          "b": {
+            "x": 6200,
+            "y": 950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "360e810d-a502-59b2-81d5-45072db871c9",
+          "a": {
+            "x": 6200,
+            "y": 950
+          },
+          "b": {
+            "x": 6100,
+            "y": 950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "36a5c379-bf16-5c85-8dfb-c36b94e37dfb",
+          "a": {
+            "x": 6100,
+            "y": 950
+          },
+          "b": {
+            "x": 6100,
+            "y": 1950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "5343a551-8cf4-5146-b63f-feab7b7bc80e",
+          "a": {
+            "x": 6100,
+            "y": 1950
+          },
+          "b": {
+            "x": 6200,
+            "y": 1950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "ada42a3a-fc9e-5b8a-b4e0-24bc49bec214",
+          "a": {
+            "x": 6200,
+            "y": 1950
+          },
+          "b": {
+            "x": 6200,
+            "y": 1900
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "8459e6bc-6877-5a12-9a01-10a0f780c104",
+          "a": {
+            "x": 6650,
+            "y": 1000
+          },
+          "b": {
+            "x": 6650,
+            "y": 950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "15252e20-23b7-57a9-aa51-d69ab2e58126",
+          "a": {
+            "x": 6650,
+            "y": 950
+          },
+          "b": {
+            "x": 6200,
+            "y": 950
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "a8d1230d-bd60-50d6-b432-f17c457f0459",
+          "at": {
+            "x": 6200,
+            "y": 950
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "684cc105-41f5-5222-8b7b-ce55327cf20e",
+          "at": {
+            "x": 6200,
+            "y": 1350
+          }
+        },
+        {
+          "kind": "block",
+          "id": "4cd26bfb-2ae1-5b94-b256-6576292cbd61",
+          "name": "Rook",
+          "at": {
+            "x": 5900,
+            "y": 750
+          },
+          "size": {
+            "w": 1250,
+            "h": 1400
+          }
+        },
+        {
+          "kind": "symbol",
+          "id": "ab08dc4d-8459-5389-b817-3d3b2243f745",
+          "libId": "wirx:Queen_TAG_COIL",
+          "at": {
+            "x": 7600,
+            "y": 1750
+          },
+          "rot": 0,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "L4",
+              "at": {
+                "x": 65,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "~10uH flat coil",
+              "at": {
+                "x": 65,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Queen",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Resonance",
+              "value": "3.75MHz",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "fbbc61a9-5cc1-5659-a90e-f1321195fa4a",
+          "libId": "wirx:C",
+          "at": {
+            "x": 7600,
+            "y": 1150
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C7",
+              "at": {
+                "x": 120,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "180pF",
+              "at": {
+                "x": 120,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Piece",
+              "value": "Queen",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ]
+        },
+        {
+          "kind": "symbol",
+          "id": "03dfdc7e-bb8c-50bc-8e2b-2cc905efef7f",
+          "libId": "wirx:C",
+          "at": {
+            "x": 8050,
+            "y": 1150
+          },
+          "rot": 180,
+          "mirror": false,
+          "unit": 1,
+          "fields": [
+            {
+              "name": "Reference",
+              "value": "C8",
+              "at": {
+                "x": 120,
+                "y": -30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Value",
+              "value": "100pF",
+              "at": {
+                "x": 120,
+                "y": 30
+              },
+              "visible": true,
+              "justify": "left",
+              "rot": 0
+            },
+            {
+              "name": "Footprint",
+              "value": "Capacitor_SMD:C_0603_1608Metric",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Datasheet",
+              "value": "",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Dielectric",
+              "value": "C0G/NP0",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Function",
+              "value": "Tag trim",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            },
+            {
+              "name": "Tolerance",
+              "value": "1%",
+              "at": {
+                "x": 0,
+                "y": 0
+              },
+              "visible": false
+            }
+          ],
+          "dnp": true
+        },
+        {
+          "kind": "wire",
+          "id": "3966b166-c7b8-5c40-b93c-d59834de466d",
+          "a": {
+            "x": 7600,
+            "y": 1300
+          },
+          "b": {
+            "x": 7600,
+            "y": 1600
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "aa4f06b5-b295-5b5a-92a9-be437c44b262",
+          "a": {
+            "x": 8050,
+            "y": 1300
+          },
+          "b": {
+            "x": 8050,
+            "y": 1350
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "7e39fe9f-d81c-56bb-848d-65f0cb892818",
+          "a": {
+            "x": 8050,
+            "y": 1350
+          },
+          "b": {
+            "x": 7600,
+            "y": 1350
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "99f228e4-2ca7-5d07-9443-beb684819f00",
+          "a": {
+            "x": 7600,
+            "y": 1000
+          },
+          "b": {
+            "x": 7600,
+            "y": 950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "39e7812a-dd7e-55d1-88c4-035d8f675549",
+          "a": {
+            "x": 7600,
+            "y": 950
+          },
+          "b": {
+            "x": 7500,
+            "y": 950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "09eb1426-4078-56bb-b4e4-9f0c8aa0a0fa",
+          "a": {
+            "x": 7500,
+            "y": 950
+          },
+          "b": {
+            "x": 7500,
+            "y": 1950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "425a203a-26fe-525b-bd7d-a561c27040e5",
+          "a": {
+            "x": 7500,
+            "y": 1950
+          },
+          "b": {
+            "x": 7600,
+            "y": 1950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "876da96e-6bb3-5aa3-a0fc-2947ee83154d",
+          "a": {
+            "x": 7600,
+            "y": 1950
+          },
+          "b": {
+            "x": 7600,
+            "y": 1900
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "45af6df2-19e8-5f53-b90c-a7496b13ca70",
+          "a": {
+            "x": 8050,
+            "y": 1000
+          },
+          "b": {
+            "x": 8050,
+            "y": 950
+          }
+        },
+        {
+          "kind": "wire",
+          "id": "23002f08-a0d7-53fb-b8d7-a3313755b230",
+          "a": {
+            "x": 8050,
+            "y": 950
+          },
+          "b": {
+            "x": 7600,
+            "y": 950
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "96c30dca-68d6-5202-84f4-cea0cdb3eb20",
+          "at": {
+            "x": 7600,
+            "y": 950
+          }
+        },
+        {
+          "kind": "junction",
+          "id": "aedf019d-1ae5-5db3-b131-3fcb86460bd0",
+          "at": {
+            "x": 7600,
+            "y": 1350
+          }
+        },
+        {
+          "kind": "block",
+          "id": "043231cc-25b4-5ff6-971a-76106f10354b",
+          "name": "Queen",
+          "at": {
+            "x": 7300,
+            "y": 750
+          },
+          "size": {
+            "w": 1250,
+            "h": 1400
+          }
+        }
+      ]
+    }
+  ],
+  "symbols": {
+    "wirx:Pawn_TAG_COIL": {
+      "id": "wirx:Pawn_TAG_COIL",
+      "name": "Pawn_TAG_COIL",
+      "description": "Pawn tag coil: ready-made flat spiral coil (15-25 mm) in the piece base, soldered to the tag's two pads. Measure L before choosing the capacitor",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "~10uH flat coil",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    "wirx:C": {
+      "id": "wirx:C",
+      "name": "C",
+      "description": "Unpolarized capacitor",
+      "refPrefix": "C",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": -80,
+              "y": -30
+            },
+            {
+              "x": 80,
+              "y": -30
+            }
+          ],
+          "unit": 0,
+          "width": 20,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": -80,
+              "y": 30
+            },
+            {
+              "x": 80,
+              "y": 30
+            }
+          ],
+          "unit": 0,
+          "width": 20,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 120,
+          "number": "1",
+          "name": "~",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 120,
+          "number": "2",
+          "name": "~",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "C",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "100nF",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Capacitor_SMD:C_0603_1608Metric",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    "wirx:Knight_TAG_COIL": {
+      "id": "wirx:Knight_TAG_COIL",
+      "name": "Knight_TAG_COIL",
+      "description": "Knight tag coil: ready-made flat spiral coil (15-25 mm) in the piece base, soldered to the tag's two pads. Measure L before choosing the capacitor",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "~10uH flat coil",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    "wirx:Rook_TAG_COIL": {
+      "id": "wirx:Rook_TAG_COIL",
+      "name": "Rook_TAG_COIL",
+      "description": "Rook tag coil: ready-made flat spiral coil (15-25 mm) in the piece base, soldered to the tag's two pads. Measure L before choosing the capacitor",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "~10uH flat coil",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    "wirx:Queen_TAG_COIL": {
+      "id": "wirx:Queen_TAG_COIL",
+      "name": "Queen_TAG_COIL",
+      "description": "Queen tag coil: ready-made flat spiral coil (15-25 mm) in the piece base, soldered to the tag's two pads. Measure L before choosing the capacitor",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "~10uH flat coil",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    }
+  },
+  "titleBlock": {
+    "title": "Mini chessboard piece tags",
+    "revision": "A",
+    "company": "Chessboard prototype",
+    "date": "2026-10-17"
+  },
+  "libraries": [
+    {
+      "name": "wirx",
+      "path": "chessboard-mini-tags.elib"
+    }
+  ]
+}

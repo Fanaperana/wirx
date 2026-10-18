@@ -1,0 +1,736 @@
+{
+  "format": "eleceda-library",
+  "version": 1,
+  "name": "wirx",
+  "symbols": [
+    {
+      "id": "wirx:Pawn_TAG_COIL",
+      "name": "Pawn_TAG_COIL",
+      "description": "Pawn tag coil: ready-made flat spiral coil (15-25 mm) in the piece base, soldered to the tag's two pads. Measure L before choosing the capacitor",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "~10uH flat coil",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:C",
+      "name": "C",
+      "description": "Unpolarized capacitor",
+      "refPrefix": "C",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": -80,
+              "y": -30
+            },
+            {
+              "x": 80,
+              "y": -30
+            }
+          ],
+          "unit": 0,
+          "width": 20,
+          "fill": "none"
+        },
+        {
+          "type": "polyline",
+          "points": [
+            {
+              "x": -80,
+              "y": 30
+            },
+            {
+              "x": 80,
+              "y": 30
+            }
+          ],
+          "unit": 0,
+          "width": 20,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 120,
+          "number": "1",
+          "name": "~",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 120,
+          "number": "2",
+          "name": "~",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "C",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "100nF",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Capacitor_SMD:C_0603_1608Metric",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:Knight_TAG_COIL",
+      "name": "Knight_TAG_COIL",
+      "description": "Knight tag coil: ready-made flat spiral coil (15-25 mm) in the piece base, soldered to the tag's two pads. Measure L before choosing the capacitor",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "~10uH flat coil",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:Rook_TAG_COIL",
+      "name": "Rook_TAG_COIL",
+      "description": "Rook tag coil: ready-made flat spiral coil (15-25 mm) in the piece base, soldered to the tag's two pads. Measure L before choosing the capacitor",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "~10uH flat coil",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "wirx:Queen_TAG_COIL",
+      "name": "Queen_TAG_COIL",
+      "description": "Queen tag coil: ready-made flat spiral coil (15-25 mm) in the piece base, soldered to the tag's two pads. Measure L before choosing the capacitor",
+      "refPrefix": "L",
+      "unitCount": 1,
+      "hidePinNames": true,
+      "hidePinNumbers": true,
+      "graphics": [
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -100
+          },
+          "mid": {
+            "x": 25,
+            "y": -75
+          },
+          "end": {
+            "x": 0,
+            "y": -50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": -50
+          },
+          "mid": {
+            "x": 25,
+            "y": -25
+          },
+          "end": {
+            "x": 0,
+            "y": 0
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "mid": {
+            "x": 25,
+            "y": 25
+          },
+          "end": {
+            "x": 0,
+            "y": 50
+          },
+          "unit": 0,
+          "fill": "none"
+        },
+        {
+          "type": "arc",
+          "start": {
+            "x": 0,
+            "y": 50
+          },
+          "mid": {
+            "x": 25,
+            "y": 75
+          },
+          "end": {
+            "x": 0,
+            "y": 100
+          },
+          "unit": 0,
+          "fill": "none"
+        }
+      ],
+      "pins": [
+        {
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "dir": 270,
+          "length": 50,
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        },
+        {
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "dir": 90,
+          "length": 50,
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "shape": "line",
+          "unit": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "Reference",
+          "value": "L",
+          "at": {
+            "x": 0,
+            "y": -150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Value",
+          "value": "~10uH flat coil",
+          "at": {
+            "x": 0,
+            "y": 150
+          },
+          "visible": true,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Footprint",
+          "value": "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        },
+        {
+          "name": "Datasheet",
+          "value": "",
+          "at": {
+            "x": 0,
+            "y": 0
+          },
+          "visible": false,
+          "justify": "center",
+          "rot": 0
+        }
+      ]
+    }
+  ]
+}
