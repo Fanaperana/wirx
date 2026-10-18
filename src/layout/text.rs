@@ -88,6 +88,30 @@ fn part_spots(symbol: &str, orient: Orient, body: Rect, ext: Rect, upright: bool
     v
 }
 
+/// Spots close to a chip's body for one text, best first: just above (or below) the body, at a
+/// corner or beside the outermost pins of that edge; `above_first` says which edge comes first
+/// (the reference goes above, the value below).
+fn chip_spots(body: Rect, pins: &[(Pt, crate::geom::Rot)], above_first: bool) -> Vec<(Pt, Justify)> {
+    use Justify::*;
+    let mut edges = [(90, body.y0 - 50, body.y0 - 110), (270, body.y1 + 50, body.y1 + 110)];
+    if !above_first {
+        edges.reverse();
+    }
+    let mut v = Vec::new();
+    for (out, y, y2) in edges {
+        let xs: Vec<i32> = pins.iter().filter(|p| p.1 == out).map(|p| p.0.x).collect();
+        for yy in [y, y2] {
+            v.push((pt(body.x0, yy), Left));
+            v.push((pt(body.x1, yy), Right));
+            if let (Some(&lo), Some(&hi)) = (xs.iter().min(), xs.iter().max()) {
+                v.push((pt(lo - 100, yy), Right));
+                v.push((pt(hi + 100, yy), Left));
+            }
+        }
+    }
+    v
+}
+
 /// A part whose pins stick out sideways (wider extent than body, same height).
 fn is_lying(body: Rect, ext: Rect) -> bool {
     ext.w() > body.w() && ext.h() <= body.h()
@@ -140,6 +164,14 @@ fn place_in_order(d: &Design, items: &mut [Item], extra: &[SymbolDef], power_fir
                 if let Some(def) = def_of(lib_id, *inst) {
                     let local = if def.is_power() { def.extent() } else { def.body() };
                     ink.push((orient.rect(local).translate(*at), idx));
+                    // Pin lines: no text on them, the part's own included.
+                    if !def.is_power() {
+                        for p in &def.pins {
+                            let tip = orient.apply(p.at) + *at;
+                            let end = tip + crate::geom::dir_vec(orient.angle(p.dir)) * p.length;
+                            ink.push((Rect::from_points(tip, end).inflate(10), NONE));
+                        }
+                    }
                 }
             }
             Item::Block { .. } => {}
@@ -166,8 +198,30 @@ fn place_in_order(d: &Design, items: &mut [Item], extra: &[SymbolDef], power_fir
             let (Some(ri), Some(vi)) = (ri, vi) else { continue };
             let upright = def.pins.len() == 2 && def.pins.iter().all(|p| !crate::geom::is_horizontal(crate::symbol::place_pin(p, *orient, pt(0, 0)).out));
             let spots = part_spots(symbol, *orient, body, ext, upright);
+            // A chip's reference and value each take the closest clear spot by its body.
+            if matches!(symbol.as_str(), "box" | "conn" | "conn2" | "custom") {
+                let pins: Vec<(Pt, crate::geom::Rot)> = def.pins.iter().map(|p| (orient.apply(p.at), crate::geom::opposite(orient.angle(p.dir)))).collect();
+                let pick = |fi: usize, above: bool, taken: Option<Rect>, ink: &[(Rect, usize)]| {
+                    chip_spots(body, &pins, above).into_iter().find(|s| {
+                        let r = text_rect(at + s.0, &fields[fi].value, s.1);
+                        clear(r, idx, ink) && taken.is_none_or(|t| !t.inflate(-5).intersects(&r.inflate(-5)))
+                    })
+                };
+                if let Some(r) = pick(ri, true, None, &ink) {
+                    let r_rect = text_rect(at + r.0, &fields[ri].value, r.1);
+                    if let Some(v) = pick(vi, false, Some(r_rect), &ink) {
+                        (fields[ri].at, fields[ri].justify) = (r.0, Some(r.1));
+                        (fields[vi].at, fields[vi].justify) = (v.0, Some(v.1));
+                        for f in [&fields[ri], &fields[vi]] {
+                            ink.push((text_rect(at + f.at, &f.value, f.justify.unwrap_or(Justify::Center)), idx));
+                        }
+                        continue;
+                    }
+                }
+            }
             let chosen = spots.iter().find(|s| {
-                clear(text_rect(at + s[0].0, &fields[ri].value, s[0].1), idx, &ink) && clear(text_rect(at + s[1].0, &fields[vi].value, s[1].1), idx, &ink)
+                let (a, b) = (text_rect(at + s[0].0, &fields[ri].value, s[0].1), text_rect(at + s[1].0, &fields[vi].value, s[1].1));
+                clear(a, idx, &ink) && clear(b, idx, &ink) && !a.inflate(-5).intersects(&b.inflate(-5))
             });
             if let Some(s) = chosen {
                 fields[ri].at = s[0].0;
@@ -213,6 +267,24 @@ pub fn overlaps(items: &[Item]) -> Vec<(String, String)> {
             if a.inflate(-5).intersects(&b.inflate(-5)) {
                 out.push((ta.clone(), tb.clone()));
             }
+        }
+    }
+    out
+}
+
+/// How far each part's reference and value text stands from the part's body (mils, 0 when it
+/// touches it): (reference, field value, gap).
+pub fn distances(items: &[Item], defs: &[SymbolDef]) -> Vec<(String, String, i32)> {
+    let gap = |a: Rect, b: Rect| (a.x0 - b.x1).max(b.x0 - a.x1).max(a.y0 - b.y1).max(b.y0 - a.y1).max(0);
+    let mut out = Vec::new();
+    for it in items {
+        let Item::Symbol { lib_id, at, orient, fields, inst: Some(_), .. } = it else { continue };
+        let Some(def) = defs.iter().find(|d| &d.id == lib_id) else { continue };
+        let body = orient.rect(def.body()).translate(*at);
+        let reference = fields.iter().find(|f| f.name == "Reference").map(|f| f.value.clone()).unwrap_or_default();
+        for f in fields.iter().filter(|f| f.visible && (f.name == "Reference" || f.name == "Value")) {
+            let r = text_rect(*at + f.at, &f.value, f.justify.unwrap_or(Justify::Center));
+            out.push((reference.clone(), f.value.clone(), gap(r, body)));
         }
     }
     out

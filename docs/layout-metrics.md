@@ -295,9 +295,9 @@ Tests: `decoupling_caps_share_one_bank_at_their_pin`, `separate_rails_make_separ
 ### Stage 6, second pass: every example's decaps at their pins
 
 - **Examples written explicitly.** chessboard.wx and rp2350b.wx chain each decoupling capacitor
-  from the pin it serves (`u.VCC -> C("100nF") -> GND`). mcu.wx puts AREF between VCC and AVCC
-  so each gets its own capacitor. The RP2350B symbol spaces its top-edge supply pins (`gap`) so
-  every bank finds room. Netlists are unchanged (same nets and parts; only the order pins are
+  from the pin it serves (`u.VCC -> C("100nF") -> GND`). In mcu.wx the ATmega's VCC, VCC and
+  AVCC pins form one run, and its two capacitors one bank on it. The RP2350B symbol spaces its
+  top-edge supply pins (`gap`) so every bank finds room. Netlists are unchanged (same nets and parts; only the order pins are
   listed in a net follows the new source order).
 - **Runs of pins.** Neighbouring pins on one rail (the ATmega's two VCC pins) take a bank: their
   short bus stays and the bank's wire continues it.
@@ -314,4 +314,23 @@ eleceda readability, before stage 6 → now: chessboard Scan and VCO 98 → 100,
 97 → 100, every other sheet unchanged (chessboard warnings 66 → 65; none elsewhere). Every
 supply pin of the RP2350B, ATmega328P, ESP32, AMS1117, REF3312, ADS1115, CD4046, CD4051, LMV358,
 74HC08, 74HC238 and W25Q128 now has its capacitors drawn at it. No two texts overlap on any sheet.
+
+### Stage 6, third pass: text by its part
+
+Measured as the gap between each reference or value and its part's body, before → after:
+
+- **Chips** (ESP32, AMS1117, CD4051, 74HC238, ULN2803, ATmega328P, W25Q128, USBLC6, AP2112K,
+  REF3312): 300-360 mil (above the top pin tips and power symbols, below the bottom ones) →
+  within 100 mil. The reference takes a top corner of the body and the value a bottom corner,
+  or the space just beyond the outermost pins of that edge, 100 mil clear of pin numbers. Pin
+  lines now count as ink, so no text lands on a pin.
+- **Upright two-pin parts** (capacitors in banks, pull-ups, LEDs): text beside the body.
+- **Every part in every example:** within 100 mil (test `part_text_stays_by_its_part`, which
+  failed on 124 texts before).
+- **Banks keep off the chip's sides.** A bank on a top (bottom) pin stays above (below) the
+  body when it can, so it no longer stands beside the side pins. In mcu this frees the corridor
+  between PB1 and the status LED: the `LED` net is a wire again instead of two labels.
+
+eleceda readability is unchanged from the second pass: 100 on every sheet of ldo, blinker, mcu,
+rp2350b and the tags; chessboard as before (sensor sheets 76 from their four-way points).
 

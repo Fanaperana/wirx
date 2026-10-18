@@ -134,6 +134,11 @@ pub fn text_overlaps(sheet: &SheetOut) -> Vec<(String, String)> {
     text::overlaps(&sheet.items)
 }
 
+/// How far each part's reference and value stand from its body (see [`text::distances`]).
+pub fn text_distances(sheet: &SheetOut, symbols: &[SymbolDef]) -> Vec<(String, String, i32)> {
+    text::distances(&sheet.items, symbols)
+}
+
 pub fn layout(d: &Design) -> (Schematic, Vec<Diagnostic>) {
     layout_with(d, &Options::default())
 }

@@ -550,3 +550,18 @@ fn no_text_overlaps_on_any_sheet() {
         }
     }
 }
+
+/// Every part's reference and value stand by the part: within 100 mil of its body, on every sheet
+/// of every example (not beyond its wires, power symbols or neighbouring parts).
+#[test]
+fn part_text_stays_by_its_part() {
+    for name in ["ldo", "blinker", "mcu", "rp2350b", "chessboard", "chessboard-tags"] {
+        let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("examples").join(format!("{name}.wx"));
+        let design = wirx::check_file(&path).unwrap().design.unwrap();
+        let (s, _) = wirx::draw(&design).unwrap();
+        for sheet in &s.sheets {
+            let far: Vec<_> = wirx::layout::text_distances(sheet, &s.symbols).into_iter().filter(|t| t.2 > 100).collect();
+            assert!(far.is_empty(), "{name}/{}: {far:?}", sheet.name);
+        }
+    }
+}

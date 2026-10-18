@@ -299,13 +299,23 @@ impl Ctx<'_> {
             let v = pt((z - a).x.signum(), (z - a).y.signum());
             Some(Rect::from_points(a + v * 60, z - v * 60).inflate(10))
         };
-        for (_, far_left, path) in options {
+        // A bank on a top (bottom) pin keeps above (below) the chip's body when it can, so it does
+        // not stand beside the side pins, in the way of their wires and labels.
+        let beside = |r: Rect| match t.out {
+            90 => r.y1 > ic.body.y0 - CLEAR && (r.x0 < ic.body.x0 || r.x1 > ic.body.x1),
+            270 => r.y0 < ic.body.y1 + CLEAR && (r.x0 < ic.body.x0 || r.x1 > ic.body.x1),
+            _ => false,
+        };
+        for (allow_beside, (_, far_left, path)) in [false, true].into_iter().flat_map(|a| options.iter().map(move |o| (a, o.clone()))) {
             let (parts, near) = &units[if far_left { 0 } else { 1 }];
             let delta = *path.last().unwrap() - *near;
             if parts.iter().any(|p| collides(p, delta, &others)) {
                 continue;
             }
             let bank_rects: Vec<Rect> = parts.iter().flat_map(|p| p.rects.iter().map(|r| r.translate(delta))).collect();
+            if !allow_beside && bank_rects.iter().copied().reduce(Rect::union).is_some_and(beside) {
+                continue;
+            }
             let clear = path.windows(2).filter_map(|w| inner(w[0], w[1])).all(|r| {
                 !others.iter().any(|o| r.overlaps(o)) && !bank_rects.iter().any(|o| r.overlaps(o))
             });

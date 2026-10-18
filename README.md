@@ -170,8 +170,10 @@ Details and examples: [docs/rhai-syntax.md](docs/rhai-syntax.md#symbols).
    touching anything.
 7. **Text.** After routing, reference and value text moves to the nearest spot that covers no wire
    or part. An upright two-pin part (a capacitor in a bank, a pull-up) has its text beside its
-   body; one lying down, above and below it. No two texts or labels on a sheet overlap
-   (`no_text_overlaps_on_any_sheet` checks every example).
+   body; one lying down, above and below it. A chip's reference goes at a top corner of its body
+   and its value at a bottom corner (or beside the outermost pins of that edge), never on a pin.
+   Every part's text stays within 100 mil of its body (`part_text_stays_by_its_part`), and no two
+   texts or labels on a sheet overlap (`no_text_overlaps_on_any_sheet`); both check every example.
 8. **Self-check.** wirx rebuilds connectivity from the drawing, the way eleceda does, and compares
    it with the design. A mismatch stops the build.
 
