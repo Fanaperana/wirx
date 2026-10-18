@@ -21,7 +21,9 @@ const LABEL: &str = "#000000";
 const GLOBAL_LABEL: &str = "#840000";
 const NO_CONNECT: &str = "#0000a4";
 const BLOCK: &str = "#000084";
-const FONT: &str = "'Courier Prime', 'Courier New', monospace";
+/// JetBrains Mono (eleceda's "JetBrains Mono Variable" sheet font): 0.6 em per character, as
+/// `text_width` measures, with clear 0/O and 1/l/I. Courier where it is not installed.
+const FONT: &str = "'JetBrains Mono', 'JetBrains Mono Variable', 'Courier Prime', 'Courier New', monospace";
 
 fn esc(s: &str) -> String {
     s.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;").replace('"', "&quot;")
