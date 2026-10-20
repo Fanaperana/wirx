@@ -80,14 +80,15 @@ pub fn build(name: &str, source: &str) -> String {
 
 /// Turn an eleceda project (`.esch` JSON text) back into wirx source. Returns
 /// `{ ok, source, warnings, mismatches, error }`; `ok` is false when the source would not
-/// reproduce the schematic's connectivity.
+/// reproduce the schematic's connectivity. With `pin_refs`, every part's reference is written, so
+/// parts added to the source later never renumber the existing ones.
 #[wasm_bindgen(js_name = importEsch)]
-pub fn import_esch(esch: &str, design_name: &str) -> String {
+pub fn import_esch(esch: &str, design_name: &str, pin_refs: bool) -> String {
     let value: serde_json::Value = match serde_json::from_str(esch) {
         Ok(v) => v,
         Err(e) => return to_string(&ImportOut { ok: false, source: None, warnings: vec![], mismatches: vec![], error: Some(format!("not JSON: {e}")) }),
     };
-    match wirx::import::import(&value, design_name) {
+    match wirx::import::import_with(&value, design_name, wirx::import::ImportOptions { pin_refs }) {
         Ok(i) => to_string(&ImportOut { ok: i.mismatches.is_empty(), source: Some(i.text), warnings: i.warnings, mismatches: i.mismatches, error: None }),
         Err(e) => to_string(&ImportOut { ok: false, source: None, warnings: vec![], mismatches: vec![], error: Some(e) }),
     }

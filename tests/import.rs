@@ -103,3 +103,43 @@ fn custom_parts_keep_their_references_and_box_symbols() {
     let (rebuilt, _) = wirx::build(c.design.as_ref().expect("compiles")).expect("builds");
     assert_eq!(refs(&value), refs(&rebuilt));
 }
+
+#[test]
+fn pinned_references_survive_an_added_part() {
+    // With every reference written, a part added before the others takes the next free number
+    // instead of renumbering the rest (what an editor or an AI agent needs).
+    let esch = Path::new(env!("CARGO_MANIFEST_DIR")).join("examples/chessboard-mini.esch");
+    let value: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(&esch).unwrap()).unwrap();
+    let imported = wirx::import::import_with(&value, "chessboard-mini", wirx::import::ImportOptions { pin_refs: true }).expect("imports");
+    assert!(imported.mismatches.is_empty(), "{:?}", imported.mismatches);
+    let refs = |src: &str| -> Vec<String> {
+        let c = wirx::check_source("t.wx", src, Path::new("."));
+        let d = c.design.expect("compiles");
+        let mut v: Vec<String> = d.instances.iter().map(|i| i.reference.clone()).collect();
+        v.sort();
+        v
+    };
+    let before = refs(&imported.text);
+    // A new resistor near the top of the source, before every other part.
+    let at = imported.text.find("sheet(").unwrap();
+    let edited = format!("{}let extra = R(\"10k\");\nextra[1] -> P3V3;\nextra[2] -> GND;\n{}", &imported.text[..at], &imported.text[at..]);
+    let after = refs(&edited);
+    assert_eq!(after.len(), before.len() + 1);
+    for r in &before {
+        assert!(after.contains(r), "{r} was renumbered");
+    }
+}
+
+#[test]
+fn power_flags_survive_import_and_rebuild() {
+    // A rail's flag must not be given to a capacitor drawn in a bank (where it is never drawn).
+    let esch = Path::new(env!("CARGO_MANIFEST_DIR")).join("examples/chessboard-mini.esch");
+    let value: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(&esch).unwrap()).unwrap();
+    let flags = |v: &serde_json::Value| {
+        v["sheets"].as_array().unwrap().iter().flat_map(|s| s["items"].as_array().unwrap().iter()).filter(|i| i["kind"] == "symbol" && i["libId"].as_str().unwrap_or("").to_lowercase().contains("flag")).count()
+    };
+    let imported = wirx::import::import_with(&value, "chessboard-mini", wirx::import::ImportOptions { pin_refs: true }).expect("imports");
+    let c = wirx::check_source("chessboard-mini.wx", &imported.text, Path::new("."));
+    let (rebuilt, _) = wirx::build(c.design.as_ref().expect("compiles")).expect("builds");
+    assert_eq!(flags(&rebuilt), flags(&value));
+}

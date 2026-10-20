@@ -727,7 +727,14 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
             label_pin.insert(n, pick);
         }
         if net.flagged && !flags_done.contains(&n) {
-            let mut candidates: Vec<&(usize, usize)> = choose.iter().filter(|p| label_pin.get(&n) != Some(p) && !d.instances[p.0].nc[p.1]).collect();
+            // A capacitor between two rails is drawn in a bank that shares one power symbol, where a
+            // flag on its pin would never be drawn: leave the flag to a later group with another pin.
+            let in_bank = |p: &(usize, usize)| {
+                let pins = &d.instances[p.0].pin_net;
+                pins.len() == 2 && pins.iter().all(|x| x.is_some_and(|k| d.nets[k].is_rail()))
+            };
+            let mut candidates: Vec<&(usize, usize)> =
+                choose.iter().filter(|p| label_pin.get(&n) != Some(p) && !d.instances[p.0].nc[p.1] && !(net.is_rail() && in_bank(p))).collect();
             // A signal net's flag goes on a small part's pin: on a chip's edge, between pins 100 mil
             // apart, its symbol would block the neighbouring pins.
             if !net.is_rail() {

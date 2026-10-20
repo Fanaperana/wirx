@@ -32,8 +32,22 @@ pub struct Imported {
     pub mismatches: Vec<String>,
 }
 
+/// How `import` writes the source.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct ImportOptions {
+    /// Write every part's reference (`ref:`), not only those automatic numbering would get wrong.
+    /// Parts added to the source later then take the next free number instead of renumbering the
+    /// rest; repeated blocks are written once per block so each can pin its references.
+    pub pin_refs: bool,
+}
+
 /// Decompile an eleceda project (`.esch` JSON). `design_name` names the design when recompiling.
 pub fn import(esch: &Value, design_name: &str) -> Result<Imported, String> {
+    import_with(esch, design_name, ImportOptions::default())
+}
+
+/// [`import`] with options.
+pub fn import_with(esch: &Value, design_name: &str, opts: ImportOptions) -> Result<Imported, String> {
     if esch["format"] != "eleceda-schematic" {
         return Err("not an eleceda schematic (`format` is not \"eleceda-schematic\")".into());
     }
@@ -48,12 +62,12 @@ pub fn import(esch: &Value, design_name: &str) -> Result<Imported, String> {
             let msgs: Vec<String> = c.diags.iter().map(|x| x.message.clone()).collect();
             return Err(format!("the generated source does not compile (a wirx bug): {}", msgs.join("; ")));
         };
-        // References: pin down only those that automatic numbering gets wrong.
+        // References: pin down only those that automatic numbering gets wrong (or all of them).
         let mut changed = false;
         let lost: Vec<String> = Vec::new();
         for (inst, &ci) in d.instances.iter().zip(&out.order) {
             let comp = &model.comps[ci];
-            if !comp.ref_ok || inst.reference == comp.reference {
+            if !comp.ref_ok || (inst.reference == comp.reference && !(opts.pin_refs && !plan.explicit.contains(&ci))) {
                 continue;
             }
             if let Some(base) = out.shared.get(&ci) {
