@@ -50,7 +50,7 @@ pub fn import(esch: &Value, design_name: &str) -> Result<Imported, String> {
         };
         // References: pin down only those that automatic numbering gets wrong.
         let mut changed = false;
-        let mut lost = Vec::new();
+        let lost: Vec<String> = Vec::new();
         for (inst, &ci) in d.instances.iter().zip(&out.order) {
             let comp = &model.comps[ci];
             if !comp.ref_ok || inst.reference == comp.reference {
@@ -58,8 +58,6 @@ pub fn import(esch: &Value, design_name: &str) -> Result<Imported, String> {
             }
             if let Some(base) = out.shared.get(&ci) {
                 changed |= plan.unshared.insert(base.clone());
-            } else if ctx.parts[&comp.sym].kind == PartKind::Custom {
-                lost.push(format!("{} becomes {}: custom parts take no `ref:` yet", comp.reference, inst.reference));
             } else {
                 changed |= plan.explicit.insert(ci);
             }
@@ -646,6 +644,11 @@ fn detect_template(sym: &Sym, name: &str) -> String {
         if shape == "box" {
             continue;
         }
+        // A template with another pin count falls back to a box, which could match the drawing
+        // and pass for that template (a 4-pin box oscillator taken for a `resistor`).
+        if crate::symbol::templates::template(shape).is_some_and(|t| t.slots.len() != sym.pins.len()) {
+            continue;
+        }
         let built = sema::build_symbol(&template_def(name, sym, shape));
         if built.pins.len() != sym.pins.len() {
             continue;
@@ -985,10 +988,14 @@ fn construct(ctx: &Ctx, c: &Comp, explicit_ref: bool, warnings: &mut Vec<String>
         }
     }
     if info.kind == PartKind::Custom {
-        if value_differs || fp_arg.is_some() || !opts.is_empty() {
-            warnings.push(format!("{}: custom parts take no per-part value, footprint or fields yet; the part's own are kept", c.reference));
+        // Custom constructors take no arguments: per-part options go through `.options(#{ … })`.
+        if value_differs {
+            opts.insert(0, format!("value: {}", quote(&c.value)));
         }
-        return format!("{}()", info.call);
+        if c.footprint != info.footprint && c.footprint.contains(':') {
+            opts.insert(0, format!("footprint: {}", quote(&c.footprint)));
+        }
+        return if opts.is_empty() { format!("{}()", info.call) } else { format!("{}().options(#{{ {} }})", info.call, opts.join(", ")) };
     }
     let mut args: Vec<String> = Vec::new();
     if info.kind == PartKind::Std && (value_differs || fp_arg.is_some()) {

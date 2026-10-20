@@ -216,9 +216,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "899def5c37c4fd7b2664648c28120ecec138e4d395b459e5ca34f9cce2dd77fd"
 dependencies = [
  "cfg-if",
+ "js-sys",
  "libc",
  "r-efi",
  "wasip2",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -346,6 +348,7 @@ checksum = "0334639972c0ea5a3fd366aa36116754a11431b619fec3ed559b3f73bcbcebf5"
 dependencies = [
  "ahash",
  "bitflags",
+ "getrandom 0.3.4",
  "num-traits",
  "once_cell",
  "rhai_codegen",
@@ -623,6 +626,17 @@ dependencies = [
  "serde",
  "serde_json",
  "uuid",
+ "web-time",
+]
+
+[[package]]
+name = "wirx-wasm"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "wasm-bindgen",
+ "wirx",
 ]
 
 [[package]]

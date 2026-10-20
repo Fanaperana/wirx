@@ -667,7 +667,7 @@ fn place_near(proto: &Placed, desired: Pt, occupied: &[Rect]) -> Placed {
 /// are ranked by [`GroupStats::rank`] (crossings, bends, wire length, …, displacement from the
 /// default), and only a strictly better one replaces the default.
 pub fn layout_group(d: &Design, g: usize, opts: &super::Options, extra_symbols: &mut Vec<SymbolDef>, flags_done: &mut HashSet<usize>, diags: &mut Vec<Diagnostic>) -> GroupOut {
-    let start = std::time::Instant::now();
+    let start = web_time::Instant::now();
     let candidates = if opts.candidates { Variant::candidates() } else { vec![Variant::DEFAULT] };
     let mut best: Option<(GroupOut, HashSet<usize>, Vec<Diagnostic>)> = None;
     let mut base_positions: HashMap<usize, Pt> = HashMap::new();

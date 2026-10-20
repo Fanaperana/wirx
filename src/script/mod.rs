@@ -18,6 +18,7 @@ use crate::stdlib;
 use crate::symbol::boxgen::{layout_symbol, Side, Slot};
 use crate::symbol::templates::{self, TEMPLATE_NAMES};
 use crate::symbol::{library, PinType, RailKind, SymbolDef};
+#[cfg(not(target_arch = "wasm32"))]
 use rhai::module_resolvers::FileModuleResolver;
 use rhai::{Array, Dynamic, Engine, EvalAltResult, FnPtr, ImmutableString, Map, NativeCallContext, Position, Scope};
 use std::cell::RefCell;
@@ -399,6 +400,42 @@ fn instantiate(st: &Shared, ctx: &NativeCallContext, def: PartDef, args: &[Dynam
     Ok(Part { id })
 }
 
+/// `p.options(#{ ref: "U2", value: "…", footprint: "…", dnp: true, mpn: "…", Field: "…" })`: per-part
+/// options for any part, custom parts included (their constructors take no arguments).
+fn part_with(st: &Shared, ctx: &NativeCallContext, p: &mut Part, m: Map) -> RResult<Part> {
+    let span = ctx_span(st, ctx);
+    let mut s = st.borrow_mut();
+    let part = s.b.design.instances[p.id].part;
+    let symbol = s.b.design.parts[part].symbol.clone();
+    for (k, v) in m.iter() {
+        let text = v.to_string();
+        match k.as_str() {
+            "ref" => s.b.explicit_refs[p.id] = Some((text, span)),
+            "value" => s.b.design.instances[p.id].value = values::value_text(v, &symbol).unwrap_or(text),
+            "footprint" | "fp" => {
+                let fp = if text.contains(':') { Some(text.clone()) } else { crate::sema::footprint_alias(&symbol, &text) };
+                let Some(fp) = fp else {
+                    drop(s);
+                    return raise(
+                        st,
+                        ctx,
+                        Diagnostic::error("unknown_footprint", format!("\"{text}\" is not a footprint alias for this part")).hint("give a full footprint name like \"Package_SO:SOIC-8_3.9x4.9mm_P1.27mm\""),
+                    );
+                };
+                s.b.design.instances[p.id].footprint = fp;
+            }
+            "dnp" => s.b.design.instances[p.id].dnp = v.as_bool().unwrap_or(false),
+            other => {
+                let key = if other == "mpn" { "MPN".to_string() } else { other.to_string() };
+                let fields = &mut s.b.design.instances[p.id].fields;
+                fields.retain(|f| f.0 != key);
+                fields.push((key, text));
+            }
+        }
+    }
+    Ok(p.clone())
+}
+
 /// `part(#{ name: …, pins: [ … ] })`: a custom part definition, instantiated.
 fn custom_part(st: &Shared, ctx: &NativeCallContext, m: Map) -> RResult<Part> {
     let get = |k: &str| m.get(k).map(|v| v.to_string());
@@ -628,6 +665,10 @@ fn build_engine(st: &Shared, base_dir: &Path) -> Engine {
     e.on_debug(|s, _, _| eprintln!("{s}"));
     #[allow(deprecated)]
     e.register_debugger(|_, d| d, |_, _, _, _, _| Ok(rhai::debugger::DebuggerCommand::Continue));
+    // In WebAssembly there is no filesystem: `import` reports that the module was not found.
+    #[cfg(target_arch = "wasm32")]
+    let _ = base_dir;
+    #[cfg(not(target_arch = "wasm32"))]
     e.set_module_resolver(FileModuleResolver::new_with_path_and_extension(base_dir, "wx"));
 
     e.register_type_with_name::<Part>("Part").register_type_with_name::<PinRef>("Pin").register_type_with_name::<Net>("Net").register_type_with_name::<NoConnect>("NC");
@@ -667,6 +708,10 @@ fn build_engine(st: &Shared, base_dir: &Path) -> Engine {
     {
         let st = st.clone();
         e.register_fn("part", move |ctx: NativeCallContext, m: Map| custom_part(&st, &ctx, m));
+    }
+    {
+        let st = st.clone();
+        e.register_fn("options", move |ctx: NativeCallContext, p: &mut Part, m: Map| part_with(&st, &ctx, p, m));
     }
 
     // Pins.

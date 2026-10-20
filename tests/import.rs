@@ -81,3 +81,25 @@ fn edits_made_in_eleceda_come_back() {
     let r1 = d.instances.iter().find(|i| i.reference == "R1").unwrap();
     assert_eq!(r1.value, "4k7");
 }
+
+#[test]
+fn custom_parts_keep_their_references_and_box_symbols() {
+    // chessboard-mini has a 4-pin box oscillator (once mistaken for the `resistor` template) and
+    // custom chips whose references automatic numbering would swap.
+    let esch = Path::new(env!("CARGO_MANIFEST_DIR")).join("examples/chessboard-mini.esch");
+    let value: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(&esch).unwrap()).unwrap();
+    let imported = wirx::import::import(&value, "chessboard-mini").expect("imports");
+    assert!(imported.mismatches.is_empty(), "{:?}", imported.mismatches);
+    assert!(!imported.warnings.iter().any(|w| w.contains("becomes")), "{:?}", imported.warnings);
+    assert!(imported.text.contains(".options(#{ ref: "), "custom parts pin their references");
+    let refs = |v: &serde_json::Value| -> BTreeSet<String> {
+        v["sheets"].as_array().unwrap().iter().flat_map(|s| s["items"].as_array().unwrap().iter())
+            .filter(|i| i["kind"] == "symbol")
+            .filter_map(|i| i["fields"].as_array().unwrap().iter().find(|f| f["name"] == "Reference").and_then(|f| f["value"].as_str()).map(String::from))
+            .filter(|r| !r.starts_with('#'))
+            .collect()
+    };
+    let c = wirx::check_source("chessboard-mini.wx", &imported.text, Path::new("."));
+    let (rebuilt, _) = wirx::build(c.design.as_ref().expect("compiles")).expect("builds");
+    assert_eq!(refs(&value), refs(&rebuilt));
+}

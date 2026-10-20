@@ -107,6 +107,14 @@ let u = ATmega328P();
   `power_in`, `power_out`, `open_collector`, `open_emitter`, `free`, `unspecified`, `no_connect`.
 - **Sides:** `left`, `right`, `top`, `bottom`. Without a side, a `box` symbol puts inputs left,
   outputs right, supplies on top and grounds at the bottom.
+- **Per-part options.** The constructor of a custom part takes no arguments; set one instance's
+  reference, value, footprint, part number, fields or DNP with `.options(#{ … })`, the same keys as
+  a standard part's options map. It works on standard parts too.
+
+  ```rhai
+  let u = ATmega328P().options(#{ ref: "U3", value: "ATmega328PB-AU", mpn: "ATMEGA328PB-AU" });
+  let spare = ATmega328P().options(#{ dnp: true });
+  ```
 
 ### Symbols
 

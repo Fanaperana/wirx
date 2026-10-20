@@ -565,3 +565,24 @@ fn part_text_stays_by_its_part() {
         }
     }
 }
+
+#[test]
+fn options_set_per_part_values_on_custom_parts() {
+    let c = check(
+        r#"
+        fn Chip() { part(#{ name: "Chip", footprint: "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm", pins: [[1, "A", passive], [2, "B", passive]] }) }
+        let a = Chip().options(#{ ref: "U7", value: "Chip-B", footprint: "Package_SO:SOIC-8_5.3x5.3mm_P1.27mm", mpn: "XYZ-1", dnp: true });
+        let b = Chip();
+        a.A -> b.A;
+        a.B -> b.B;
+        "#,
+    );
+    assert!(!has_errors(&c.diags), "{:?}", messages(&c));
+    let d = c.design.unwrap();
+    let a = d.instances.iter().find(|i| i.reference == "U7").expect("U7");
+    assert_eq!(a.value, "Chip-B");
+    assert_eq!(a.footprint, "Package_SO:SOIC-8_5.3x5.3mm_P1.27mm");
+    assert!(a.dnp);
+    assert!(a.fields.contains(&("MPN".to_string(), "XYZ-1".to_string())));
+    assert!(d.instances.iter().any(|i| i.reference != "U7" && i.value == "Chip"));
+}

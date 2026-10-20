@@ -4,6 +4,14 @@ version = "0.1.0"
 edition = "2024"
 description = "Schematic-as-code: a DSL that compiles circuits into laid-out, checked schematics"
 
+license = "MIT"
+repository = "https://github.com/Fanaperana/wirx"
+readme = "README.md"
+keywords = ["schematic", "eda", "electronics", "dsl", "kicad"]
+
+[workspace]
+members = [".", "wasm"]
+
 [lib]
 path = "src/lib.rs"
 
@@ -17,3 +25,8 @@ rhai = { version = "1.26", features = ["debugging", "metadata"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order"] }
 uuid = { version = "1", features = ["v5"] }
+# std::time::Instant panics in the browser; web-time is the same API there (performance.now).
+web-time = "1"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+rhai = { version = "1.26", features = ["debugging", "metadata", "wasm-bindgen"] }

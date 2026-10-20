@@ -46,11 +46,18 @@ sheet("Power", || {
 - `wirx lib list` and `wirx lib show <part>`: the standard parts, rails and pins, from the
   command line.
 
-## Usage
+## Install
+
+wirx is a Rust program (edition 2024, Rust 1.85 or newer):
 
 ```bash
-cargo build --release
+git clone https://github.com/Fanaperana/wirx
+cd wirx
+cargo build --release        # the binary is target/release/wirx
+cargo install --path .       # or put `wirx` on your PATH
 ```
+
+## Usage
 
 ```bash
 wirx check design.wx                     # run the script, check names and electrical rules
@@ -86,6 +93,7 @@ The essentials:
 | Standard part | `R("10k")`, `C("100nF", "0402")`, `R("0", "0603", #{ ref: "R10", mpn: "…", dnp: true })` |
 | Computed value | `R(e24((5.0 - 2.0) / 0.010))` (numbers are base units) |
 | Custom part | `fn ATmega328P() { part(#{ name: "ATmega328P", footprint: "…", pins: [[29, "~RESET", input], [[4, 6], "VCC", power_in]] }) }` |
+| Per-part options | `ATmega328P().options(#{ ref: "U3", value: "…", mpn: "…", dnp: true })` (any part) |
 | Pins | `u.VIN`, `c[1]`, `j["A9"]`, `u.pin("~RESET")`, `u.pins(power_in)`, `u.pins("PB")` |
 | Connect | `a -> b` joins and continues from `b`; `[a, b] -> GND` fans in or out |
 | Inline part | `pb1 -> R("330") -> LED("red") -> GND` (in → out: 1 → 2, A → K, + → −) |
@@ -195,8 +203,8 @@ wirx import design.esch -o design.wx     # take the edits back (without -o it pr
   again (`R(…)`, `Conn(6)`). Other symbols become custom parts, `fn Name() { part(#{ … }) }`, with
   the pins from the file (number, name, type, side) and the shape they match, else `"box"`.
 - **Instances** keep their value, footprint (as an alias such as `"0603"` where one fits), extra
-  fields and `dnp` in the options map. References are kept: `ref:` is written only where automatic
-  numbering would differ.
+  fields and `dnp` in the options map (`.options(#{ … })` for custom parts). References are kept:
+  `ref:` is written only where automatic numbering would differ.
 - **Nets** become `->` chains, named after their labels (`net("SDA")`). Power-symbol nets become
   rails: built-ins like `GND` or `P3V3`, else `supply("…")` / `ground("…")`. No-connect flags
   become `nc([…])` and PWR_FLAGs `.driven()`.
@@ -207,8 +215,7 @@ wirx import design.esch -o design.wx     # take the edits back (without -o it pr
 
 Before writing, `import` compiles its own output and compares the netlist with the schematic's; it
 refuses to write on a mismatch (override with `--force`). What wirx cannot express yet is reported
-as a warning: buses, text notes, layout hints, and per-part value, footprint, fields or references
-of custom parts (their constructor takes no options yet). Re-importing a file that wirx built gives
+as a warning: buses, text notes and layout hints. Re-importing a file that wirx built gives
 the same netlist, and importing again after a rebuild gives the same source (`tests/import.rs`
 checks this for the examples).
 
@@ -252,6 +259,60 @@ The examples (`examples/ldo.wx`, `blinker.wx`, `mcu.wx`) meet the bar eleceda se
 reference designs: they load without repairs, have no errors or warnings, and score 95+ for
 readability.
 
+## In eleceda
+
+eleceda ships wirx as its layout engine (a git submodule built
+to WebAssembly, so the desktop app and the browser version share it). Its AI agent reads the open
+design as wirx source (`wirx import`), changes the intent, and wirx redraws and checks the sheets
+that changed; the result is shown as a preview to accept.
+
+## As a library
+
+The crate is the compiler without the command line:
+
+```rust
+use std::path::Path;
+
+let c = wirx::check_source("design.wx", &text, Path::new("."));   // run the script + checks
+if let Some(design) = &c.design {
+    let (esch, diagnostics) = wirx::build(design)?;                // laid out, verified .esch JSON
+}
+let imported = wirx::import::import(&esch_json, "design")?;        // .esch back to .wx source
+println!("{}", imported.text);
+```
+
+Diagnostics carry a stable `code`, a span and a hint; `c.sources.render(&d)` prints them like the
+command line and `c.sources.to_json(&d)` gives the JSON form.
+
+## WebAssembly
+
+`wasm/` wraps the library for JavaScript. Every function takes and returns JSON strings:
+
+```bash
+cd wasm
+wasm-pack build --release --target web --out-dir pkg
+```
+
+```js
+import init, { check, build, importEsch, version } from './pkg/wirx_wasm.js';
+await init();
+const out = JSON.parse(build('design.wx', source));     // { ok, esch, diagnostics, errors }
+const back = JSON.parse(importEsch(eschText, 'design')); // { ok, source, warnings, mismatches, error }
+```
+
+There is no filesystem in the browser: `import "…"` and `library: "…"` references report an error.
+Run it in a Web Worker so layout never blocks the page.
+
+## Tests
+
+```bash
+cargo test --release
+```
+
+The suite builds every example deterministically, checks the language and its error messages,
+round-trips the examples through `.esch` and back (`tests/import.rs`), and holds the layout to the
+text and overlap rules above.
+
 ## Not yet
 
 - Hierarchical sheet symbols
@@ -259,3 +320,7 @@ readability.
 - LSP and formatter
 - Footprint pad checks
 - Native KiCad `.kicad_sch` output (for now, export through eleceda: see [Getting to KiCad](#getting-to-kicad))
+
+## License
+
+MIT. See [LICENSE](LICENSE).

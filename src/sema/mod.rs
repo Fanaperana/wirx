@@ -205,7 +205,7 @@ pub struct Builder {
     named: HashMap<String, usize>,
     /// Part name -> (part index, definition fingerprint).
     parts: HashMap<String, (usize, String)>,
-    explicit_refs: Vec<Option<(String, Option<Span>)>>,
+    pub explicit_refs: Vec<Option<(String, Option<Span>)>>,
 }
 
 /// Everything about a new instance except its pins.
