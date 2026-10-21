@@ -7,6 +7,7 @@
 use super::templates::{rect, std_fields};
 use super::{Fill, Pin, PinType, SymbolDef};
 use crate::geom::{pt, Pt, Rot};
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Side {
@@ -61,8 +62,23 @@ pub fn box_symbol(id: &str, name: &str, prefix: &str, pins: &[BoxPin]) -> Symbol
         Side::Top => 2,
         Side::Bottom => 3,
     };
+    // A hidden pin named like a visible one (the other DVDD or GND pins of a chip) stacks behind
+    // it, the way chip symbols draw them, instead of taking a place of its own on the edge.
+    let stack_on: HashMap<usize, usize> = pins
+        .iter()
+        .enumerate()
+        .filter(|(_, p)| p.hidden)
+        .filter_map(|(i, p)| {
+            let side = p.side.or_else(|| auto_side(p));
+            let host = pins.iter().position(|q| !q.hidden && q.name == p.name && q.ptype == p.ptype && (p.side.is_none() || q.side.or_else(|| auto_side(q)) == side))?;
+            Some((i, host))
+        })
+        .collect();
     let mut flexible = Vec::new();
     for (i, p) in pins.iter().enumerate() {
+        if stack_on.contains_key(&i) {
+            continue;
+        }
         match p.side.or_else(|| auto_side(p)) {
             Some(s) => sides[idx(s)].push((i, p)),
             None => flexible.push((i, p)),
@@ -111,6 +127,11 @@ pub fn box_symbol(id: &str, name: &str, prefix: &str, pins: &[BoxPin]) -> Symbol
     place(&sides[1], &|i| pt(half_w + len, r + i * pitch), 180);
     place(&sides[2], &|i| pt(t + i * pitch, -half_h - len), 270);
     place(&sides[3], &|i| pt(b + i * pitch, half_h + len), 90);
+    for (&i, &host) in &stack_on {
+        let h = out.iter().find(|p| p.0 == host).unwrap().1.clone();
+        let p = &pins[i];
+        out.push((i, Pin { number: p.number.clone(), name: p.name.clone(), ptype: p.ptype, hidden: Some(true), ..h }));
+    }
     // Keep the part's declaration order: pin k of the symbol is pin k of the part.
     out.sort_by_key(|p| p.0);
     let out: Vec<Pin> = out.into_iter().map(|p| p.1).collect();

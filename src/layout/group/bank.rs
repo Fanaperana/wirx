@@ -18,6 +18,9 @@
 use super::*;
 use crate::symbol::PinType;
 
+/// How far out from a bank's pin the lane kept for its wire reaches (see `bank_lanes`).
+const LANE: i32 = 2500;
+
 pub(super) struct Bank {
     pub supply: usize,
     pub ground: usize,
@@ -220,11 +223,83 @@ impl Ctx<'_> {
         (caps, pt(near, bus))
     }
 
+    /// Which way each bank at a pin on a top or bottom edge goes, and how far its pin is from the
+    /// corner it goes toward (keyed by the bank's first capacitor). A bank goes toward the corner
+    /// with fewer other banked pins between it and the corner, so it passes over no pin whose own
+    /// bank still has to come out there; then the one with fewer signal pins to pass over (their
+    /// parts stand there); then the nearer corner. Banks of side pins get no way.
+    pub(super) fn bank_ways(&self, banks: &[&Bank], placed: &HashMap<usize, Placed>) -> HashMap<usize, (Option<bool>, i32)> {
+        // (chip, edge direction, edge line, lowest and highest position of the pin or run along it)
+        let spans: Vec<Option<(usize, u16, i32, i32, i32)>> = banks
+            .iter()
+            .map(|b| {
+                let (c, k) = b.pin?;
+                let p = placed.get(&c)?;
+                let run = self.run_of(c, k).unwrap_or_else(|| vec![k]);
+                let t = p.pins[k];
+                let along = |q: usize| if is_horizontal(t.out) { p.pins[q].at.y } else { p.pins[q].at.x };
+                let line = if is_horizontal(t.out) { t.at.x } else { t.at.y };
+                Some((c, t.out, line, run.iter().map(|&q| along(q)).min()?, run.iter().map(|&q| along(q)).max()?))
+            })
+            .collect();
+        let mut ways = HashMap::new();
+        for (x, b) in banks.iter().enumerate() {
+            let Some((c, out, line, lo, hi)) = spans[x] else { continue };
+            let p = &placed[&c];
+            let (lo_room, hi_room) = if is_horizontal(out) { (lo - p.body.y0, p.body.y1 - hi) } else { (lo - p.body.x0, p.body.x1 - hi) };
+            if is_horizontal(out) {
+                ways.insert(b.caps[0], (None, lo_room.min(hi_room)));
+                continue;
+            }
+            let same_edge = spans.iter().enumerate().filter(|&(z, s)| z != x && s.is_some_and(|s| s.0 == c && s.1 == out && s.2 == line)).map(|(_, s)| s.unwrap());
+            let (before, after) = same_edge.fold((0, 0), |(l, r), s| (l + (s.4 < lo) as usize, r + (s.3 > hi) as usize));
+            // Pins on this edge wired to a signal net, each side of the bank's pin.
+            let inst = &self.d.instances[c];
+            let signals = |side: &dyn Fn(i32) -> bool| {
+                (0..p.pins.len())
+                    .filter(|&q| p.pins[q].out == out && side(p.pins[q].at.x) && !inst.nc[q] && inst.pin_net[q].is_some_and(|n| !self.d.nets[n].is_rail()))
+                    .count()
+            };
+            let (sig_before, sig_after) = (signals(&|x| x < lo), signals(&|x| x > hi));
+            let left = if before != after {
+                before < after
+            } else if sig_before != sig_after {
+                sig_before < sig_after
+            } else {
+                lo_room <= hi_room
+            };
+            ways.insert(b.caps[0], (Some(left), if left { lo_room } else { hi_room }));
+        }
+        ways
+    }
+
+    /// Room kept clear in front of the pins of `chip` that banks will be drawn at, while the parts
+    /// hanging off its other pins are placed: a lane straight out from the pin (or from the end of
+    /// its run the bank leaves by), so the bank's wire can get past those parts to open space.
+    pub(super) fn bank_lanes(&self, banks: &[Bank], chip: usize, placed: &HashMap<usize, Placed>) -> Vec<Rect> {
+        let mine: Vec<&Bank> = banks.iter().filter(|b| b.pin.is_some_and(|p| p.0 == chip)).collect();
+        let Some(p) = placed.get(&chip) else { return vec![] };
+        let ways = self.bank_ways(&mine, placed);
+        mine.iter()
+            .map(|b| {
+                let (_, k) = b.pin.unwrap();
+                let t = p.pins[k];
+                let run = self.run_of(chip, k).unwrap_or_else(|| vec![k]);
+                let ends: Vec<Pt> = if run.len() > 1 { run.iter().map(|&q| p.pins[q].at + dir_vec(t.out) * STUB).collect() } else { vec![t.at] };
+                let start = match ways.get(&b.caps[0]).and_then(|w| w.0) {
+                    Some(false) => *ends.iter().max_by_key(|p| (p.x, p.y)).unwrap(),
+                    _ => *ends.iter().min_by_key(|p| (p.x, p.y)).unwrap(),
+                };
+                Rect::from_points(start, start + dir_vec(t.out) * LANE).inflate(50)
+            })
+            .collect()
+    }
+
     /// Draw a bank at its pin: the pin's own power symbol gives way to a wire into the bank's supply
-    /// wire. Tries growing distances, nearest first, toward the chip's nearer corner (only that way
-    /// when `outward_only`, then the other way otherwise); false (nothing changed) when no position
-    /// is clear.
-    pub(super) fn attach_bank(&mut self, b: &Bank, outward_only: bool, placed: &mut HashMap<usize, Placed>, order: &mut Vec<usize>, occupied: &mut Vec<Rect>) -> bool {
+    /// wire. Tries growing distances, nearest first, toward `way` (true: left) on a top or bottom
+    /// edge, the chip's nearer corner without one (only that way when `outward_only`, then the
+    /// other way otherwise); false (nothing changed) when no position is clear.
+    pub(super) fn attach_bank(&mut self, b: &Bank, way: Option<bool>, outward_only: bool, placed: &mut HashMap<usize, Placed>, order: &mut Vec<usize>, occupied: &mut Vec<Rect>) -> bool {
         let Some((chip, k)) = b.pin else { return false };
         let Some(old) = placed.get(&chip).cloned() else { return false };
         // A run of pins keeps its short bus; the bank's wire continues it from one end.
@@ -258,9 +333,9 @@ impl Ctx<'_> {
         let ends: Vec<Pt> = if run.len() > 1 { run.iter().map(|&q| ic.pins[q].at + dir_vec(t.out) * STUB).collect() } else { vec![t.at] };
         let first = *ends.iter().min_by_key(|p| (p.x, p.y)).unwrap();
         let last = *ends.iter().max_by_key(|p| (p.x, p.y)).unwrap();
-        // On a top or bottom edge the bank goes toward the nearer corner of the chip, so banks of
-        // neighbouring pins fan out without crossing.
-        let toward_left = t.at.x - ic.body.x0 <= ic.body.x1 - t.at.x;
+        // On a top or bottom edge the bank goes its way (see `bank_ways`), else toward the nearer
+        // corner of the chip, so banks of neighbouring pins fan out without crossing.
+        let toward_left = way.unwrap_or(t.at.x - ic.body.x0 <= ic.body.x1 - t.at.x);
         // (cost, far_left, path from the pin to the bank's near end)
         let mut options: Vec<(i32, bool, Vec<Pt>)> = Vec::new();
         match t.out {

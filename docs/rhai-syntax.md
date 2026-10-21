@@ -107,6 +107,9 @@ let u = ATmega328P();
   `power_in`, `power_out`, `open_collector`, `open_emitter`, `free`, `unspecified`, `no_connect`.
 - **Sides:** `left`, `right`, `top`, `bottom`. Without a side, a `box` symbol puts inputs left,
   outputs right, supplies on top and grounds at the bottom.
+- **Hidden pins.** `hidden` after the type (`[[23, 39], "DVDD", power_in, hidden]`) draws those
+  pins behind the visible pin of the same name (`[6, "DVDD", power_in]`), the way chip symbols
+  show many supply pins as one. With no visible pin of that name, each keeps a place of its own.
 - **Per-part options.** The constructor of a custom part takes no arguments; set one instance's
   reference, value, footprint, part number, fields or DNP with `.options(#{ … })`, the same keys as
   a standard part's options map. It works on standard parts too.

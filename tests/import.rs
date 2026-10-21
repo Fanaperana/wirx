@@ -143,3 +143,53 @@ fn power_flags_survive_import_and_rebuild() {
     let (rebuilt, _) = wirx::build(c.design.as_ref().expect("compiles")).expect("builds");
     assert_eq!(flags(&rebuilt), flags(&value));
 }
+
+/// Where pin `number` of part `reference` was drawn.
+fn pin_at(s: &wirx::layout::Schematic, d: &wirx::ir::Design, reference: &str, number: &str) -> wirx::geom::Pt {
+    let i = d.instances.iter().position(|x| x.reference == reference).unwrap_or_else(|| panic!("no {reference}"));
+    for it in s.sheets.iter().flat_map(|sh| &sh.items) {
+        if let wirx::layout::Item::Symbol { lib_id, at, orient, inst: Some(j), .. } = it
+            && *j == i
+        {
+            let sym = s.symbols.iter().find(|x| &x.id == lib_id).unwrap();
+            return wirx::symbol::place_pin(sym.pins.iter().find(|p| p.number == number).unwrap(), *orient, *at).at;
+        }
+    }
+    panic!("{reference} not drawn")
+}
+
+/// Is there a wire path between `a` and `b` on one sheet?
+fn wired(s: &wirx::layout::Schematic, a: wirx::geom::Pt, b: wirx::geom::Pt) -> bool {
+    use wirx::geom::Pt;
+    let on = |p: Pt, (x, y): (Pt, Pt)| (x.x == y.x || x.y == y.y) && p.x >= x.x.min(y.x) && p.x <= x.x.max(y.x) && p.y >= x.y.min(y.y) && p.y <= x.y.max(y.y);
+    s.sheets.iter().any(|sheet| {
+        let wires: Vec<(Pt, Pt)> = sheet.items.iter().filter_map(|it| if let wirx::layout::Item::Wire { a, b } = it { Some((*a, *b)) } else { None }).collect();
+        let mut reached: Vec<bool> = wires.iter().map(|&w| on(a, w)).collect();
+        while let Some(i) = (0..wires.len()).find(|&i| {
+            !reached[i] && (0..wires.len()).any(|j| reached[j] && [wires[i].0, wires[i].1].iter().any(|&p| on(p, wires[j])) || reached[j] && [wires[j].0, wires[j].1].iter().any(|&p| on(p, wires[i])))
+        }) {
+            reached[i] = true;
+        }
+        wires.iter().zip(&reached).any(|(&w, &r)| r && on(b, w))
+    })
+}
+
+#[test]
+fn imported_decoupling_stays_at_stacked_pins() {
+    // RP2350A in the imported chessboard-mini: DVDD is pins 6, 23 and 39 drawn as one (23 and 39
+    // hidden behind 6), between VREG_VIN and the IOVDD pins on a crowded top edge, with the core
+    // regulator's inductor hanging off VREG_LX next to them. Each capacitor's `near` pin keeps its
+    // bank: drawn there and wired to it, not left in a row under the chip.
+    let esch = Path::new(env!("CARGO_MANIFEST_DIR")).join("examples/chessboard-mini.esch");
+    let value: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(&esch).unwrap()).unwrap();
+    let imported = wirx::import::import_with(&value, "chessboard-mini", wirx::import::ImportOptions { pin_refs: true }).expect("imports");
+    let c = wirx::check_source("chessboard-mini.wx", &imported.text, Path::new("."));
+    let d = c.design.expect("compiles");
+    let (s, _) = wirx::draw(&d).unwrap_or_else(|e| panic!("{e:#?}"));
+    for (cap, pin) in [("C13", "49"), ("C15", "6"), ("C16", "6"), ("C17", "6"), ("C18", "6")] {
+        assert!(wired(&s, pin_at(&s, &d, cap, "1"), pin_at(&s, &d, "U3", pin)), "{cap} is wired to U3 pin {pin}");
+    }
+    for hidden in ["23", "39"] {
+        assert_eq!(pin_at(&s, &d, "U3", hidden), pin_at(&s, &d, "U3", "6"), "DVDD pin {hidden} behind pin 6");
+    }
+}

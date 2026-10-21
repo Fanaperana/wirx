@@ -51,9 +51,10 @@ impl Variant {
 
 impl GroupStats {
     /// The one quality order every optimisation uses (lower is better): unreachable pins,
-    /// crossings, four-way points, bends, hugging parallel wires, length, then how far parts moved.
-    pub fn rank(&self) -> (usize, usize, usize, usize, usize, i64, i64) {
-        (self.unrouted, self.crossings, self.four_way, self.bends, self.hugs, self.length, self.displacement)
+    /// decoupling banks drawn away from their pin, crossings, four-way points, bends, hugging
+    /// parallel wires, length, then how far parts moved.
+    pub fn rank(&self) -> (usize, usize, usize, usize, usize, usize, i64, i64) {
+        (self.unrouted, self.stray_banks, self.crossings, self.four_way, self.bends, self.hugs, self.length, self.displacement)
     }
 }
 
@@ -79,6 +80,8 @@ pub struct GroupStats {
     pub collisions: usize,
     /// Pins that had to be connected by label because no wire could reach them.
     pub unrouted: usize,
+    /// Decoupling banks with a known pin that found no room there and were drawn apart.
+    pub stray_banks: usize,
     /// Total movement of parts from the default candidate's positions, mils.
     pub displacement: i64,
     pub micros: u128,
@@ -181,6 +184,12 @@ struct Ctx<'a> {
     diags: &'a mut Vec<Diagnostic>,
     /// Pins whose rail is drawn by a decoupling bank instead of their own power symbol.
     bank_pins: HashSet<(usize, usize)>,
+    /// Banks with a known pin that could not be drawn there.
+    stray_banks: usize,
+    /// Lanes kept clear for the wires of banks still to be drawn (see `bank::bank_lanes`), by chip:
+    /// parts placed meanwhile stay out of them, and parts hanging off that chip are not wired
+    /// across them.
+    lanes: Vec<(usize, Rect)>,
 }
 
 pub fn label_rect(at: Pt, rot: Rot, text: &str) -> Rect {
@@ -687,7 +696,8 @@ pub fn layout_group(d: &Design, g: usize, opts: &super::Options, extra_symbols: 
             None => true,
             Some((b, _, _)) => {
                 let base = base.as_ref().unwrap();
-                let valid = out.stats.collisions <= base.collisions && out.stats.unrouted <= base.unrouted && out.stats.four_way <= base.four_way;
+                let valid = out.stats.collisions <= base.collisions && out.stats.unrouted <= base.unrouted && out.stats.four_way <= base.four_way
+                    || out.stats.stray_banks < base.stray_banks;
                 valid && rank(&out.stats) < rank(&b.stats)
             }
         };
@@ -760,7 +770,7 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
         }
     }
 
-    let mut ctx = Ctx { v, opts: *opts, d, g, in_group, label_pin, flag_pin, extra_symbols, diags, bank_pins: HashSet::new() };
+    let mut ctx = Ctx { v, opts: *opts, d, g, in_group, label_pin, flag_pin, extra_symbols, diags, bank_pins: HashSet::new(), stray_banks: 0, lanes: Vec::new() };
     let mut placed: HashMap<usize, Placed> = HashMap::new();
     let mut order: Vec<usize> = Vec::new();
     let mut occupied: Vec<Rect> = Vec::new();
@@ -819,6 +829,12 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
         .map(|&i| (i, partner_pins(i).iter().map(|p| p.1).min().map_or((false, 0), |y| (true, -facing * y))))
         .collect();
 
+    // Decoupling capacitors go in banks (see `bank`): drawn at their pin once the chips are placed,
+    // or, with no pin to serve, as one unit in the row below. A lone capacitor with no pin to draw
+    // it at stays an ordinary rail-only part. Until then each bank's pin keeps a lane clear.
+    let banks = ctx.plan_banks(&near);
+    let bank_chips: HashSet<usize> = banks.iter().filter_map(|b| b.pin.map(|p| p.0)).collect();
+
     // Clusters of signal-connected parts, each grown from its biggest part.
     loop {
         let anchor = group
@@ -839,6 +855,11 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
             place_near(&proto, desired, &occupied)
         };
         commit(p, &mut placed, &mut order, &mut occupied);
+        if bank_chips.contains(&anchor) {
+            let lanes = ctx.bank_lanes(&banks, anchor, &placed);
+            occupied.extend(lanes.iter().copied());
+            ctx.lanes.extend(lanes.into_iter().map(|r| (anchor, r)));
+        }
 
         // Grow outward pin by pin.
         let mut qi = order.len() - 1;
@@ -868,13 +889,13 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
                         continue;
                     }
                     // A `near` hint picks the parent pin itself.
-                    let (anchor_pin, anchor_out) = match near.get(&ci).and_then(|&(b, bk)| placed.get(&b).map(|p| p.pins[bk])) {
-                        Some(hp) => (hp.at, hp.out),
-                        None => (pp[k].at, pp[k].out),
+                    let (anchor_chip, anchor_pin, anchor_out) = match near.get(&ci).and_then(|&(b, bk)| placed.get(&b).map(|p| (b, p.pins[bk]))) {
+                        Some((b, hp)) => (b, hp.at, hp.out),
+                        None => (parent, pp[k].at, pp[k].out),
                     };
                     let p = match bridge_child(&mut ctx, ci, ck, parent, &pp, k, &occupied) {
                         Some(p) => p,
-                        None => place_child(&mut ctx, ci, ck, anchor_pin, anchor_out, &occupied),
+                        None => place_child(&mut ctx, ci, ck, anchor_chip, anchor_pin, anchor_out, &occupied),
                     };
                     let straight = p.pins[ck].at.y == anchor_pin.y || p.pins[ck].at.x == anchor_pin.x;
                     let tip = p.pins[ck].at;
@@ -885,17 +906,19 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
                     if straight {
                         occupied.push(wire_rect(anchor_pin, tip));
                     }
+                    if bank_chips.contains(&ci) {
+                        let lanes = ctx.bank_lanes(&banks, ci, &placed);
+                        occupied.extend(lanes.iter().copied());
+                        ctx.lanes.extend(lanes.into_iter().map(|r| (ci, r)));
+                    }
                 }
             }
         }
     }
 
     uncross_hangs(&mut placed, &order, &hangs);
+    ctx.lanes.clear();
 
-    // Decoupling capacitors go in banks (see `bank`): drawn at their pin once the chips are placed,
-    // or, with no pin to serve, as one unit in the row below. A lone capacitor with no pin to draw
-    // it at stays an ordinary rail-only part.
-    let banks = ctx.plan_banks(&near);
     let banked: HashSet<usize> = banks.iter().filter(|b| b.pin.is_some() || b.caps.len() > 1).flat_map(|b| b.caps.iter().copied()).collect();
 
     // Rail-only parts (bulk caps, regulators between rails): a `near` hint puts one at its pin;
@@ -917,7 +940,7 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
             let mut local_order = vec![i];
             let mut local_occ = proto.rects.clone();
             for b in banks.iter().filter(|b| b.pin.is_some_and(|p| p.0 == i)) {
-                if ctx.attach_bank(b, false, &mut local, &mut local_order, &mut local_occ) {
+                if ctx.attach_bank(b, None, false, &mut local, &mut local_order, &mut local_occ) {
                     attached.insert(b.caps[0]);
                 }
             }
@@ -951,25 +974,23 @@ fn layout_candidate(d: &Design, g: usize, v: Variant, opts: &super::Options, ext
     let mut row: Vec<Vec<Placed>> = Vec::new();
     // Outermost pins of an edge first: banks of inner pins then pass over them, not through them.
     let mut pending: Vec<&bank::Bank> = banks.iter().filter(|b| b.pin.is_some() && !attached.contains(&b.caps[0])).collect();
-    pending.sort_by_key(|b| {
-        let (c, k) = b.pin.unwrap();
-        placed.get(&c).map_or(0, |p| {
-            let t = p.pins[k];
-            if is_horizontal(t.out) { (t.at.y - p.body.y0).min(p.body.y1 - t.at.y) } else { (t.at.x - p.body.x0).min(p.body.x1 - t.at.x) }
-        })
-    });
-    // First every bank toward its chip's nearer corner, outer pins first, so they fan out; then
-    // the ones that found no room there may take the other way.
+    // Each bank goes toward the corner that keeps it clear of the other banks' pins.
+    let ways = ctx.bank_ways(&pending, &placed);
+    let way = |b: &bank::Bank| ways.get(&b.caps[0]).copied().unwrap_or((None, 0));
+    pending.sort_by_key(|b| way(b).1);
+    // First every bank its way, outer pins first, so they fan out; then the ones that found no
+    // room there may take the other way.
     let mut retry: Vec<&bank::Bank> = Vec::new();
     for b in pending {
-        if !ctx.attach_bank(b, true, &mut placed, &mut order, &mut occupied) {
+        if !ctx.attach_bank(b, way(b).0, true, &mut placed, &mut order, &mut occupied) {
             retry.push(b);
         }
     }
     for b in retry {
-        if ctx.attach_bank(b, false, &mut placed, &mut order, &mut occupied) {
+        if ctx.attach_bank(b, way(b).0, false, &mut placed, &mut order, &mut occupied) {
             continue;
         }
+        ctx.stray_banks += 1;
         if b.caps.len() > 1 {
             row.push(ctx.bank_unit(b, true, false).0);
             continue;
@@ -1320,7 +1341,7 @@ fn bridge_child(ctx: &mut Ctx, ci: usize, ck: usize, parent: usize, pp: &[Placed
 }
 
 /// Place part `ci` so its pin `ck` faces the parent pin at `at` (leaving in direction `out`).
-fn place_child(ctx: &mut Ctx, ci: usize, ck: usize, at: Pt, out: Rot, occupied: &[Rect]) -> Placed {
+fn place_child(ctx: &mut Ctx, ci: usize, ck: usize, parent: usize, at: Pt, out: Rot, occupied: &[Rect]) -> Placed {
     let want = opposite(out);
     let orient = ctx.rail_orient(ci).unwrap_or_else(|| {
         let sym = ctx.sym(ci);
@@ -1344,9 +1365,17 @@ fn place_child(ctx: &mut Ctx, ci: usize, ck: usize, at: Pt, out: Rot, occupied: 
     let along = dir_vec(out);
     let across = dir_vec(crate::geom::norm_rot(out as i32 - 90)) * if ctx.v.flip { -1 } else { 1 };
     let hanging = is_horizontal(q.out) != is_horizontal(out);
+    // A part beside a lane of its parent's banks is wired to its pin without crossing the lane
+    // (one bend either way).
+    let lanes: Vec<Rect> = ctx.lanes.iter().filter(|l| l.0 == parent).map(|l| l.1).collect();
+    let crosses = |a: Pt, b: Pt| a != b && lanes.iter().any(|l| wire_rect(a, b).overlaps(l));
+    let reachable = |b: Pt| {
+        let (c1, c2) = (pt(at.x, b.y), pt(b.x, at.y));
+        lanes.is_empty() || (!crosses(at, c1) && !crosses(c1, b)) || (!crosses(at, c2) && !crosses(c2, b))
+    };
     for &(a, p) in if hanging { along_offsets() } else { front_offsets() } {
         let off = base + along * a + across * p;
-        if !collides(&proto, off, occupied) {
+        if !collides(&proto, off, occupied) && reachable(q.at + off) {
             let mut placed = proto.clone();
             placed.translate(off);
             return placed;
@@ -1945,6 +1974,7 @@ fn route_group(ctx: &mut Ctx, placed: &HashMap<usize, Placed>, order: &[usize], 
         four_way: metrics.four_way,
         collisions: super::text::collisions(d, &items, ctx.extra_symbols),
         unrouted,
+        stray_banks: ctx.stray_banks,
         ..Default::default()
     };
     GroupOut { group: ctx.g, name: group.name.clone(), items, bbox: bb.unwrap_or(Rect::new(0, 0, 100, 100)), stats, positions }

@@ -71,6 +71,9 @@ enum Cmd {
         /// Write the source even when its netlist differs from the schematic's.
         #[arg(long)]
         force: bool,
+        /// Write every part's reference, so parts added later take the next free number.
+        #[arg(long)]
+        pin_refs: bool,
     },
     /// Browse the standard library.
     Lib {
@@ -238,7 +241,7 @@ fn main() -> ExitCode {
                 }
             }
         }
-        Cmd::Import { file, out, force } => import(&file, out.as_deref(), force),
+        Cmd::Import { file, out, force, pin_refs } => import(&file, out.as_deref(), force, pin_refs),
         Cmd::Stats { file, json, no_candidates, no_reroute, no_cleanup } => {
             let c = match wirx::check_file(&file) {
                 Ok(c) => c,
@@ -275,7 +278,7 @@ fn main() -> ExitCode {
     }
 }
 
-fn import(file: &Path, out: Option<&Path>, force: bool) -> ExitCode {
+fn import(file: &Path, out: Option<&Path>, force: bool, pin_refs: bool) -> ExitCode {
     let text = match std::fs::read_to_string(file) {
         Ok(t) => t,
         Err(e) => return fail(&format!("cannot read {}: {e}", file.display())),
@@ -285,7 +288,7 @@ fn import(file: &Path, out: Option<&Path>, force: bool) -> ExitCode {
         Err(e) => return fail(&format!("{} is not valid JSON: {e}", file.display())),
     };
     let name = out.unwrap_or(file).file_stem().and_then(|s| s.to_str()).unwrap_or("design").to_string();
-    let imported = match wirx::import::import(&esch, &name) {
+    let imported = match wirx::import::import_with(&esch, &name, wirx::import::ImportOptions { pin_refs }) {
         Ok(i) => i,
         Err(e) => return fail(&e),
     };

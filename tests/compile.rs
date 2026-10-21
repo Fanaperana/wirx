@@ -512,6 +512,109 @@ fn polarized_caps_follow_their_wiring() {
     assert_eq!(own_symbols(&s, &d, "C2"), 2, "negative-rail cap keeps its own symbols");
 }
 
+/// Is there a wire path between `a` and `b` (a wire end on another wire joins them)?
+fn wired(s: &wirx::layout::Schematic, a: wirx::geom::Pt, b: wirx::geom::Pt) -> bool {
+    use wirx::geom::Pt;
+    let on = |p: Pt, (x, y): (Pt, Pt)| p.x >= x.x.min(y.x) && p.x <= x.x.max(y.x) && p.y >= x.y.min(y.y) && p.y <= x.y.max(y.y) && (x.x == y.x || x.y == y.y);
+    for sheet in &s.sheets {
+        let wires: Vec<(Pt, Pt)> = sheet.items.iter().filter_map(|it| if let wirx::layout::Item::Wire { a, b } = it { Some((*a, *b)) } else { None }).collect();
+        let mut reached: Vec<bool> = wires.iter().map(|&w| on(a, w)).collect();
+        loop {
+            let mut grew = false;
+            for i in 0..wires.len() {
+                if reached[i] {
+                    continue;
+                }
+                let touches = (0..wires.len()).any(|j| reached[j] && (on(wires[i].0, wires[j]) || on(wires[i].1, wires[j]) || on(wires[j].0, wires[i]) || on(wires[j].1, wires[i])));
+                if touches {
+                    reached[i] = true;
+                    grew = true;
+                }
+            }
+            if !grew {
+                break;
+            }
+        }
+        if wires.iter().zip(&reached).any(|(&w, &r)| r && on(b, w)) {
+            return true;
+        }
+    }
+    false
+}
+
+/// A chip whose supply pins stand side by side on its top edge, two of them with more pins of the
+/// same name hidden behind them (the way RP2040/RP2350 symbols draw DVDD and IOVDD), next to a
+/// switching pin with an inductor hanging off it.
+const SOC: &str = r#"
+    fn SOC() {
+        part(#{ name: "SOC", prefix: "U", footprint: "Package_DFN_QFN:QFN-24-1EP_4x4mm_P0.5mm_EP2.6x2.6mm",
+            pins: [
+                [1, "IN", input], [2, "OUT", output],
+                [3, "LX", power_out, top],
+                [4, "VIN", power_in],
+                [5, "DVDD", power_in],
+                [[6, 7], "DVDD", power_in, hidden],
+                [8, "IOVDD", power_in],
+                [[9, 10], "IOVDD", power_in, hidden],
+                [11, "GND", power_in],
+            ] })
+    }
+"#;
+
+/// Hidden pins named like a visible pin are drawn behind it, not in places of their own.
+#[test]
+fn hidden_pins_stack_behind_their_visible_pin() {
+    let (d, s) = bank_layout(&format!(
+        r#"{SOC}
+        let u = SOC();
+        [u.VIN, u.IOVDD] -> P3V3; u.DVDD -> supply("+1V1"); u.GND -> GND; nc([u.IN, u.OUT, u.LX]);
+        GND.driven();
+        "#
+    ));
+    for (visible, hidden) in [("5", ["6", "7"]), ("8", ["9", "10"])] {
+        for h in hidden {
+            assert_eq!(pin_at(&s, &d, "U1", h), pin_at(&s, &d, "U1", visible), "pin {h} behind pin {visible}");
+        }
+    }
+    // Four places on the top edge (LX, VIN, DVDD, IOVDD), not eight.
+    let tops: std::collections::BTreeSet<i32> = ["3", "4", "5", "6", "7", "8", "9", "10"].iter().map(|n| pin_at(&s, &d, "U1", n).x).collect();
+    assert_eq!(tops.len(), 4, "{tops:?}");
+}
+
+/// Banks at neighbouring pins of one edge, one of them a stacked pin with four capacitors, with an
+/// inductor hanging off the pin next to them: every bank is still drawn at its own pin and wired
+/// to it, never left apart in the row below.
+#[test]
+fn banks_at_stacked_and_neighbouring_pins_are_wired_to_them() {
+    let (d, s) = bank_layout(&format!(
+        r#"{SOC}
+        let u = SOC();
+        let v1v1 = supply("+1V1").driven();
+        [u.VIN, u.IOVDD] -> P3V3; u.DVDD -> v1v1; u.GND -> GND; nc([u.IN, u.OUT]);
+        u.LX -> L("3.3uH", "Inductor_SMD:L_0805_2012Metric") -> v1v1;
+        let vin = C("100nF", "0402");
+        P3V3 -> vin -> GND;
+        near(vin, u.VIN);
+        let core = [C("4.7uF", "0402"), C("100nF", "0402"), C("100nF", "0402"), C("100nF", "0402")];
+        for c in core {{ v1v1 -> c -> GND; near(c, u[5]); }}
+        let io = [C("4.7uF", "0402"), C("100nF", "0402")];
+        for c in io {{ P3V3 -> c -> GND; near(c, u[8]); }}
+        P3V3.driven(); GND.driven();
+        "#
+    ));
+    let rails = rail_symbols(&s);
+    let at_pin = [("C1", "4"), ("C2", "5"), ("C3", "5"), ("C4", "5"), ("C5", "5"), ("C6", "8"), ("C7", "8")];
+    for (c, pin) in at_pin {
+        assert_eq!(own_symbols(&s, &d, c), 0, "{c} is in a bank: {rails:?}");
+        assert!(wired(&s, pin_at(&s, &d, c, "1"), pin_at(&s, &d, "U1", pin)), "{c} is wired to U1 pin {pin}");
+    }
+    assert_eq!(own_symbols(&s, &d, "U1"), 1, "only GND keeps U1's own power symbol: {rails:?}");
+    // The core bank keeps the board's order: a 100nF next to the pin, the 4.7uF farthest.
+    let dvdd = pin_at(&s, &d, "U1", "5");
+    let dist = |r: &str| pin_at(&s, &d, r, "1").manhattan(dvdd);
+    assert!(["C3", "C4", "C5"].iter().all(|c| dist(c) < dist("C2")), "4.7uF beyond the 100nF caps");
+}
+
 /// The chessboard fixture: decoupling banks at their pins, signal capacitors on their signals.
 #[test]
 fn chessboard_decoupling_banks() {

@@ -334,3 +334,46 @@ Measured as the gap between each reference or value and its part's body, before 
 eleceda readability is unchanged from the second pass: 100 on every sheet of ldo, blinker, mcu,
 rp2350b and the tags; chessboard as before (sensor sheets 76 from their four-way points).
 
+### Stage 6, fourth pass: banks at crowded and stacked pins
+
+An RP2350A as `wirx import` writes it (a flat `pins` list, no `gap`s) has nine supply and
+regulator pins side by side on its top edge, DVDD and IOVDD with more pins hidden behind them.
+Imported with pinned references and rebuilt, the +1V1 bank (C15–C18 at DVDD) and C13 (at
+VREG_VIN) were drawn apart, under the chip, unwired. Four causes, four fixes:
+
+- **Hidden pins took places of their own.** A `box` symbol gave DVDD 23/39 and IOVDD
+  11/20/30/38/45 their own slots, invisible pins with wires running to them. They now stack
+  behind the visible pin of the same name (`box_symbol`), as in the original drawing.
+- **The IOVDD bank went over its neighbours.** A bank on a top or bottom edge went toward the
+  nearer corner by distance, so the IOVDD bank turned left over DVDD and VREG_VIN, and every way
+  up from those pins crossed it. A bank now goes toward the corner with fewer other banked pins in
+  the way, then fewer signal pins (whose parts stand there), then the nearer one (`bank_ways`);
+  banks nearer their corner go first and lowest, the others pass over them.
+- **The inductor stood on the pins.** L1 (on VREG_LX) is placed before any bank and took the
+  space straight above VREG_VIN and DVDD. When a chip is placed, each pin that will get a bank
+  now keeps a lane 2500 mil out from it while the parts hanging off the chip's other pins are
+  placed: they stay out of it and are not wired across it (`bank_lanes`). Other chips' parts
+  only keep out of the lane.
+- **Candidates ignored strays.** The best layout candidate was picked on wiring alone, so one
+  whose banks fell back could win. `GroupStats::stray_banks` (banks with a known pin drawn
+  apart) now ranks right after unrouted pins, and a candidate with fewer strays than the default
+  may win even with more text collisions or four-way points.
+
+eleceda readability (sheet score / `decoupling_not_at_pin` findings), before → after:
+
+| design | before | after |
+| --- | --- | --- |
+| chessboard-mini imported, MCU | 68 / 5 | 96 / 0 |
+| chessboard-mini imported, all | 80 | 93 |
+| rp2350b imported, MCU | 66 / 5 | 95 / 0 |
+| every example built from its own source | | unchanged |
+
+Tests: `hidden_pins_stack_behind_their_visible_pin`,
+`banks_at_stacked_and_neighbouring_pins_are_wired_to_them` and (on the imported chessboard-mini)
+`imported_decoupling_stays_at_stacked_pins`. `wirx import --pin-refs` writes every reference,
+as eleceda's agent does.
+
+Still open: a PWR_FLAG on a pin whose neighbours are on other rails (three supply pins side by
+side, each its own rail, one rail `driven()`) touches the next pin's power symbol and the layout
+fails with "shorted in the drawing"; it did before too. And `wirx import` does not write a box
+symbol's `gap`s back, so imported chips are drawn tighter than the original.
